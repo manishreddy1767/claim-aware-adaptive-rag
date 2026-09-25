@@ -382,6 +382,7 @@ if __name__ == "__main__":
             "total_evidence_gain": 0.0,
             "base_priority": claim["adaptive_priority"],
             "dynamic_priority": claim["adaptive_priority"],
+            "low_gain_streak": 0,
             "resolved": False,
         }
         for claim in selected
@@ -403,6 +404,7 @@ if __name__ == "__main__":
             key=lambda item: (
                 item["dynamic_priority"]
                 / (1 + 0.5 * item["attempts"])
+                / (1 + 0.75 * item["low_gain_streak"])
             )
         )
 
@@ -461,6 +463,14 @@ if __name__ == "__main__":
             previous_support, current_support
         )
         state["total_evidence_gain"] += evidence_gain
+
+        # Penalize repeated low-gain retrievals.
+        if evidence_gain < 0.05:
+            state["low_gain_streak"] += 1
+        else:
+            state["low_gain_streak"] = 0
+
+        print(f"Low evidence-gain streak: {state['low_gain_streak']}")
 
         # Update priority based on remaining uncertainty.
         remaining_uncertainty = max(
