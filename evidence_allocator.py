@@ -380,6 +380,8 @@ if __name__ == "__main__":
             "result": "INSUFFICIENT",
             "best_support_confidence": 0.0,
             "total_evidence_gain": 0.0,
+            "base_priority": claim["adaptive_priority"],
+            "dynamic_priority": claim["adaptive_priority"],
             "resolved": False,
         }
         for claim in selected
@@ -399,7 +401,7 @@ if __name__ == "__main__":
         state = max(
             active,
             key=lambda item: (
-                item["claim"]["adaptive_priority"]
+                item["dynamic_priority"]
                 / (1 + 0.5 * item["attempts"])
             )
         )
@@ -459,6 +461,18 @@ if __name__ == "__main__":
             previous_support, current_support
         )
         state["total_evidence_gain"] += evidence_gain
+
+        # Update priority based on remaining uncertainty.
+        remaining_uncertainty = max(
+            0.0, 1.0 - state["best_support_confidence"]
+        )
+        state["dynamic_priority"] = (
+            state["base_priority"] * remaining_uncertainty
+        )
+        print(
+            f"Updated dynamic priority: "
+            f"{state['dynamic_priority']:.4f}"
+        )
 
         print(f"Evidence gain this retrieval: {evidence_gain:.4f}")
         print(
