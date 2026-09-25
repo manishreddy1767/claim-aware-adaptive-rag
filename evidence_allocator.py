@@ -223,28 +223,28 @@ def verify_claim(claim, evidence):
     label = result["label"].lower()
     confidence = result["score"]
 
-    # Resolve generic labels using model configuration
     if label.startswith("label_"):
         label_id = int(label.split("_")[1])
         id2label = nli_model.model.config.id2label
-        label = id2label.get(
-            label_id,
-            label
-        ).lower()
+        label = id2label.get(label_id, label).lower()
 
     print(f"NLI Label: {label}")
     print(f"NLI Confidence: {confidence:.4f}")
 
     if confidence < 0.70:
-        return "INSUFFICIENT"
+        status = "INSUFFICIENT"
+    elif "entailment" in label:
+        status = "SUPPORTED"
+    elif "contradiction" in label:
+        status = "CONTRADICTED"
+    else:
+        status = "INSUFFICIENT"
 
-    if "entailment" in label:
-        return "SUPPORTED"
-
-    if "contradiction" in label:
-        return "CONTRADICTED"
-
-    return "INSUFFICIENT"
+    return {
+        "status": status,
+        "label": label,
+        "confidence": confidence
+    }
 
 
 # Step 5: Revise the answer
@@ -378,6 +378,8 @@ if __name__ == "__main__":
             "remaining_documents": documents.copy(),
             "attempts": 0,
             "result": "INSUFFICIENT",
+            "best_support_confidence": 0.0,
+            "total_evidence_gain": 0.0,
             "resolved": False,
         }
         for claim in selected
@@ -406,7 +408,7 @@ if __name__ == "__main__":
         state["attempts"] += 1
         retrievals_used += 1
 
-        print(f"\\nClaim: {claim_text}")
+        print(f"\nClaim: {claim_text}")
         print(
             f"Adaptive priority: "
             f"{state['claim']['adaptive_priority']:.3f}"
@@ -440,8 +442,29 @@ if __name__ == "__main__":
             print("Verification: SKIPPED (Low similarity)")
             continue
 
-        result = verify_claim(claim_text, evidence)
+        verification = verify_claim(claim_text, evidence)
+        result = verification["status"]
         print(f"Verification: {result}")
+
+        # Evidence gain measures improvement in supporting entailment confidence.
+        current_support = (
+            verification["confidence"]
+            if "entailment" in verification["label"]
+            else 0.0
+        )
+        previous_support = state["best_support_confidence"]
+        evidence_gain = max(0.0, current_support - previous_support)
+
+        state["best_support_confidence"] = max(
+            previous_support, current_support
+        )
+        state["total_evidence_gain"] += evidence_gain
+
+        print(f"Evidence gain this retrieval: {evidence_gain:.4f}")
+        print(
+            f"Cumulative evidence gain: "
+            f"{state['total_evidence_gain']:.4f}"
+        )
 
         if result in ("SUPPORTED", "CONTRADICTED"):
             state["result"] = result
@@ -478,14 +501,11 @@ if __name__ == "__main__":
     }
 
     for claim_text, state in claim_states.items():
+        print(f"\nFinal Result: {claim_text} -> {state['result']}")
         print(
-            f"\\nFinal Result: {claim_text} -> {state['result']}"
+            f"Total supporting evidence gain: "
+            f"{state['total_evidence_gain']:.4f}"
         )
-
-    print(
-        f"\\nTotal evidence retrievals used: "
-        f"{retrievals_used}/{retrieval_budget}"
-    )
 
     # Claims not processed because the budget ran out remain insufficient
     for claim in selected:
