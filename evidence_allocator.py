@@ -367,94 +367,125 @@ if __name__ == "__main__":
                     expected_label="entailment"
                 )
 
-    # Shared budget: maximum number of evidence passages to retrieve
+    # Shared budget with adaptive claim scheduling
     retrieval_budget = 6
     retrievals_used = 0
 
-    for claim in selected:
-        claim_text = claim["claim"]
-        print(f"\nClaim: {claim_text}")
+    # Track retrieval progress separately for each claim
+    claim_states = {
+        claim["claim"]: {
+            "claim": claim,
+            "remaining_documents": documents.copy(),
+            "attempts": 0,
+            "result": "INSUFFICIENT",
+            "resolved": False,
+        }
+        for claim in selected
+    }
 
-        final_result = "INSUFFICIENT"
-        remaining_documents = documents.copy()
-        round_number = 0
+    while retrievals_used < retrieval_budget:
+        active = [
+            state for state in claim_states.values()
+            if not state["resolved"] and state["remaining_documents"]
+        ]
 
-        while (
-            remaining_documents
-            and retrievals_used < retrieval_budget
-        ):
-            round_number += 1
-            retrievals_used += 1
-
-            print(f"\n--- Retrieval Round {round_number} ---")
-            print(
-                f"Shared retrieval budget remaining: "
-                f"{retrieval_budget - retrievals_used}"
-            )
-
-            # Dynamically retrieve the best remaining passage
-            evidence_list = retrieve_evidence(
-                claim_text,
-                remaining_documents,
-                top_k=1
-            )
-
-            if not evidence_list:
-                print("No more evidence available.")
-                break
-
-            item = evidence_list[0]
-            evidence = item["document"]
-            similarity = item["score"]
-
-            # Remove this passage so it cannot be retrieved again
-            remaining_documents.remove(evidence)
-
-            print(f"Evidence: {evidence}")
-            print(f"Similarity score: {similarity}")
-
-            if similarity < SIMILARITY_THRESHOLD:
-                print("Verification: SKIPPED (Low similarity)")
-                continue
-
-            result = verify_claim(claim_text, evidence)
-            print(f"Verification: {result}")
-
-            if result in ("SUPPORTED", "CONTRADICTED"):
-                final_result = result
-
-                expected_label = (
-                    "entailment"
-                    if result == "SUPPORTED"
-                    else "contradiction"
-                )
-
-                citation = get_precise_citation(
-                    claim_text,
-                    evidence,
-                    args.pdf_path,
-                    expected_label=expected_label
-                )
-
-                if citation:
-                    claim_citations[claim_text] = citation
-                else:
-                    claim_citations.pop(claim_text, None)
-                    print(
-                        "No individual sentence passed citation verification."
-                    )
-
-                print(f"Stopping retrieval: {final_result}")
-                break
-
-            print("Evidence insufficient. Retrieving another passage.")
-
-        verification_results[claim_text] = final_result
-        print(f"Final Result: {final_result}")
-
-        if retrievals_used >= retrieval_budget:
-            print("\nShared retrieval budget exhausted.")
+        if not active:
             break
+
+        # Favor high-priority claims while distributing retrieval attempts
+        # across unresolved claims.
+        state = max(
+            active,
+            key=lambda item: (
+                item["claim"]["adaptive_priority"]
+                / (1 + 0.5 * item["attempts"])
+            )
+        )
+
+        claim_text = state["claim"]["claim"]
+        state["attempts"] += 1
+        retrievals_used += 1
+
+        print(f"\\nClaim: {claim_text}")
+        print(
+            f"Adaptive priority: "
+            f"{state['claim']['adaptive_priority']:.3f}"
+        )
+        print(
+            f"Attempt: {state['attempts']} | "
+            f"Shared budget remaining: "
+            f"{retrieval_budget - retrievals_used}"
+        )
+
+        evidence_list = retrieve_evidence(
+            claim_text,
+            state["remaining_documents"],
+            top_k=1
+        )
+
+        if not evidence_list:
+            state["resolved"] = True
+            continue
+
+        item = evidence_list[0]
+        evidence = item["document"]
+        similarity = item["score"]
+
+        state["remaining_documents"].remove(evidence)
+
+        print(f"Evidence: {evidence}")
+        print(f"Similarity score: {similarity}")
+
+        if similarity < SIMILARITY_THRESHOLD:
+            print("Verification: SKIPPED (Low similarity)")
+            continue
+
+        result = verify_claim(claim_text, evidence)
+        print(f"Verification: {result}")
+
+        if result in ("SUPPORTED", "CONTRADICTED"):
+            state["result"] = result
+            state["resolved"] = True
+
+            expected_label = (
+                "entailment"
+                if result == "SUPPORTED"
+                else "contradiction"
+            )
+
+            citation = get_precise_citation(
+                claim_text,
+                evidence,
+                args.pdf_path,
+                expected_label=expected_label
+            )
+
+            if citation:
+                claim_citations[claim_text] = citation
+            else:
+                claim_citations.pop(claim_text, None)
+                print(
+                    "No individual sentence passed citation verification."
+                )
+
+            print(f"Claim resolved: {result}")
+        else:
+            print("Claim remains unresolved; scheduler will reconsider it.")
+
+    verification_results = {
+        claim_text: state["result"]
+        for claim_text, state in claim_states.items()
+    }
+
+    for claim_text, state in claim_states.items():
+        print(
+            f"\\nFinal Result: {claim_text} -> {state['result']}"
+        )
+
+    print(
+        f"\\nTotal evidence retrievals used: "
+        f"{retrievals_used}/{retrieval_budget}"
+    )
 
     # Claims not processed because the budget ran out remain insufficient
     for claim in selected:
