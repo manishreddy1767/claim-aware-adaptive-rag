@@ -323,6 +323,8 @@ if __name__ == "__main__":
 
     claims = identify_evidence_gaps(claims)
 
+    selected = allocate_budget(claims, budget)
+
     print("\n=== Evidence Gap Analysis ===")
     for claim in claims:
         print(
@@ -330,7 +332,14 @@ if __name__ == "__main__":
             f'Gap = {claim["evidence_gap"]}'
         )
 
-    selected = allocate_budget(claims, budget)
+    print("\n=== Adaptive Priority Scores ===")
+    for claim in claims:
+        if claim["status"] != "Supported":
+            print(
+                f'{claim["claim"]}: '
+                f'Uncertainty = {claim["uncertainty"]}, '
+                f'Priority = {claim["adaptive_priority"]}'
+            )
 
     print("\n=== Selected Claims for Retrieval ===")
     for claim in selected:
