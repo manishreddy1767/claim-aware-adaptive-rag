@@ -85,16 +85,29 @@ def identify_evidence_gaps(claims):
     return claims
 
 
-# Step 2: Allocate retrieval budget
+# Step 2: Allocate retrieval budget adaptively
 def allocate_budget(claims, budget):
     candidates = [
         claim for claim in claims
         if claim["status"] != "Supported"
     ]
 
+    for claim in candidates:
+        score = claim["support_score"]
+
+        # Uncertainty is highest when the support score is near 0.5.
+        uncertainty = 1 - abs(score - 0.5) * 2
+
+        # Combine evidence gap and uncertainty into a priority score.
+        claim["uncertainty"] = round(uncertainty, 2)
+        claim["adaptive_priority"] = round(
+            0.7 * claim["evidence_gap"] + 0.3 * uncertainty,
+            3
+        )
+
     return sorted(
         candidates,
-        key=lambda claim: claim["evidence_gap"],
+        key=lambda claim: claim["adaptive_priority"],
         reverse=True
     )[:budget]
 
