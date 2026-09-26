@@ -45,6 +45,8 @@ class RetrievalConfig:
     # Sufficiency: best hybrid score and query key-term coverage.
     sufficiency_score: float = 0.45
     sufficiency_coverage: float = 0.60
+    # Score-bar reduction when every query key term appears in the evidence.
+    full_coverage_relief: float = 0.10
     max_expansion_rounds: int = 2
     # Add sentences adjacent to top hits during expansion (disable when units
     # are independent documents rather than consecutive sentences).

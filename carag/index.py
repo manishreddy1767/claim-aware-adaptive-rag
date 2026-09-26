@@ -95,7 +95,10 @@ class EvidenceIndex:
         token_lists = [tokenize(u.text) for u in document.units]
         self.units.extend(document.units)
         self.documents.append(document)
-        self.unit_terms.extend(set(t) for t in token_lists)
+        # Section headings give context ("5. Limitations") that the sentence itself
+        # may omit; they count for key-term coverage but not for BM25.
+        self.unit_terms.extend(set(t) | set(tokenize(u.section or ""))
+                               for t, u in zip(token_lists, document.units))
         self.unit_features.extend(evidence_features(u.text) for u in document.units)
         self.embeddings = vectors if start == 0 else np.vstack([self.embeddings, vectors])
         self.bm25.add(token_lists)

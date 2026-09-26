@@ -51,6 +51,7 @@ class QueryAnalysis:
     is_vague: bool = False
     vague_reason: str = ""
     premise: str | None = None   # declarative statement the question presupposes or asks
+    entities: list[str] = field(default_factory=list)  # named things the evidence must mention
 
     @property
     def is_yes_no(self) -> bool:
@@ -131,6 +132,25 @@ def _declarative(question: str) -> str | None:
     return sentence[0].upper() + sentence[1:] + "."
 
 
+_ENTITY_RE = re.compile(r"\b[A-Z][\w-]*(?:\s+(?:[A-Z][\w-]*|\d[\w.-]*))+|\b[A-Z][a-z]*[A-Z0-9][\w-]*\b")
+
+
+def extract_entities(question: str) -> list[str]:
+    """Multi-word capitalized names ('Trial Three', 'Node B') and camel-case names ('LoRaWAN').
+
+    The question's first word is ignored because it is capitalized anyway.
+    """
+    body = question.strip()
+    first = re.match(r"^\W*\w+\s*", body)
+    offset = first.end() if first else 0
+    entities = []
+    for match in _ENTITY_RE.finditer(body[offset:]):
+        entity = match.group(0).strip()
+        if entity.lower() not in {"i", "yes", "no"}:
+            entities.append(entity)
+    return entities
+
+
 def analyze_question(question: str) -> QueryAnalysis:
     q = question.strip()
     low = q.lower()
@@ -164,6 +184,7 @@ def analyze_question(question: str) -> QueryAnalysis:
             "so the intended subject or outcome is ambiguous."
         )
 
+    analysis.entities = extract_entities(q)
     if "yes_no" in intents or low.startswith(("why ", "how come ")):
         analysis.premise = _declarative(q)
     return analysis

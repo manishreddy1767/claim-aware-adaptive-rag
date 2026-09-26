@@ -104,9 +104,12 @@ class ClaimVerifier:
         entailing = sorted([j for j in relevant if j.entailment >= cfg.support_threshold],
                            key=lambda j: (-j.entailment, len(j.evidence_ids)))
         supporting = [j for j in entailing if numbers_ok(j)]
-        # Windows are used only as supporting evidence: the small NLI model produces
-        # spurious contradictions on two-sentence premises that mention several entities.
-        contradicting = sorted([j for j in relevant if len(j.evidence_ids) == 1
+        # The small NLI model produces spurious contradictions on two-sentence windows
+        # that mention several entities, so a window may contradict only when it is
+        # more relevant to the claim than every single sentence.
+        best_single = max((j.relevance for j in judgements if len(j.evidence_ids) == 1), default=0.0)
+        contradicting = sorted([j for j in relevant
+                                if (len(j.evidence_ids) == 1 or j.relevance > best_single)
                                 and j.relevance >= cfg.contradiction_relevance_threshold
                                 and j.contradiction >= cfg.contradiction_threshold],
                                key=lambda j: (-j.contradiction, len(j.evidence_ids)))

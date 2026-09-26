@@ -105,8 +105,21 @@ def _stem(token: str) -> str:
     return token
 
 
+# Common irregular forms mapped to their base so 'ran' matches 'run'.
+_IRREGULAR = {
+    "ran": "run", "took": "take", "taken": "take", "led": "lead", "made": "make", "found": "find",
+    "grew": "grow", "grown": "grow", "rose": "rise", "risen": "rise", "fell": "fall", "fallen": "fall",
+    "gave": "give", "given": "give", "went": "go", "gone": "go", "came": "come", "saw": "see",
+    "seen": "see", "kept": "keep", "lost": "lose", "won": "win", "drew": "draw", "drawn": "draw",
+    "built": "build", "chose": "choose", "chosen": "choose", "began": "begin", "begun": "begin",
+    "wrote": "write", "written": "write", "held": "hold", "sent": "send", "spent": "spend",
+    "got": "get", "became": "become", "bought": "buy", "brought": "bring", "caught": "catch",
+    "thought": "think", "told": "tell", "sold": "sell", "left": "leave", "meant": "mean",
+}
+
+
 def tokenize(text: str, remove_stopwords: bool = True) -> list[str]:
-    tokens = [t.lower() for t in _WORD_RE.findall(text)]
+    tokens = [_IRREGULAR.get(t, t) for t in (t.lower() for t in _WORD_RE.findall(text))]
     if remove_stopwords:
         tokens = [t for t in tokens if t not in STOPWORDS]
     return [_stem(t) for t in tokens]

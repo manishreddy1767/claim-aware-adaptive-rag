@@ -127,15 +127,22 @@ class AdaptiveRetriever:
         if not chosen:
             return False, ["No evidence passed the minimum relevance score."]
         best = float(max(scores["total"][i] for i in chosen))
-        if best < cfg.sufficiency_score:
-            reasons.append(f"Best evidence score {best:.2f} is below {cfg.sufficiency_score:.2f}.")
         terms = analysis.key_terms
+        coverage = 1.0
         if terms:
             covered = {t for t in terms for i in chosen if t in self.index.unit_terms[i]}
             coverage = len(covered) / len(terms)
             if coverage < cfg.sufficiency_coverage:
                 missing = [t for t in terms if t not in covered]
                 reasons.append(f"Only {coverage:.0%} of key terms found (missing: {', '.join(missing)}).")
+        # Finding every key term is strong topical evidence, so the score bar is relaxed.
+        required = cfg.sufficiency_score - (cfg.full_coverage_relief if coverage == 1.0 else 0.0)
+        if best < required:
+            reasons.append(f"Best evidence score {best:.2f} is below {required:.2f}.")
+        texts = " ".join(self.index.units[i].text.lower() for i in chosen)
+        missing_entities = [e for e in analysis.entities if e.lower() not in texts]
+        if missing_entities:
+            reasons.append("The evidence does not mention " + ", ".join(f"'{e}'" for e in missing_entities) + ".")
         for feature in ("causal", "numeric"):
             if feature in analysis.intents and not any(
                     self.index.unit_features[i][feature] and scores["coverage"][i] > 0 for i in chosen):

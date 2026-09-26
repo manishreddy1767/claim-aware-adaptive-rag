@@ -1,0 +1,1594 @@
+{
+  "dataset": "SYNTHETIC (author-labelled; see evaluation/datasets)",
+  "device": "cuda",
+  "config": {
+    "models": {
+      "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "nli_model": "cross-encoder/nli-deberta-v3-small",
+      "device": "auto",
+      "batch_size": 32
+    },
+    "ingestion": {
+      "min_sentence_words": 3,
+      "max_sentence_chars": 1200,
+      "request_timeout": 20,
+      "max_download_bytes": 10000000
+    },
+    "retrieval": {
+      "semantic_weight": 0.65,
+      "lexical_weight": 0.35,
+      "intent_bonus": 0.08,
+      "min_k": 2,
+      "initial_k": 4,
+      "max_k": 10,
+      "relative_cutoff": 0.7,
+      "absolute_min_score": 0.25,
+      "sufficiency_score": 0.45,
+      "sufficiency_coverage": 0.6,
+      "full_coverage_relief": 0.1,
+      "max_expansion_rounds": 2,
+      "expand_neighbors": true,
+      "redundancy_threshold": 0.92,
+      "baseline_k": 5
+    },
+    "verification": {
+      "evidence_per_claim": 6,
+      "relevance_threshold": 0.4,
+      "support_threshold": 0.7,
+      "contradiction_threshold": 0.7,
+      "contradiction_relevance_threshold": 0.55,
+      "conflict_margin": 0.1,
+      "uncertain_threshold": 0.4,
+      "use_windows": true
+    },
+    "answer": {
+      "max_answer_sentences": 3,
+      "min_answer_score": 0.4,
+      "check_question_premise": true,
+      "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
+    }
+  },
+  "retrieval": {
+    "n_questions": 20,
+    "k": 5,
+    "systems": {
+      "fixed_top5_semantic": {
+        "p@1": 0.85,
+        "p@k": 0.23,
+        "r@k": 0.8667,
+        "mrr": 0.885,
+        "ndcg@k": 0.846,
+        "set_precision": 0.23,
+        "set_recall": 0.8667,
+        "n_retrieved": 5.0,
+        "latency_s": 0.0133
+      },
+      "fixed_top5_bm25": {
+        "p@1": 0.9,
+        "p@k": 0.25,
+        "r@k": 0.9333,
+        "mrr": 0.91,
+        "ndcg@k": 0.9045,
+        "set_precision": 0.25,
+        "set_recall": 0.9333,
+        "n_retrieved": 5.0,
+        "latency_s": 0.012
+      },
+      "fixed_top5_hybrid": {
+        "p@1": 0.9,
+        "p@k": 0.25,
+        "r@k": 0.9083,
+        "mrr": 0.9125,
+        "ndcg@k": 0.8953,
+        "set_precision": 0.25,
+        "set_recall": 0.9083,
+        "n_retrieved": 5.0,
+        "latency_s": 0.0131
+      },
+      "adaptive_hybrid": {
+        "p@1": 0.85,
+        "p@k": 0.22,
+        "r@k": 0.85,
+        "mrr": 0.8917,
+        "ndcg@k": 0.8464,
+        "set_precision": 0.5167,
+        "set_recall": 0.85,
+        "n_retrieved": 2.55,
+        "latency_s": 0.013
+      }
+    }
+  },
+  "verification": {
+    "n_claims": 30,
+    "three_way": {
+      "similarity_threshold": {
+        "accuracy": 0.4667,
+        "macro_f1": 0.363,
+        "n": 30,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.3846,
+            "recall": 1.0,
+            "f1": 0.5556,
+            "support": 10
+          },
+          "CONTRADICTED": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 9
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 1.0,
+            "recall": 0.3636,
+            "f1": 0.5333,
+            "support": 11
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 10,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 0
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 9,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 0
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 7,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 4
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "nli_top1": {
+        "accuracy": 0.8,
+        "macro_f1": 0.8056,
+        "n": 30,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 1.0,
+            "recall": 0.8,
+            "f1": 0.8889,
+            "support": 10
+          },
+          "CONTRADICTED": {
+            "precision": 0.7778,
+            "recall": 0.7778,
+            "f1": 0.7778,
+            "support": 9
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.6923,
+            "recall": 0.8182,
+            "f1": 0.75,
+            "support": 11
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 8,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 2
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 7,
+            "NOT_ESTABLISHED": 2
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 2,
+            "NOT_ESTABLISHED": 9
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "claim_aware_verifier": {
+        "accuracy": 0.8667,
+        "macro_f1": 0.8653,
+        "n": 30,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 10
+          },
+          "CONTRADICTED": {
+            "precision": 0.7778,
+            "recall": 0.7778,
+            "f1": 0.7778,
+            "support": 9
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.8182,
+            "recall": 0.8182,
+            "f1": 0.8182,
+            "support": 11
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 10,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 0
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 7,
+            "NOT_ESTABLISHED": 2
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 2,
+            "NOT_ESTABLISHED": 9
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      }
+    },
+    "latency_s": {
+      "similarity_threshold": 0.0137,
+      "nli_top1": 0.254,
+      "claim_aware_verifier": 0.1386
+    },
+    "five_way_claim_aware_verifier": {
+      "accuracy": 0.8333,
+      "macro_f1": 0.8403,
+      "n": 30,
+      "per_class": {
+        "SUPPORTED": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10
+        },
+        "PARTIALLY_SUPPORTED": {
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "support": 4
+        },
+        "CONTRADICTED": {
+          "precision": 0.7778,
+          "recall": 0.7778,
+          "f1": 0.7778,
+          "support": 9
+        },
+        "INSUFFICIENT_EVIDENCE": {
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "support": 7
+        },
+        "UNCERTAIN": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0
+        }
+      },
+      "confusion": {
+        "SUPPORTED": {
+          "SUPPORTED": 10,
+          "PARTIALLY_SUPPORTED": 0,
+          "CONTRADICTED": 0,
+          "INSUFFICIENT_EVIDENCE": 0,
+          "UNCERTAIN": 0
+        },
+        "PARTIALLY_SUPPORTED": {
+          "SUPPORTED": 0,
+          "PARTIALLY_SUPPORTED": 3,
+          "CONTRADICTED": 1,
+          "INSUFFICIENT_EVIDENCE": 0,
+          "UNCERTAIN": 0
+        },
+        "CONTRADICTED": {
+          "SUPPORTED": 0,
+          "PARTIALLY_SUPPORTED": 1,
+          "CONTRADICTED": 7,
+          "INSUFFICIENT_EVIDENCE": 0,
+          "UNCERTAIN": 1
+        },
+        "INSUFFICIENT_EVIDENCE": {
+          "SUPPORTED": 0,
+          "PARTIALLY_SUPPORTED": 0,
+          "CONTRADICTED": 1,
+          "INSUFFICIENT_EVIDENCE": 5,
+          "UNCERTAIN": 1
+        },
+        "UNCERTAIN": {
+          "SUPPORTED": 0,
+          "PARTIALLY_SUPPORTED": 0,
+          "CONTRADICTED": 0,
+          "INSUFFICIENT_EVIDENCE": 0,
+          "UNCERTAIN": 0
+        }
+      },
+      "labels": [
+        "SUPPORTED",
+        "PARTIALLY_SUPPORTED",
+        "CONTRADICTED",
+        "INSUFFICIENT_EVIDENCE",
+        "UNCERTAIN"
+      ]
+    },
+    "details": [
+      {
+        "claim": "Trial Two sampled the sensors at 10 Hz.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.99)."
+      },
+      {
+        "claim": "Trial One consumed an average of 42 milliwatt-hours per day.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.99)."
+      },
+      {
+        "claim": "Both trials used the same firmware version.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.99)."
+      },
+      {
+        "claim": "Trial Two consumed more energy because of its higher sampling frequency.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=1.00)."
+      },
+      {
+        "claim": "The reboots of Node B were caused by a loose power connector.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.99)."
+      },
+      {
+        "claim": "Data were transmitted over LoRaWAN every 5 minutes.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.99)."
+      },
+      {
+        "claim": "The study used only one site.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=1.00)."
+      },
+      {
+        "claim": "The battery in Trial One was projected to last 71 days.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.97)."
+      },
+      {
+        "claim": "Node B in Trial Two rebooted twice during a thunderstorm.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=0.99)."
+      },
+      {
+        "claim": "Trial Two recorded 12 short pollution spikes.",
+        "gold": "SUPPORTED",
+        "predicted": "SUPPORTED",
+        "explanation": "Entailed by evidence (P(entailment)=1.00)."
+      },
+      {
+        "claim": "Trial One sampled the sensors at 10 Hz.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=1.00)."
+      },
+      {
+        "claim": "Trial Two consumed an average of 42 milliwatt-hours per day.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=1.00)."
+      },
+      {
+        "claim": "The reboots were caused by the sampling configuration.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=1.00)."
+      },
+      {
+        "claim": "The two trials used different firmware versions.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=1.00)."
+      },
+      {
+        "claim": "Radio transmission energy was much higher in Trial Two than in Trial One.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=0.96)."
+      },
+      {
+        "claim": "The battery in Trial Two was projected to last 71 days.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=0.98)."
+      },
+      {
+        "claim": "Each trial ran for 30 days.",
+        "gold": "CONTRADICTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=1.00)."
+      },
+      {
+        "claim": "Trial Two consumed more energy because it transmitted data more frequently.",
+        "gold": "CONTRADICTED",
+        "predicted": "PARTIALLY_SUPPORTED",
+        "explanation": "Only part of the claim is established (Trial Two consumed more energy.). The 'because' relationship itself is not supported by the evidence."
+      },
+      {
+        "claim": "Trial One recorded more short pollution spikes than Trial Two.",
+        "gold": "CONTRADICTED",
+        "predicted": "UNCERTAIN",
+        "explanation": "Relevant evidence exists but the NLI model is inconclusive (max P(entailment)=0.54, max P(contradiction)=0.81)."
+      },
+      {
+        "claim": "The sensor nodes cost 50 dollars each.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "INSUFFICIENT_EVIDENCE",
+        "explanation": "Relevant passages were found, but none of them establishes or contradicts the claim."
+      },
+      {
+        "claim": "The gateway was located two kilometres from the rooftop.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "CONTRADICTED",
+        "explanation": "Relevant evidence contradicts the claim (P(contradiction)=0.99)."
+      },
+      {
+        "claim": "The microcontroller was manufactured by Texas Instruments.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "INSUFFICIENT_EVIDENCE",
+        "explanation": "No sufficiently relevant evidence was found in the sources."
+      },
+      {
+        "claim": "The collected data were stored in a cloud database.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "UNCERTAIN",
+        "explanation": "Relevant evidence exists but the NLI model is inconclusive (max P(entailment)=0.00, max P(contradiction)=0.97)."
+      },
+      {
+        "claim": "The study was funded by a national research agency.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "INSUFFICIENT_EVIDENCE",
+        "explanation": "Relevant passages were found, but none of them establishes or contradicts the claim."
+      },
+      {
+        "claim": "The particulate matter sensor was calibrated every week.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "INSUFFICIENT_EVIDENCE",
+        "explanation": "Relevant passages were found, but none of them establishes or contradicts the claim."
+      },
+      {
+        "claim": "The nodes were enclosed in waterproof plastic housings.",
+        "gold": "INSUFFICIENT_EVIDENCE",
+        "predicted": "INSUFFICIENT_EVIDENCE",
+        "explanation": "Relevant passages were found, but none of them establishes or contradicts the claim."
+      },
+      {
+        "claim": "Trial Two consumed more energy because its nodes were placed in direct sunlight.",
+        "gold": "PARTIALLY_SUPPORTED",
+        "predicted": "PARTIALLY_SUPPORTED",
+        "explanation": "Only part of the claim is established (Trial Two consumed more energy.). The 'because' relationship itself is not supported by the evidence."
+      },
+      {
+        "claim": "Trial One's battery lasted longer because its humidity sensor was disabled.",
+        "gold": "PARTIALLY_SUPPORTED",
+        "predicted": "CONTRADICTED",
+        "explanation": "Part of the claim is contradicted by the evidence."
+      },
+      {
+        "claim": "Node B rebooted twice during a thunderstorm because lightning struck the gateway.",
+        "gold": "PARTIALLY_SUPPORTED",
+        "predicted": "PARTIALLY_SUPPORTED",
+        "explanation": "Only part of the claim is established (Node B rebooted twice during a thunderstorm.). The 'because' relationship itself is not supported by the evidence."
+      },
+      {
+        "claim": "Higher sampling frequency improved the detection of short pollution events because the sensors were replaced with newer models.",
+        "gold": "PARTIALLY_SUPPORTED",
+        "predicted": "PARTIALLY_SUPPORTED",
+        "explanation": "Only part of the claim is established (Higher sampling frequency improved the detection of short pollution events.). The 'because' relationship itself is not supported by the evidence."
+      }
+    ]
+  },
+  "answering": {
+    "n_questions": 27,
+    "systems": {
+      "fixed_top3_no_verification": {
+        "overall_accuracy": 0.5926,
+        "answerable_accuracy": 0.9375,
+        "over_abstention_rate": 0.0,
+        "correct_abstention_rate": 0.1429,
+        "false_answer_rate_on_unanswerable": 0.8571,
+        "premise_question_accuracy": 0.0,
+        "supported_claim_rate": 1.0,
+        "unsupported_claim_rate": 0.0,
+        "citation_validity": 1.0,
+        "mean_latency_s": 0.0108,
+        "rows": [
+          {
+            "id": "d1",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial One sampled the sensors at a frequency of 1 Hz. Trial Two sampled the sensors at a frequency of 10 Hz. For long-term deployments where battery life is the priority, a 1 Hz sampling frequency is recommended.",
+            "latency_s": 0.02,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "d2",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "wrong",
+            "answer": "The study compared two deployment configurations of a battery-powered environmental sensor node. Energy consumption was measured with an inline power monitor attached to each node. Two sensor nodes, Node A and Node B, were deployed in each trial.",
+            "latency_s": 0.016,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "d3",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Energy consumption was measured with an inline power monitor attached to each node. The goal was to understand how configuration choices affect energy consumption and data quality. Trial One consumed an average of 42 milliwatt-hours per day.",
+            "latency_s": 0.012,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c1",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. Trial Two consumed an average of 118 milliwatt-hours per day.",
+            "latency_s": 0.012,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c2",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Node B in Trial Two rebooted twice during a thunderstorm on March 21. Two sensor nodes, Node A and Node B, were deployed in each trial. The reboots were caused by a loose power connector rather than by the sampling configuration.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c3",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Radio transmission energy was nearly identical in both trials because the transmission interval was the same. Trial Two therefore consumed about 2.8 times as much energy as Trial One. Data were transmitted over LoRaWAN every 5 minutes in both trials.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c4",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Humidity readings during rain were excluded from the analysis because the humidity sensor saturated above 95 percent relative humidity. Each node measured air temperature, relative humidity and particulate matter. However, the improvement in temperature accuracy was small and may not justify the additional energy cost.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c5",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. Each trial ran for 14 days at the same rooftop site. The study used only one site and two nodes per trial, so the results may not generalize to other environments.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m1",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The battery in Trial Two was projected to last 25 days, compared with 71 days in Trial One. Trial Two therefore consumed about 2.8 times as much energy as Trial One. Trial One consumed an average of 42 milliwatt-hours per day.",
+            "latency_s": 0.012,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m2",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The mean absolute temperature error was 0.3 degrees Celsius in Trial One and 0.2 degrees Celsius in Trial Two. However, the improvement in temperature accuracy was small and may not justify the additional energy cost. Ambient temperature differed between the two trial periods, which could have affected battery performance.",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m3",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. Trial Two consumed an average of 118 milliwatt-hours per day. Trial One consumed an average of 42 milliwatt-hours per day.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n1",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two consumed an average of 118 milliwatt-hours per day. Trial Two therefore consumed about 2.8 times as much energy as Trial One. Trial One consumed an average of 42 milliwatt-hours per day.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n2",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. Higher sampling frequency improved the detection of short pollution events. A 10 Hz sampling frequency is recommended only when short-lived pollution events must be captured.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n3",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Each trial ran for 14 days at the same rooftop site. Trial One ran from March 3 to March 16, and Trial Two ran from March 17 to March 30. The battery in Trial Two was projected to last 25 days, compared with 71 days in Trial One.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n4",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Data were transmitted over LoRaWAN every 5 minutes in both trials. Radio transmission energy was nearly identical in both trials because the transmission interval was the same. A 10 Hz sampling frequency is recommended only when short-lived pollution events must be captured.",
+            "latency_s": 0.012,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "l1",
+            "type": "limitation",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The study used only one site and two nodes per trial, so the results may not generalize to other environments. Synthetic test document. Data quality was similar in both trials.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a1",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "false_answer",
+            "answer": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. Data were transmitted over LoRaWAN every 5 minutes in both trials. The goal was to understand how configuration choices affect energy consumption and data quality.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a2",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "Two sensor nodes, Node A and Node B, were deployed in each trial. The purchase cost of the sensor nodes was not recorded in this study. Each node measured air temperature, relative humidity and particulate matter.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a3",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "false_answer",
+            "answer": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. Each trial ran for 14 days at the same rooftop site. Each node measured air temperature, relative humidity and particulate matter.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a4",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "false_answer",
+            "answer": "Both trials used the same hardware model, the same 3000 mAh lithium battery and the same firmware version. The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. Trial One sampled the sensors at a frequency of 1 Hz.",
+            "latency_s": 0.013,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a5",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "false_answer",
+            "answer": "Trial One consumed an average of 42 milliwatt-hours per day. Trial Two consumed an average of 118 milliwatt-hours per day. Trial Two therefore consumed about 2.8 times as much energy as Trial One.",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p1",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "false_answer",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. Trial Two consumed an average of 118 milliwatt-hours per day.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p2",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "false_answer",
+            "answer": "Data quality was similar in both trials. Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. Trial Two therefore consumed about 2.8 times as much energy as Trial One.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p3",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "false_answer",
+            "answer": "The reboots were caused by a loose power connector rather than by the sampling configuration. Node B in Trial Two rebooted twice during a thunderstorm on March 21. Two sensor nodes, Node A and Node B, were deployed in each trial.",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p4",
+            "type": "yes_no",
+            "expected": "yes",
+            "outcome": "wrong",
+            "answer": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. Higher sampling frequency improved the detection of short pollution events. Data quality was similar in both trials.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "v1",
+            "type": "vague",
+            "expected": "abstain",
+            "outcome": "false_answer",
+            "answer": "The reboots were caused by a loose power connector rather than by the sampling configuration. Node B in Trial Two rebooted twice during a thunderstorm on March 21. The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "v2",
+            "type": "vague",
+            "expected": "abstain",
+            "outcome": "false_answer",
+            "answer": "Node B in Trial Two rebooted twice during a thunderstorm on March 21. The reboots were caused by a loose power connector rather than by the sampling configuration. The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods.",
+            "latency_s": 0.009,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          }
+        ]
+      },
+      "adaptive_no_verification": {
+        "overall_accuracy": 0.8148,
+        "answerable_accuracy": 0.9375,
+        "over_abstention_rate": 0.0,
+        "correct_abstention_rate": 1.0,
+        "false_answer_rate_on_unanswerable": 0.0,
+        "premise_question_accuracy": 0.0,
+        "supported_claim_rate": 1.0,
+        "unsupported_claim_rate": 0.0,
+        "citation_validity": 1.0,
+        "mean_latency_s": 0.0107,
+        "rows": [
+          {
+            "id": "d1",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial One sampled the sensors at a frequency of 1 Hz. [1]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "d2",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "wrong",
+            "answer": "The study compared two deployment configurations of a battery-powered environmental sensor node. [1]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "d3",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Energy consumption was measured with an inline power monitor attached to each node. [1]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c1",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c2",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Node B in Trial Two rebooted twice during a thunderstorm on March 21. [1] The reboots were caused by a loose power connector rather than by the sampling configuration. [2]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c3",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Radio transmission energy was nearly identical in both trials because the transmission interval was the same. [1]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c4",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Humidity readings during rain were excluded from the analysis because the humidity sensor saturated above 95 percent relative humidity. [1]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c5",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. [1]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m1",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The battery in Trial Two was projected to last 25 days, compared with 71 days in Trial One. [1]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m2",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The mean absolute temperature error was 0.3 degrees Celsius in Trial One and 0.2 degrees Celsius in Trial Two. [1]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m3",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n1",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two consumed an average of 118 milliwatt-hours per day. [1] Trial Two therefore consumed about 2.8 times as much energy as Trial One. [2]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n2",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. [1]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n3",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Each trial ran for 14 days at the same rooftop site. [1] Trial One ran from March 3 to March 16, and Trial Two ran from March 17 to March 30. [2]",
+            "latency_s": 0.012,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n4",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Data were transmitted over LoRaWAN every 5 minutes in both trials. [1]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "l1",
+            "type": "limitation",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The study used only one site and two nodes per trial, so the results may not generalize to other environments. [1]",
+            "latency_s": 0.014,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a1",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.01,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "a2",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "Trial Two sampled the sensors at a frequency of 10 Hz. [1] Two sensor nodes, Node A and Node B, were deployed in each trial. [2] The purchase cost of the sensor nodes was not recorded in this study. [3]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a3",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.015,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "a4",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.01,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "a5",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.011,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "p1",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "false_answer",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p2",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "false_answer",
+            "answer": "The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [1] Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. [2]",
+            "latency_s": 0.01,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p3",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "false_answer",
+            "answer": "The reboots were caused by a loose power connector rather than by the sampling configuration. [1]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p4",
+            "type": "yes_no",
+            "expected": "yes",
+            "outcome": "wrong",
+            "answer": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. [1]",
+            "latency_s": 0.011,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "v1",
+            "type": "vague",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.01,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "v2",
+            "type": "vague",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.01,
+            "claim_statuses": [],
+            "citation_ok": true
+          }
+        ]
+      },
+      "adaptive_with_claim_verification": {
+        "overall_accuracy": 0.963,
+        "answerable_accuracy": 0.9375,
+        "over_abstention_rate": 0.0,
+        "correct_abstention_rate": 1.0,
+        "false_answer_rate_on_unanswerable": 0.0,
+        "premise_question_accuracy": 1.0,
+        "supported_claim_rate": 0.8529,
+        "unsupported_claim_rate": 0.1176,
+        "citation_validity": 1.0,
+        "mean_latency_s": 0.1037,
+        "rows": [
+          {
+            "id": "d1",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial One sampled the sensors at a frequency of 1 Hz. [1]",
+            "latency_s": 0.081,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "d2",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "wrong",
+            "answer": "The study compared two deployment configurations of a battery-powered environmental sensor node. [1]",
+            "latency_s": 0.087,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "d3",
+            "type": "direct",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Energy consumption was measured with an inline power monitor attached to each node. [1]",
+            "latency_s": 0.084,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c1",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+            "latency_s": 0.23,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c2",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Node B in Trial Two rebooted twice during a thunderstorm on March 21. [1] The reboots were caused by a loose power connector rather than by the sampling configuration. [2]",
+            "latency_s": 0.16,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c3",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Radio transmission energy was nearly identical in both trials because the transmission interval was the same. [1]",
+            "latency_s": 0.174,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c4",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Humidity readings during rain were excluded from the analysis because the humidity sensor saturated above 95 percent relative humidity. [1]",
+            "latency_s": 0.152,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "c5",
+            "type": "causal",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. [1]",
+            "latency_s": 0.154,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m1",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The battery in Trial Two was projected to last 25 days, compared with 71 days in Trial One. [1]",
+            "latency_s": 0.082,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m2",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The mean absolute temperature error was 0.3 degrees Celsius in Trial One and 0.2 degrees Celsius in Trial Two. [1]",
+            "latency_s": 0.1,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "m3",
+            "type": "comparison",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+            "latency_s": 0.159,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n1",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two consumed an average of 118 milliwatt-hours per day. [1] Trial Two therefore consumed about 2.8 times as much energy as Trial One. [2]",
+            "latency_s": 0.148,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n2",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. [1]",
+            "latency_s": 0.151,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n3",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Each trial ran for 14 days at the same rooftop site. [1] Trial One ran from March 3 to March 16, and Trial Two ran from March 17 to March 30. [2]",
+            "latency_s": 0.236,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "n4",
+            "type": "numeric",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "Data were transmitted over LoRaWAN every 5 minutes in both trials. [1]",
+            "latency_s": 0.085,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "l1",
+            "type": "limitation",
+            "expected": "answer",
+            "outcome": "correct",
+            "answer": "The study used only one site and two nodes per trial, so the results may not generalize to other environments. [1]",
+            "latency_s": 0.088,
+            "claim_statuses": [
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a1",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.01,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "a2",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "Trial Two sampled the sensors at a frequency of 10 Hz. [1] Two sensor nodes, Node A and Node B, were deployed in each trial. [2] The purchase cost of the sensor nodes was not recorded in this study. [3]",
+            "latency_s": 0.231,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "a3",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.012,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "a4",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.012,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "a5",
+            "type": "absent",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.013,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "p1",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "correct",
+            "answer": "The question's assumption is not supported by the sources. The sources state: Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1]",
+            "latency_s": 0.077,
+            "claim_statuses": [
+              "INSUFFICIENT_EVIDENCE",
+              "INSUFFICIENT_EVIDENCE"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p2",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "correct",
+            "answer": "No. The sources state: The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [1]",
+            "latency_s": 0.081,
+            "claim_statuses": [
+              "UNCERTAIN"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p3",
+            "type": "misleading",
+            "expected": "correct_premise",
+            "outcome": "correct",
+            "answer": "The question's assumption is not supported by the sources. The sources state: Node B in Trial Two rebooted twice during a thunderstorm on March 21. The reboots were caused by a loose power connector rather than by the sampling configuration. [1][2]",
+            "latency_s": 0.079,
+            "claim_statuses": [
+              "INSUFFICIENT_EVIDENCE",
+              "INSUFFICIENT_EVIDENCE",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "p4",
+            "type": "yes_no",
+            "expected": "yes",
+            "outcome": "correct",
+            "answer": "Yes. Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. [1]",
+            "latency_s": 0.089,
+            "claim_statuses": [
+              "SUPPORTED",
+              "SUPPORTED"
+            ],
+            "citation_ok": true
+          },
+          {
+            "id": "v1",
+            "type": "vague",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.011,
+            "claim_statuses": [],
+            "citation_ok": true
+          },
+          {
+            "id": "v2",
+            "type": "vague",
+            "expected": "abstain",
+            "outcome": "correct",
+            "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+            "latency_s": 0.014,
+            "claim_statuses": [],
+            "citation_ok": true
+          }
+        ]
+      }
+    }
+  }
+}
