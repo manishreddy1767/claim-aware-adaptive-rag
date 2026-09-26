@@ -31,6 +31,8 @@ _COMMON_VERBS = {
     "measure", "generate", "cost", "go", "come", "see", "give", "keep", "remain", "operate",
     "overheat", "crash", "collapse", "form", "orbit", "support", "prevent", "occur", "happen",
 }
+_PARTICIPLES = {"made", "built", "kept", "found", "put", "set", "run", "done", "held", "lost", "sent",
+                "left", "cut", "shut", "told", "sold", "brought", "bought", "caught", "taught"}
 _IRREGULAR_PAST = {
     "have": "had", "get": "got", "become": "became", "rise": "rose", "fall": "fell",
     "run": "ran", "take": "took", "make": "made", "lead": "led", "draw": "drew",
@@ -93,6 +95,9 @@ def _subject_end(tokens: list[str], expect_verb: bool) -> int:
     while j < limit:
         low = tokens[j].lower()
         if j > i and (low in _PREDICATE_STARTERS or (expect_verb and low in _COMMON_VERBS)):
+            return j
+        # After is/was/are/were the predicate often starts with a participle ("chosen", "excluded").
+        if j > i and not expect_verb and (re.search(r"[a-z]{2,}(ed|en)$", low) or low in _PARTICIPLES):
             return j
         j += 1
     # Fall back: subject is determiner + one word.

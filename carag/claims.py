@@ -82,5 +82,6 @@ def decompose_causal(claim: str) -> CausalParts | None:
         subject = " ".join(tokens[: max(1, _subject_end(tokens, expect_verb=True))])
         # Resolve a leading pronoun to the effect clause's subject.
         remainder = re.sub(r"^(it|they|he|she)\b", subject, remainder, flags=re.I)
+        remainder = re.sub(r"^(its|their|his|her)\b", subject + "'s", remainder, flags=re.I)
         cause = _as_sentence(remainder)
     return CausalParts(effect=effect, cause=cause, connective=connective)

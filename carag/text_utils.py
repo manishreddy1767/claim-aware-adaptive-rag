@@ -89,12 +89,19 @@ def split_sentences(text: str) -> list[str]:
 
 
 def _stem(token: str) -> str:
-    """Very light suffix stripping so 'consumed'/'consumes' match 'consumption'-free forms."""
+    """Very light suffix stripping so inflections match ('nodes'/'node', 'used'/'use')."""
+    if token.isdigit():
+        return token
     for suffix in ("ations", "ation", "ingly", "ing", "edly", "ed", "ies", "es", "s", "ly"):
         if token.endswith(suffix) and len(token) - len(suffix) >= 3:
-            if suffix == "ies":
-                return token[: -len(suffix)] + "y"
-            return token[: -len(suffix)]
+            token = token[: -len(suffix)] + ("y" if suffix == "ies" else "")
+            break
+    else:
+        if token.endswith("ed") and len(token) >= 4:   # short forms: 'used' -> 'use'
+            token = token[:-1]
+    # Drop a final silent 'e' so 'node' == 'nod(es)' and 'use' == 'us(ed)'.
+    if len(token) > 3 and token.endswith("e"):
+        token = token[:-1]
     return token
 
 

@@ -63,6 +63,13 @@ class VerificationConfig:
     relevance_threshold: float = 0.40
     support_threshold: float = 0.70
     contradiction_threshold: float = 0.70
+    # Contradicting evidence must be about the same thing as the claim, so it
+    # needs higher similarity than evidence merely considered "relevant".
+    contradiction_relevance_threshold: float = 0.55
+    # Support and contradiction count as a conflict only if their strength
+    # (relevance x NLI probability) is within this margin; otherwise the
+    # stronger evidence decides.
+    conflict_margin: float = 0.10
     # NLI probability range treated as inconclusive (UNCERTAIN).
     uncertain_threshold: float = 0.40
     # Also test adjacent-sentence windows as premises.

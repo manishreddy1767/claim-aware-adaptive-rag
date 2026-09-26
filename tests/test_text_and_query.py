@@ -18,7 +18,7 @@ def test_extract_numbers_normalizes():
 
 
 def test_tokenize_stems_and_drops_stopwords():
-    assert tokenize("The trials consumed energy") == ["trial", "consum", "energy"]
+    assert tokenize("The trials consumed energy nodes node") == ["trial", "consum", "energy", "nod", "nod"]
 
 
 def test_question_intents():

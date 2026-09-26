@@ -75,16 +75,16 @@ def build(output: Path = OUTPUT) -> Path:
         pdf.add_page()
         if number == 0:
             pdf.set_font("Helvetica", "B", 15)
-            pdf.multi_cell(0, 8, TITLE)
+            pdf.multi_cell(0, 8, TITLE, new_x="LMARGIN", new_y="NEXT")
             pdf.ln(3)
         for kind, text in page:
             if kind == "h":
                 pdf.ln(2)
                 pdf.set_font("Helvetica", "B", 12)
-                pdf.multi_cell(0, 7, text)
+                pdf.multi_cell(0, 7, text, new_x="LMARGIN", new_y="NEXT")
             else:
                 pdf.set_font("Helvetica", "", 11)
-                pdf.multi_cell(0, 6, text)
+                pdf.multi_cell(0, 6, text, new_x="LMARGIN", new_y="NEXT")
                 pdf.ln(2)
     pdf.output(str(output))
     return output

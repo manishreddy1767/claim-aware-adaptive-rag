@@ -5,11 +5,12 @@ Labels (applied in this order):
 * SUPPORTED - a topically relevant evidence passage entails the full claim
   (P(entailment) >= support_threshold) and every number in the claim appears in
   that passage, and no relevant passage contradicts it.
-* CONTRADICTED - a topically relevant passage contradicts the claim
-  (P(contradiction) >= contradiction_threshold) and none supports it, or a
+* CONTRADICTED - a single, closely relevant sentence contradicts the claim
+  (P(contradiction) >= contradiction_threshold, similarity >=
+  contradiction_relevance_threshold) and none supports it, or a
   component of a causal claim is contradicted.
-* UNCERTAIN - relevant passages both support and contradict the claim
-  (conflicting sources), the NLI entailment is not backed by matching numbers,
+* UNCERTAIN - passages of comparable strength (relevance x NLI probability)
+  both support and contradict the claim (conflicting sources), the NLI entailment is not backed by matching numbers,
   or NLI probabilities are inconclusive (between uncertain_threshold and the
   decision thresholds).
 * PARTIALLY_SUPPORTED - the full claim is not entailed, but a component is
@@ -62,16 +63,17 @@ class ClaimVerifier:
 
         premises = [(self.index.units[i].text, [self.index.units[i].evidence_id], relevance[i]) for i in indices]
         if cfg.use_windows:
-            # Evidence split across adjacent sentences ("X happened. This was because Y.")
+            # Evidence split across adjacent sentences ("X happened. This was because Y.").
+            windows = []
             for i in indices[:3]:
                 for j in self.index.neighbors(i):
                     a, b = sorted((i, j))
                     ids = [self.index.units[a].evidence_id, self.index.units[b].evidence_id]
-                    if any(p[1] == ids for p in premises):
-                        continue
-                    rel = max(relevance.get(a, 0.0), relevance.get(b, 0.0),
-                              float(self.index.embeddings[j] @ claim_vec))
-                    premises.append((f"{self.index.units[a].text} {self.index.units[b].text}", ids, rel))
+                    if all(w[1] != ids for w in windows):
+                        windows.append((f"{self.index.units[a].text} {self.index.units[b].text}", ids))
+            if windows:
+                window_vecs = self.index.embedder.encode([w[0] for w in windows])
+                premises += [(text, ids, float(vec @ claim_vec)) for (text, ids), vec in zip(windows, window_vecs)]
         return premises
 
     def _judge(self, claim: str, premises) -> list[EvidenceJudgement]:
@@ -102,7 +104,11 @@ class ClaimVerifier:
         entailing = sorted([j for j in relevant if j.entailment >= cfg.support_threshold],
                            key=lambda j: (-j.entailment, len(j.evidence_ids)))
         supporting = [j for j in entailing if numbers_ok(j)]
-        contradicting = sorted([j for j in relevant if j.contradiction >= cfg.contradiction_threshold],
+        # Windows are used only as supporting evidence: the small NLI model produces
+        # spurious contradictions on two-sentence premises that mention several entities.
+        contradicting = sorted([j for j in relevant if len(j.evidence_ids) == 1
+                                and j.relevance >= cfg.contradiction_relevance_threshold
+                                and j.contradiction >= cfg.contradiction_threshold],
                                key=lambda j: (-j.contradiction, len(j.evidence_ids)))
         # Report single-sentence evidence in preference to windows that contain it.
         supporting = _prefer_single(supporting)
@@ -116,6 +122,15 @@ class ClaimVerifier:
             best_relevance=max(j.relevance for j in judgements),
         )
 
+        if supporting and contradicting:
+            # Evidence strength = relevance x NLI probability. When one side is clearly
+            # stronger it decides; otherwise the sources genuinely conflict (UNCERTAIN below).
+            support_strength = max(j.relevance * j.entailment for j in supporting)
+            contra_strength = max(j.relevance * j.contradiction for j in contradicting)
+            if contra_strength < support_strength - cfg.conflict_margin:
+                contradicting = result.contradicting = []
+            elif support_strength < contra_strength - cfg.conflict_margin:
+                supporting = result.supporting = []
         if supporting and contradicting:
             result.status = ClaimStatus.UNCERTAIN
             result.explanation = ("The sources conflict: some evidence supports the claim and other "
