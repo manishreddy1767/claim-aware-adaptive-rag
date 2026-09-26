@@ -3,57 +3,63 @@
 A locally runnable retrieval-augmented question-answering system that:
 
 - answers questions **only from your documents and webpages**, citing the exact sentence (and PDF page) behind every statement;
-- retrieves evidence **adaptively**, expanding or trimming the evidence set per question and **abstaining** when evidence is insufficient;
+- retrieves evidence **adaptively**, expanding or trimming the evidence set per question, and **abstains** when the evidence does not contain an answer;
 - **verifies every claim** against the sources with an NLI model and labels it SUPPORTED, PARTIALLY_SUPPORTED, CONTRADICTED, INSUFFICIENT_EVIDENCE or UNCERTAIN;
 - checks the **assumptions inside questions** ("Why did X happen?" when X did not happen);
-- **revises any answer text** (e.g. from a chatbot) so that only source-supported statements remain as facts;
+- **revises any answer text** (from a chatbot, or from the optional local LLM) so that only source-supported statements remain as facts;
 - spends verification effort under a **shared evidence budget**, stopping early on settled claims.
 
-> The system measures agreement with the provided sources as judged by a small NLI model. It does **not** establish real-world truth and does **not** eliminate hallucinations; it detects and removes many unsupported statements, with the error rates reported below.
+> The system measures agreement with the provided sources as judged by NLI and QA models. It does **not** establish real-world truth and does **not** eliminate hallucinations; it detects and removes many unsupported statements, with the error rates reported in §7.
 
 ---
 
 ## 1. Motivation and problem
 
-Standard RAG pipelines retrieve a fixed top-k set of passages and hand them to a generator. Three problems follow:
+Standard RAG pipelines retrieve a fixed top-k set of passages and hand them to a generator. Four problems follow:
 
-1. **Fixed k is wrong for most questions**: too few passages for multi-part questions, too many irrelevant ones for simple lookups, and no signal when the answer is simply absent.
-2. **Answers are not checked claim by claim**: a fluent answer can mix supported facts with unsupported or contradicted ones, and a single answer-level score hides which is which.
-3. **Verification is expensive**: checking every claim against every passage costs many NLI calls, though most claims are settled by the first one or two passages.
+1. **Fixed k is wrong for most questions**: too few passages for multi-part questions, too many irrelevant ones for simple lookups, and no signal when the answer is absent.
+2. **Answers are not checked claim by claim**: a fluent answer can mix supported facts with unsupported or contradicted ones.
+3. **Support is not relevance**: a sentence can be true according to the sources yet not answer the question.
+4. **Verification is expensive**: checking every claim against every passage costs many NLI calls, though most claims are settled by the first one or two passages.
 
 **Research idea:** combine adaptive, question-aware retrieval with claim-level verification under a shared evidence budget, to improve evidence-grounded answering and reduce unsupported claims.
 
-## 2. What the system does (architecture)
+## 2. Architecture
 
 ```mermaid
 flowchart LR
-  A[PDF / TXT / DOCX / URL] --> B[Ingestion<br/>sentences + page, URL,<br/>section, evidence id]
+  A[PDF / scanned PDF / TXT / DOCX / URL / JS page] --> B[Ingestion<br/>sentences + page, URL,<br/>section, evidence id]
   B --> C[Evidence index<br/>MiniLM embeddings + BM25]
   Q[Question] --> QA[Question analysis<br/>intent, key terms, entities,<br/>vagueness, premise]
   QA --> R[Adaptive hybrid retrieval<br/>score, trim, sufficiency check,<br/>expand up to 2 rounds]
   C --> R
-  R -->|insufficient / vague| X[Abstain with reason]
   R --> P[Premise check<br/>verify question's assumption]
   P -->|contradicted| Y[Correct the question, cite evidence]
-  P --> G[Extractive answer<br/>best evidence sentences]
+  P --> S[Answerability: extractive QA<br/>finds answer span or 'no answer']
+  S -->|no answer| X[Abstain with reason]
+  S --> G[Extractive answer<br/>span sentence + evidence]
+  S -.->|optional| L[Local LLM draft]
   G --> K[Claim extraction]
-  K --> V[Budgeted NLI verification<br/>shared evidence budget]
-  V --> H[Revision: keep / qualify / remove<br/>+ citations]
+  L --> K
   T[Any answer text] --> K
+  K --> V[Budgeted NLI verification<br/>shared evidence budget]
+  V --> H[Revision: keep / qualify / correct / remove<br/>+ citations]
 ```
 
 | Module | Responsibility |
 |---|---|
-| [carag/ingestion.py](carag/ingestion.py) | PDF (per-page), TXT/MD, DOCX (incl. tables), webpages (article text, navigation/reference lists removed, PDF URLs supported). Heading detection, hyphenation repair, sentence splitting, de-duplication, clear `IngestionError`s. |
+| [carag/ingestion.py](carag/ingestion.py) | PDF (per page; **OCR fallback for scanned pages**), TXT/MD, DOCX (including tables), webpages (article text with navigation and reference lists removed; PDF URLs; **headless-browser fallback for JavaScript-rendered pages**). Heading detection, hyphenation repair, sentence splitting, de-duplication, clear `IngestionError`s. |
 | [carag/index.py](carag/index.py) | Sentence embeddings computed once per source, built-in BM25, evidence-type flags (causal, comparison, numeric, limitation), neighbour links. |
 | [carag/query.py](carag/query.py) | Rule-based question analysis: intents, key terms, named entities, vagueness, declarative premise extraction. |
-| [carag/retrieval.py](carag/retrieval.py) | Hybrid scoring and adaptive selection (below). |
-| [carag/claims.py](carag/claims.py) | Conservative claim extraction; causal decomposition ("A because B"). |
+| [carag/retrieval.py](carag/retrieval.py) | Hybrid scoring and adaptive selection. |
+| [carag/relevance.py](carag/relevance.py) | Extractive QA: locates the answer span and decides answerability. |
+| [carag/claims.py](carag/claims.py) | Conservative claim extraction (attribution phrases stripped); causal decomposition ("A because B"). |
 | [carag/verification.py](carag/verification.py) | NLI-based claim labelling rules. |
 | [carag/budget.py](carag/budget.py) | Shared evidence budget with evidence-gain-aware scheduling. |
-| [carag/answering.py](carag/answering.py) | Grounded extractive answering, premise checks, abstention, citations. |
+| [carag/answering.py](carag/answering.py) | Grounded extractive answering, premise checks, answerability, abstention, citations. |
 | [carag/revision.py](carag/revision.py) | Hallucination prevention: rewrites answer text from claim verdicts. |
-| [carag/pipeline.py](carag/pipeline.py) | `ClaimAwareRAG` facade used by the CLI, UI and evaluation. |
+| [carag/generation.py](carag/generation.py) | Optional local LLM drafting (experimental). |
+| [carag/pipeline.py](carag/pipeline.py) | `ClaimAwareRAG` facade used by the CLI, the UI and the evaluation. |
 | [carag/config.py](carag/config.py) | All thresholds in one place. |
 | [app.py](app.py) | Streamlit UI. |
 | [evaluation/](evaluation/) | Metrics, datasets and evaluation scripts. |
@@ -61,32 +67,36 @@ flowchart LR
 
 ## 3. Models
 
-| Model | Role | Why |
-|---|---|---|
-| `sentence-transformers/all-MiniLM-L6-v2` (~90 MB) | Sentence embeddings for retrieval and evidence relevance | Existing project model; fast on CPU and GPU. |
-| `cross-encoder/nli-deberta-v3-small` (~550 MB) | Entailment / contradiction / neutral probabilities for claim verification | Existing project model; small enough for a 4–6 GB GPU. The full probability distribution is used, not just the top label. |
+| Model | Size | Role | Why |
+|---|---|---|---|
+| `sentence-transformers/all-MiniLM-L6-v2` | ~90 MB | Sentence embeddings for retrieval and evidence relevance | Existing project model; fast on CPU and GPU. |
+| `cross-encoder/nli-deberta-v3-base` (default) | ~740 MB | Entailment / contradiction / neutral probabilities for claim verification | **Measured better** than the original `-small`: SciFact macro-F1 0.649 vs 0.590, synthetic 0.966 vs 0.865 (§7.3). |
+| `cross-encoder/nli-deberta-v3-small` (option) | ~550 MB | Lower-memory alternative | The original project model. |
+| `deepset/minilm-uncased-squad2` | ~130 MB | Answer-span extraction and answerability ("does the evidence answer the question?") | Added because verification cannot detect supported-but-irrelevant answers. It cut false answers on SQuAD 2.0 from 65% to 21% (§7.4). |
+| `Qwen/Qwen2.5-0.5B-Instruct` (optional, off by default) | ~1 GB | Generative answer drafts, which are then verified and revised | Smallest instruction model that fits beside the others in 4 GB of VRAM. It measured **worse** than the extractive answerer (§7.6), so it is experimental. |
 
-No generative LLM is used. Answers are **extractive**: they consist of source sentences, so every answer sentence has a real citation. I tested a cross-encoder reranker (`ms-marco-MiniLM-L-6-v2`) and did not add it, because it did not fix the observed ranking failures on the test document (see Limitations).
+No paid APIs and no cloud services are used. Models download from Hugging Face once; after that, document processing runs offline.
 
-**Measured resource use** (RTX 3050 Laptop 4 GB, Windows 11, Python 3.14): peak GPU memory 722 MiB, peak process RAM ~2.1 GB, ~0.2 s per question on GPU, ~0.7 s on CPU (after model load). Models load lazily once per process and are shared across UI sessions. GPU is used automatically when available; CPU fallback is automatic, including on GPU out-of-memory.
+**Measured resource use** (RTX 3050 Laptop 4 GB, Windows 11): with the default configuration, peak GPU memory is 1.0 GB and answers take ~0.15 s each on GPU or ~0.47 s on CPU. With the optional LLM, peak GPU memory is 1.9 GB and answers take ~0.7 s. Peak process RAM was 4.2 GB, measured with GPU and CPU copies of all models loaded at once; single-device use is lower. Models load lazily, once per process, and are shared across UI sessions. The GPU is used automatically when available, with automatic CPU fallback, including on GPU out-of-memory.
 
 ## 4. Installation
 
-Requires Python 3.10+ (developed and tested on **Python 3.14.3**; the brief mentioned 3.12, which was not installed on the development machine).
+Tested on **Python 3.14.3** (GPU, CUDA 12.6) and **Python 3.12.14** (CPU-only PyTorch): all 66 tests pass on both.
 
 ```bash
 cd claim-aware-adaptive-rag
 python -m venv .venv
-source .venv/Scripts/activate        # Git Bash on Windows;  .venv\Scripts\activate in cmd/PowerShell
+source .venv/Scripts/activate        # Git Bash;  .venv\Scripts\activate in cmd/PowerShell
 
 # PyTorch first: CUDA 12.6 build (NVIDIA GPU) ...
 pip install torch --index-url https://download.pytorch.org/whl/cu126
 # ... or CPU-only:  pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 pip install -r requirements.txt
+python -m playwright install chromium    # optional: JavaScript-rendered webpages
 ```
 
-The two models (~650 MB) download from Hugging Face on first use; after that, document processing works offline. Webpage ingestion and the SciFact download need internet.
+`requirements.txt` includes the optional OCR packages (`pypdfium2`, `rapidocr`, `onnxruntime`) and `playwright`. If they are missing, the system still works; it reports that scanned pages or JavaScript pages cannot be read and explains how to enable them. Webpage ingestion and downloading the evaluation datasets need internet access.
 
 ## 5. Usage
 
@@ -96,10 +106,14 @@ The two models (~650 MB) download from Hugging Face on first use; after that, do
 streamlit run app.py
 ```
 
-1. Upload PDF/TXT/DOCX files and/or enter a URL, then click **Add**. The table shows each source and its sentence count.
-2. **Ask** tab: type a question. You get the answer with numbered citations, plus three tabs: **Claim checks** (label + evidence for each claim and for the question's assumption), **Retrieved evidence** (scores), and **How retrieval worked** (expansion/trimming trace, evidence budget use).
-3. **Verify text** tab: paste any answer, for example from a chatbot. You get a **revised answer** with only supported facts, corrections for contradicted claims, and per-claim verdicts with the budget used.
-4. The sidebar adjusts retrieval, verification, budget and answering thresholds. The defaults work without tuning.
+1. **Add sources:** upload PDF/TXT/DOCX files and/or enter a URL. A table shows each source, its sentence count and any warnings (e.g. OCR used).
+2. **Ask** tab: type a question. You get the short answer, the answer sentences with numbered citations, and three tabs:
+   - **Claim checks:** a label and supporting or contradicting evidence for each claim, and for the question's assumption;
+   - **Retrieved evidence:** scores for each retrieved sentence;
+   - **How retrieval worked:** the expansion/trimming trace and evidence-budget use.
+   The *Local LLM draft (experimental)* toggle shows an LLM draft next to its verified version.
+3. **Verify text** tab: paste any answer. You get a **revised answer** containing only supported facts, cited corrections for contradicted claims, and a verdict and budget use per claim.
+4. **Sidebar:** choose the models and adjust retrieval, verification, budget and answering thresholds. The defaults work without tuning.
 
 ### Command line
 
@@ -113,8 +127,18 @@ python -m carag ask report.pdf https://en.wikipedia.org/wiki/Mars -q "How many m
 # Hallucination detection + prevention for any text (shared budget; --budget N or --no-budget)
 python -m carag verify claim_aware_rag_test_document.pdf --text "Trial One sampled at 10 Hz. The study was funded by NASA."
 
-# Baselines: --fixed-k (fixed top-k semantic retrieval), --no-verify; --json for machine-readable output
+# Experimental: local LLM draft, verified and revised
+python -m carag ask claim_aware_rag_test_document.pdf --generate -q "How much energy did Trial One consume per day?"
 ```
+
+Options:
+
+- `--fixed-k`: fixed top-k semantic retrieval (baseline);
+- `--no-verify`: skip claim verification;
+- `--no-qa-check`: disable the answerability check;
+- `--nli-model cross-encoder/nli-deberta-v3-small`: lower-memory claim checking;
+- `--device cpu`: run on CPU;
+- `--json`: machine-readable output.
 
 Example (real output, abridged):
 
@@ -128,12 +152,18 @@ $ python -m carag verify ... --text "Trial One sampled the sensors at 10 Hz. Tri
 REVISED ANSWER  Correction: the claim "Trial One sampled the sensors at 10 Hz." conflicts with the sources, which
   state: Trial One sampled the sensors at a frequency of 1 Hz. [1] Trial Two consumed an average of 118
   milliwatt-hours per day. [2] Removed because the sources do not support them: "The study was funded by NASA.".
-EVIDENCE BUDGET  used 12/12 NLI checks
 ```
 
 The original prototype still runs: `python evidence_allocator.py sample_space_facts.pdf`.
 
 ## 6. How it works
+
+### Ingestion ([carag/ingestion.py](carag/ingestion.py))
+
+Every sentence becomes an evidence unit carrying its source file or URL, page number (PDFs), section heading and an id such as `report.pdf#p2.s15`. Exact duplicates and fragments shorter than 3 words are dropped, and the number dropped is reported rather than hidden.
+
+- **Scanned PDF pages** (no text layer) are rendered and read with OCR (RapidOCR, PP-OCR models), with a warning that OCR text may contain recognition errors.
+- **Webpages** whose static HTML yields fewer than 3 sentences are rendered in headless Chromium (Playwright).
 
 ### Adaptive retrieval ([carag/retrieval.py](carag/retrieval.py))
 
@@ -142,19 +172,27 @@ Every sentence gets `score = 0.65 · cosine + 0.35 · BM25_normalized + intent_b
 1. **Initial selection and trimming:** keep up to 4 sentences scoring ≥ 70% of the best score. Weaker tail evidence is dropped ("refined").
 2. **Sufficiency check:** the evidence is sufficient only if all of these hold:
    - the best score is ≥ 0.45 (0.35 when every key term is found);
-   - ≥ 60% of the question's key terms are covered (section headings count);
-   - every named entity in the question (e.g. "Trial Three", "Node B") appears in the evidence;
+   - ≥ 60% of the key terms are covered (section headings count);
+   - every named entity in the question (e.g. "Trial Three") appears in the evidence;
    - causal or numeric questions have causal or numeric evidence about their subject.
 3. **Expansion** (up to 2 rounds) if insufficient:
    - search for the missing key terms;
    - add neighbouring sentences of the top hits (explanations often sit in the next sentence);
    - widen k and relax the cutoff.
 4. Near-duplicate sentences (cosine ≥ 0.92) are suppressed.
-5. If the evidence is still insufficient, or the question is too vague ("Why did it happen?"), the system **abstains** and says why.
+
+### Answerability ([carag/relevance.py](carag/relevance.py))
+
+The extractive QA model reads the best evidence (the top 8 hybrid-ranked sentences plus the adaptive evidence, in document order) and returns its best answer span and the margin of that span's score over "no answer".
+
+- **Margin < 0** (the model prefers "no answer"): the system abstains. The threshold is 0, the model's own decision, and was not tuned.
+- **Otherwise:** the sentence containing the span leads the answer, and the span is shown as the short answer.
+
+When the QA check is disabled, the retrieval sufficiency check decides instead. Vague questions ("Why did it happen?") always abstain.
 
 ### Claim verification ([carag/verification.py](carag/verification.py))
 
-For each claim, the verifier gathers candidates: the most relevant sentences from the whole index, plus two-sentence windows (for evidence split across sentences). It scores each as *premise = evidence, hypothesis = claim* with the NLI model. The labels:
+Candidate evidence for a claim consists of the most relevant sentences in the whole index plus two-sentence windows (for evidence split across sentences), sorted by relevance. Each candidate is scored as *premise = evidence, hypothesis = claim*.
 
 | Label | Definition |
 |---|---|
@@ -164,165 +202,199 @@ For each claim, the verifier gathers candidates: the most relevant sentences fro
 | **UNCERTAIN** | Support and contradiction of comparable strength (relevance × probability within 0.10: the sources conflict); or entailment without matching numbers; or inconclusive NLI (0.40–0.70); or not reached within the evidence budget. |
 | **INSUFFICIENT_EVIDENCE** | No relevant passage entails or contradicts the claim. |
 
-Design choices that follow the brief:
+Design choices:
 
 - **Similarity is never treated as support.** Support always requires NLI entailment.
 - **Missing evidence is never labelled CONTRADICTED.** Contradiction requires a closely relevant sentence that the NLI model judges contradictory.
-- **Windows are restricted.** A two-sentence window may contradict only when it is more relevant than every single sentence. This rule was added because the small NLI model produced spurious contradictions on multi-entity windows.
+- **Windows are restricted.** A two-sentence window may contradict only when it is more relevant than every single sentence, because NLI models produce spurious contradictions on multi-entity windows.
 
 ### Hallucination prevention ([carag/answering.py](carag/answering.py), [carag/revision.py](carag/revision.py))
 
 These are separate mechanisms:
 
-- **Evidence-grounded generation:** answers are composed only of retrieved source sentences, each with a citation (source, PDF page or URL, evidence id).
-- **Abstention:** "I could not find sufficient evidence in the provided sources to answer this question reliably." is returned when retrieval is insufficient, the question is vague, a named entity is missing, or no answer claim survives verification.
-- **Premise checking:** for "why" and yes/no questions, the question is turned into a statement ("Why did Trial One consume more…?" → "Trial One consumed more…") and verified. A contradicted premise produces a cited correction instead of an answer.
-- **Claim-level detection:** answer claims are verified. Claims that are contradicted or unsupported are removed; partial or uncertain ones are marked.
-- **Revision of external text:** `check_answer` / the Verify tab rewrites any draft answer:
-  - supported claims are kept and cited;
-  - contradicted claims are replaced with a cited correction;
-  - for partially supported claims, only the established part is kept;
-  - uncertain claims are marked `[Unverified]`;
-  - unsupported claims are removed and listed.
+- **Evidence-grounded answering:** default answers consist only of retrieved source sentences, each with a citation.
+- **Abstention:** "I could not find sufficient evidence in the provided sources to answer this question reliably." is returned when the QA model finds no answer, the question is vague, or no answer claim survives verification.
+- **Premise checking:** "why" and yes/no questions are turned into statements ("Why did Trial One consume more…?" → "Trial One consumed more…") and verified. A contradicted premise produces a cited correction.
+- **Claim-level detection and revision:** claims are verified. Revision then:
+  - keeps supported claims, with a citation;
+  - replaces contradicted claims with a correction quoting the source;
+  - keeps only the established part of a partially supported claim;
+  - marks uncertain claims `[Unverified]`;
+  - removes unsupported claims and lists them.
 
-**What this cannot establish:** whether a source is itself correct; facts absent from the sources; correctness beyond the NLI model's accuracy (see §7). Because answers are extractive, an answer can be well supported but still **not answer the question** (a relevance failure the verifier cannot detect).
+  This applies to extractive answers, pasted text and LLM drafts.
+- **LLM drafts** are gated: nothing is generated when the QA model finds no answer in the evidence.
+
+**What this cannot establish:** whether a source is itself correct; facts absent from the sources; or correctness beyond the accuracy of the NLI and QA models (§7).
 
 ### Budget-aware verification ([carag/budget.py](carag/budget.py))
 
-This restores and completes the scheduling idea from the original prototype. The claims of one answer share a budget of NLI evidence checks (default 4 × number of claims):
+The claims of one answer share a budget of NLI evidence checks: 4 × the number of claims, with a minimum of 6.
 
-- **Base priority:** `0.7 · evidence_gap + 0.3 · hedging_uncertainty`, where `evidence_gap = 1 − similarity of the best candidate passage`.
+- **Base priority:** `0.7 · evidence_gap + 0.3 · hedging_uncertainty`.
 - **First pass:** every claim receives one step of 2 checks.
 - **Scheduling:** the next claim is the one maximizing `priority / (1 + 0.8·attempts) / (1 + 0.75·low_gain_streak)`. Evidence gain is the increase in the best entailment or contradiction probability; steps gaining < 0.05 extend the low-gain streak.
 - **Early stopping:** a claim stops consuming budget once it is SUPPORTED or CONTRADICTED.
-- **Reserve:** a small part of the budget is reserved for the components of causal claims.
+- **Reserve:** part of the budget is reserved for the components of causal claims.
 - **Budget ran out:** claims never reached are reported as UNCERTAIN ("not verified"), never as supported.
 
 ## 7. Evaluation
 
-All numbers below come from actually running the scripts in [evaluation/](evaluation/). Raw outputs are in [evaluation/results/](evaluation/results/). Reproduce with:
+All numbers come from running the scripts in [evaluation/](evaluation/) with the final code and default configuration. Raw outputs are in [evaluation/results/](evaluation/results/).
 
 ```bash
-python -m evaluation.run_synthetic   # synthetic document (~1 min)
-python -m evaluation.run_scifact     # SciFact dev, downloads ~3 MB (~2 min on GPU)
-python -m evaluation.run_budget      # budget sweep, synthetic + SciFact (~3 min on GPU)
+python -m evaluation.run_synthetic      # synthetic document                            (~1 min, GPU)
+python -m evaluation.run_scifact        # SciFact retrieval + verification (downloads 3 MB)  (~3 min)
+python -m evaluation.run_squad          # SQuAD 2.0 end-to-end answering (downloads 4 MB)   (~3 min)
+python -m evaluation.run_budget         # budget sweep, synthetic + SciFact              (~6 min)
+python -m evaluation.run_generation     # local LLM: draft vs revised (add --no-gate)    (~5 min)
 ```
 
 **Metric definitions:**
 
-- **Retrieval:** Precision@k, Recall@k, MRR and nDCG@k with binary relevance; for variable-size adaptive sets, set precision/recall and mean k.
-- **Verification:** accuracy, per-class precision/recall/F1, macro-F1 and confusion matrices. Labels are collapsed to 3 classes (SUPPORTED / CONTRADICTED / NOT_ESTABLISHED = insufficient + partial + uncertain) to compare with baselines that cannot output the finer labels.
+- **Retrieval:** P@k, R@k, MRR and nDCG@k with binary relevance; for variable-size adaptive sets, set precision/recall and mean k.
+- **Verification:** accuracy, per-class precision/recall/F1, macro-F1 and confusion matrices. Labels are collapsed to 3 classes (SUPPORTED / CONTRADICTED / NOT_ESTABLISHED = insufficient + partial + uncertain) to compare with baselines.
 - **Answering:**
-  - *answerable accuracy*: the answer contains the gold fact;
-  - *correct abstention rate*: abstaining on unanswerable questions;
-  - *false-answer rate*: answering an unanswerable question;
+  - *answer accuracy*: answered, and the answer contains a gold answer string. This is sentence-level and more lenient than SQuAD exact match;
+  - *false-answer rate*: answering an unanswerable question (a hallucinated answer);
+  - *over-abstention*: abstaining on an answerable question;
   - *premise accuracy*: misleading questions corrected, yes/no correct;
-  - *supported-claim rate*: the share of answer claims the verifier labels SUPPORTED;
   - *citation validity*: every citation points to an existing evidence sentence with identical text.
 - **Cost:** NLI checks per claim, latency.
 
 ### 7.1 Datasets
 
-- **Synthetic (development set):** [claim_aware_rag_test_document.pdf](claim_aware_rag_test_document.pdf), a 3-page **synthetic** sensor-study report generated by [scripts/make_test_document.py](scripts/make_test_document.py). There are 27 questions ([synthetic_qa.json](evaluation/datasets/synthetic_qa.json)): direct, causal, comparison, numeric, limitation, absent, misleading and vague. There are also 30 labelled claims ([synthetic_claims.json](evaluation/datasets/synthetic_claims.json)). All labels come from a single annotator (the project author). **The rules and thresholds were adjusted while inspecting failures on this set, so synthetic results overstate expected performance.** The brief's `claim_aware_rag_test_document.pdf` did not exist in the repository, so this document was created.
-- **SciFact dev (held out, real):** 300 expert-written scientific claims, 5,183 abstracts, gold SUPPORT/CONTRADICT/no-evidence labels ([Wadden et al., 2020](https://aclanthology.org/2020.emnlp-main.609/)). No tuning was done on SciFact.
+| Dataset | Type | Used for | Caveat |
+|---|---|---|---|
+| Synthetic test document ([claim_aware_rag_test_document.pdf](claim_aware_rag_test_document.pdf), generated by [scripts/make_test_document.py](scripts/make_test_document.py)); 27 questions, 30 claims ([evaluation/datasets](evaluation/datasets/)) | **Synthetic**, single annotator (the author) | Development and regression | **Rules were adjusted while inspecting failures on this set, so its results are optimistic.** The brief's test PDF did not exist in the repository, so this one was created. |
+| [SciFact](https://aclanthology.org/2020.emnlp-main.609/) dev: 300 expert-written claims, 5,183 abstracts | Real | Retrieval and claim verification (held out) | No tuning on SciFact. |
+| [SQuAD 2.0](https://aclanthology.org/P18-2124/) dev: 35 Wikipedia articles; 12 questions per article (6 answerable, 6 unanswerable); articles 0–16 = dev split, 17–34 = test split | Real, crowd-annotated | End-to-end answering and abstention | The QA model was trained on the SQuAD 2.0 *train* split, so SQuAD gains from it are in-distribution. |
 
 ### 7.2 Retrieval
 
 | System | P@1 | R@3 | R@10 | MRR | nDCG@10 | set P | mean k |
 |---|---|---|---|---|---|---|---|
-| **SciFact** BM25 top-10 | 0.649 | 0.812 | 0.914 | 0.744 | 0.784 | 0.099 | 10 |
+| SciFact BM25 top-10 | 0.649 | 0.812 | 0.914 | 0.744 | 0.784 | 0.099 | 10 |
 | SciFact semantic (MiniLM) top-10 | 0.617 | 0.804 | 0.912 | 0.727 | 0.771 | 0.100 | 10 |
 | SciFact **hybrid** top-10 | 0.697 | **0.871** | **0.952** | **0.800** | **0.835** | 0.104 | 10 |
 | SciFact **adaptive hybrid** | **0.702** | 0.865 | 0.906 | 0.797 | 0.818 | **0.300** | 4.2 |
 
-Synthetic (20 labelled questions, k = 5):
-
-| System | P@1 | R@5 | MRR | nDCG@5 | set P | mean k |
-|---|---|---|---|---|---|---|
-| semantic top-5 | 0.85 | 0.87 | 0.89 | 0.85 | 0.23 | 5 |
-| hybrid top-5 | 0.90 | 0.91 | 0.91 | 0.90 | 0.25 | 5 |
-| adaptive hybrid | 0.85 | 0.85 | 0.89 | 0.85 | 0.52 | 2.5 |
-
-On SciFact, hybrid scoring beats both BM25 and semantic-only retrieval. Adaptive selection returns about 4 abstracts instead of 10, tripling set precision at the cost of 4.6 points of recall.
+On the synthetic set (20 labelled questions), hybrid top-5 reaches P@1 0.90 and nDCG@5 0.90, against 0.85 and 0.85 for semantic top-5. Adaptive retrieval returns 2.5 sentences on average, with set precision 0.52. On SQuAD 2.0, adaptive retrieval puts a gold-answer sentence in the evidence for 94–96% of answerable questions, against 87–88% for fixed top-3.
 
 ### 7.3 Claim verification (3-way)
 
 | System | SciFact acc | SciFact macro-F1 | Synthetic acc | Synthetic macro-F1 |
 |---|---|---|---|---|
 | Similarity threshold (cosine ≥ 0.5 ⇒ supported; original prototype logic) | 0.537 | 0.384 | 0.467 | 0.363 |
-| NLI on top-1 passage, top label ≥ 0.7 (original prototype logic) | 0.517 | 0.492 | 0.800 | 0.806 |
-| **Claim-aware verifier** | **0.603** | **0.590** | **0.867** | **0.865** |
+| NLI on top-1 passage, top label ≥ 0.7 (original prototype logic), deberta-small | 0.517 | 0.492 | – | – |
+| NLI on top-1 passage, deberta-base | 0.560 | 0.539 | 0.900 | 0.903 |
+| Claim-aware verifier, deberta-small | 0.603 | 0.590 | 0.867 | 0.865 |
+| **Claim-aware verifier, deberta-base (default)** | **0.660** | **0.649** | **0.967** | **0.966** |
 
-SciFact per-class F1 for the claim-aware verifier: SUPPORTED 0.567 (precision 0.91, recall 0.41), CONTRADICTED 0.551, NOT_ESTABLISHED 0.652. It is conservative: when it says SUPPORTED it is usually right, but it misses many supported claims. On the synthetic set the fine-grained 5-way accuracy is 0.833 (macro-F1 0.840).
+SciFact per-class F1 for the default: SUPPORTED 0.623, CONTRADICTED 0.621, NOT_ESTABLISHED 0.702. The setting is the oracle abstract: each claim is verified against the sentences of its gold abstract, or, for no-evidence claims, the first cited abstract. The absolute numbers are well below published SciFact systems, which are trained in-domain.
 
-SciFact setting: oracle abstract. The claim is verified against the sentences of its gold abstract, or, for claims with no evidence, the first cited abstract. The absolute numbers are far below published SciFact systems, which are trained in-domain; this is a small general-domain NLI model applied out of domain.
+### 7.4 End-to-end answering on SQuAD 2.0 (real data)
 
-### 7.4 End-to-end answering (synthetic, 27 questions)
+| System | Split | Overall | Answer acc | Over-abstention | False-answer rate | Latency |
+|---|---|---|---|---|---|---|
+| Fixed top-3 semantic, always answers | test | 0.440 | 0.880 | 0.000 | 1.000 | 0.01 s |
+| Adaptive retrieval + sufficiency abstention | test | 0.551 | 0.759 | 0.176 | 0.657 | 0.01 s |
+| + claim/premise verification | test | 0.556 | 0.759 | 0.176 | 0.648 | 0.08 s |
+| **+ QA answerability (full system, default)** | **test** | **0.819** | **0.852** | **0.139** | **0.213** | 0.09 s |
+| Full system | dev | 0.794 | 0.853 | 0.118 | 0.265 | 0.10 s |
 
-| System | Overall | Answerable acc | Correct abstention | False-answer rate | Premise questions | Citation validity | Latency |
-|---|---|---|---|---|---|---|---|
-| Fixed top-3 semantic, always answers | 0.593 | 0.938 | 0.143 | 0.857 | 0.00 | 1.00 | 0.01 s |
-| Adaptive retrieval + abstention, no verification | 0.815 | 0.938 | 1.000 | 0.000 | 0.00 | 1.00 | 0.01 s |
-| **Adaptive + claim verification (full system)** | **0.963** | 0.938 | 1.000 | 0.000 | **1.00** | 1.00 | 0.06 s |
+Test split: 108 answerable + 108 unanswerable questions from 18 articles.
 
-Adaptive retrieval with sufficiency checks removes false answers on absent-information questions (86% → 0% on 7 questions). Claim and premise verification is what handles misleading questions (0/4 → 4/4). The one remaining error is the "battery capacity" vocabulary-mismatch question (see Limitations). These are development-set results (§7.1).
+- **Retrieval heuristics alone** abstain on only about a third of SQuAD's adversarial unanswerable questions.
+- **Claim verification adds almost nothing here,** because extractive answers are, by construction, supported by the sentence they quote.
+- **The QA answerability check** is what reduces false answers (65% → 21%). Part of that gain is in-distribution (see §7.1).
 
-### 7.5 Budget-aware verification (accuracy vs. cost)
+### 7.5 End-to-end answering on the synthetic set (development set, 27 questions)
 
-Claims are verified in shuffled groups of 5 under a shared budget. SciFact here uses a harder retrieve-then-verify setting: a pooled index of 2,575 sentences from the 283 abstracts cited in the dev set. Cost is the number of NLI checks actually run.
+| System | Overall | Answerable acc | Correct abstention | False-answer rate | Premise questions |
+|---|---|---|---|---|---|
+| Fixed top-3 semantic, always answers | 0.593 | 0.938 | 0.143 | 0.857 | 0/4 |
+| Adaptive retrieval + abstention | 0.815 | 0.938 | 1.000 | 0.000 | 0/4 |
+| + claim/premise verification | **0.963** | 0.938 | 1.000 | 0.000 | 4/4 |
+| + QA answerability (default) | 0.926 | 0.875 | 1.000 | 0.000 | 4/4 |
+
+Citation validity is 1.00 for every system. On this out-of-distribution document the QA check causes one extra over-abstention; I kept it on by default because of its large gain on real data (§7.4).
+
+### 7.6 Optional local LLM: does verification prevent its hallucinations?
+
+Qwen2.5-0.5B-Instruct drafts answers from the retrieved evidence. Draft and revised answers are scored against the **gold labels** (72 + 72 SQuAD test-split questions; 16 + 7 synthetic questions).
+
+| Version | SQuAD answer acc | SQuAD false-answer rate | SQuAD overall | Synthetic false-answer rate | Synthetic overall |
+|---|---|---|---|---|---|
+| LLM draft, no gate | 0.625 | 1.000 | 0.312 | 0.857 | 0.435 |
+| LLM draft, no gate → verified + revised | 0.486 | 0.681 | 0.403 | 0.000 | 0.652 |
+| LLM draft with QA answerability gate | 0.569 | 0.250 | **0.660** | 0.286 | 0.609 |
+| Gate → verified + revised | 0.444 | **0.167** | 0.639 | **0.000** | 0.652 |
+| **Extractive system (default)** | **0.833** | 0.250 | **0.792** | **0.000** | **0.913** |
+
+**Findings:**
+
+- **The small LLM hallucinates freely.** It answered 100% of SQuAD's unanswerable questions.
+- **Verification and revision consistently remove hallucinated answers:** false answers fall 100% → 68% without the gate and 25% → 17% with it; on the synthetic set they fall to 0%.
+- **Revision also removes correct answers,** because the verifier is conservative with paraphrase: SQuAD answer accuracy drops 0.57 → 0.44.
+- **The extractive default is clearly better than any LLM variant,** so the LLM remains optional and labelled experimental.
+
+### 7.7 Budget-aware verification (accuracy vs. cost)
+
+Claims are verified in shuffled groups of 5 under a shared budget. The SciFact setting here is retrieve-then-verify over a pooled index of 2,575 sentences from 283 abstracts. Cost is the number of NLI checks actually run.
 
 | Strategy | Budget/claim | Synthetic checks/claim | Synthetic acc | SciFact checks/claim | SciFact acc | SciFact macro-F1 |
 |---|---|---|---|---|---|---|
-| Exhaustive | – | 15.0 | 0.867 | 10.7 | 0.570 | 0.563 |
-| Fixed split (no early stop) | 4 | 8.2* | 0.833 | 4.2 | 0.557 | 0.540 |
-| Round-robin + early stop | 3 | 2.9 | 0.867 | 3.0 | 0.543 | 0.526 |
-| Priority (evidence-gain) | 3 | 2.9 | 0.867 | 3.0 | 0.543 | 0.527 |
-| Round-robin + early stop | 6 | 5.8 | 0.900 | 5.6 | 0.563 | 0.553 |
-| **Priority (evidence-gain)** | 6 | 5.8 | 0.900 | 5.6 | **0.570** | **0.559** |
+| Exhaustive | – | 14.3 | 0.967 | 10.7 | 0.643 | 0.634 |
+| Fixed split (no early stop) | 4 | 7.1* | 0.967 | 4.2 | 0.617 | 0.607 |
+| Round-robin + early stop | 3 | 2.7 | 0.967 | 3.0 | 0.600 | 0.588 |
+| Priority (evidence-gain) | 3 | 2.7 | 0.967 | 3.0 | 0.600 | 0.590 |
+| Round-robin + early stop | 6 | 5.2 | 0.967 | 5.6 | 0.643 | 0.635 |
+| **Priority (evidence-gain)** | 6 | 5.2 | 0.967 | 5.6 | **0.650** | **0.642** |
 
 \*Fixed split does not cap causal decomposition, so it exceeds its nominal budget. Full sweep (budgets 2/3/4/6) in [budget_results.json](evaluation/results/budget_results.json).
 
 **Findings:**
 
-- A shared budget with early stopping **matches exhaustive accuracy with about 80% fewer NLI checks on the synthetic set** (3 vs 15 per claim) **and about 48% fewer on SciFact** (5.6 vs 10.7).
-- **The evidence-gain priority formula is not measurably better than round-robin with the same early stopping.** The two are identical at budgets 3–4, priority is worse at budget 2, and slightly better at budget 6; these differences are within noise at this sample size. The savings come from sharing the budget and stopping early, not from the priority ordering.
+- A shared budget with early stopping **matches exhaustive accuracy with about 81% fewer NLI checks on the synthetic set** (2.7 vs 14.3 per claim) **and about 48% fewer on SciFact** (5.6 vs 10.7).
+- **The evidence-gain priority formula is not measurably better than round-robin with the same early stopping.** The differences are +0.007 at budgets 4 and 6, −0.02 at budget 2, and identical at budget 3. The savings come from sharing the budget and stopping early.
 
 ## 8. Testing
 
 ```bash
-python -m pytest          # 61 tests, ~50 s on GPU (model-backed tests load the models once)
+python -m pytest          # 66 tests, ~55 s on GPU (~75 s CPU-only)
 ```
 
 The tests cover:
 
-- **Ingestion:** PDF, TXT, DOCX, and webpages (including live HTTP against a local server); invalid URLs; empty, unsupported and corrupt files; page/section metadata.
+- **Ingestion:** PDF, TXT and DOCX; **scanned PDF via OCR**; webpages (live HTTP against a local server, including a **JavaScript-rendered page**); invalid URLs; empty, unsupported and corrupt files; page and section metadata.
 - **Retrieval:** direct, causal-with-distractors, numeric, absent-information expansion, trimming, deduplication.
 - **Verification:** supported, contradicted, insufficient and partial claims; "missing ≠ contradicted".
-- **Answering:** citation correctness, abstention, misleading premises, yes/no questions, baseline modes.
-- **Budget and revision:** budget never exceeded; same labels as exhaustive; early stopping; tiny budgets; revision behaviour.
+- **Answering:** citation correctness, abstention, misleading premises, yes/no questions, QA answerability, baseline modes.
+- **Budget, revision and LLM:** budget never exceeded; same labels as exhaustive; early stopping; tiny budgets; revision behaviour; the LLM draft being verified and gated.
 - **UI:** the Streamlit app is driven headlessly via `streamlit.testing`.
 
 ## 9. Known limitations
 
-- **Relevance failures are not caught by verification.** "What battery capacity did the sensor nodes have?" retrieves "…a battery-powered environmental sensor node" instead of "…the same 3000 mAh lithium battery…" (the word "capacity" never appears). The answer is well supported by the source but does not answer the question.
+- **Relevance is still imperfect.** "What battery capacity did the sensor nodes have?" retrieves "…battery-powered…" sentences instead of "…the same 3000 mAh lithium battery…" (vocabulary mismatch), and the QA model then extracts a wrong span. On SQuAD test, 14% of answerable questions are wrongly abstained and 21% of unanswerable ones are answered.
 - **NLI model errors:**
-  - spurious contradictions on unrelated but topical sentences (e.g. "The gateway was located two kilometres from the rooftop" → CONTRADICTED);
-  - weak numeric and comparative reasoning ("25 days vs 71 days");
-  - low recall of SUPPORTED on scientific text (0.41 on SciFact).
-- **Heuristics are hand-written:** question analysis, premise extraction, entity detection and claim splitting are rule-based. They are transparent but brittle for unusual phrasing, and the premise extraction handles only "why/did/does/is…" forms.
-- **Thresholds were set on a small synthetic set written by the same author.** SciFact is the only held-out evaluation, and there is no held-out end-to-end QA benchmark.
-- **Extractive answers only:** no synthesis across sentences and no paraphrase. The optional use of a local generative LLM was not implemented.
-- **Ingestion gaps:** no OCR for scanned PDFs; tables in PDFs are extracted as plain text; JavaScript-rendered webpages are not supported.
-- **Budget scheduling:** the priority formula showed no measurable gain over round-robin (§7.5).
+  - spurious contradictions on topical but unrelated sentences;
+  - weak numeric and comparative reasoning;
+  - SciFact accuracy of 0.66 on biomedical text;
+  - conservatism with paraphrase, which removes some correct LLM answers.
+- **Rule-based heuristics:** question analysis, premise extraction (only "why/did/does/is…" forms), entity detection and claim splitting are transparent but brittle for unusual phrasing.
+- **Dataset caveats:** synthetic thresholds were set by the author on the same data; the SQuAD gains of the QA model are in-distribution; there is no held-out benchmark with claim-level gold labels for generated answers.
+- **OCR is imperfect** (a garbled line is possible, and a warning is shown). Tables in PDFs are extracted as plain text.
+- **Budget scheduling:** the priority formula showed no significant gain over round-robin (§7.7).
+- **The optional 0.5B LLM** is weaker than extractive answering (§7.6).
 
 ## 10. Future work
 
-- Evaluate end-to-end QA on a labelled, real benchmark (e.g. QASPER, or HotpotQA with supporting facts) with a held-out test split.
-- Try a stronger or domain-adapted NLI verifier (e.g. DeBERTa-v3-base/large MNLI-FEVER-ANLI, or models trained on SciFact) within the 4–6 GB VRAM limit.
-- Add an answer-relevance check (e.g. a QA cross-encoder) to catch supported-but-irrelevant answers.
-- Add an optional local generator (e.g. a 0.5–1.5B instruct model) whose drafts pass through `check_answer`, and measure hallucination rates before and after revision.
-- Investigate when priority scheduling helps: larger claim groups, tighter budgets, a learned stopping rule.
-- Calibrate the thresholds on held-out data.
+- A labelled benchmark for generated answers with claim-level gold labels (e.g. RAGTruth), to measure hallucination detection directly.
+- An NLI verifier trained on scientific/fact-checking data (e.g. MNLI+FEVER+ANLI), and a QA model not trained on the evaluation distribution.
+- A synonym- or query-expansion step for vocabulary mismatch ("capacity" ↔ "mAh").
+- Larger local generators (1.5–3B, 4-bit) on GPUs with more memory, and paraphrase-tolerant revision.
+- A study of when priority scheduling helps (larger claim groups, tighter budgets, learned stopping).
 
 ## 11. Project layout
 
@@ -330,7 +402,8 @@ The tests cover:
 carag/                 core package (see §2)
 app.py                 Streamlit UI
 evidence_allocator.py  original prototype CLI (unchanged)
-evaluation/            metrics.py, run_synthetic.py, run_scifact.py, run_budget.py, datasets/, results/
+evaluation/            metrics.py, run_synthetic.py, run_scifact.py, run_squad.py, run_budget.py,
+                       run_generation.py, datasets/, results/
 scripts/               make_test_document.py (generates the synthetic test PDF)
 tests/                 pytest suite
 claim_aware_rag_test_document.pdf   synthetic test document

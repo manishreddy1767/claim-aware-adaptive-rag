@@ -1,7 +1,7 @@
 {
   "dataset": "SciFact dev (real, expert-annotated)",
   "source": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
-  "nli_model": "cross-encoder/nli-deberta-v3-base",
+  "nli_model": "cross-encoder/nli-deberta-v3-small",
   "verification": {
     "n_claims": 300,
     "gold_distribution": {
@@ -58,44 +58,44 @@
         ]
       },
       "nli_top1": {
-        "accuracy": 0.56,
-        "macro_f1": 0.5392,
+        "accuracy": 0.5167,
+        "macro_f1": 0.4925,
         "n": 300,
         "per_class": {
           "SUPPORTED": {
-            "precision": 0.9545,
-            "recall": 0.3387,
-            "f1": 0.5,
+            "precision": 0.9429,
+            "recall": 0.2661,
+            "f1": 0.4151,
             "support": 124
           },
           "CONTRADICTED": {
-            "precision": 0.5455,
+            "precision": 0.4918,
             "recall": 0.4688,
-            "f1": 0.5042,
+            "f1": 0.48,
             "support": 64
           },
           "NOT_ESTABLISHED": {
-            "precision": 0.4776,
-            "recall": 0.8571,
-            "f1": 0.6134,
+            "precision": 0.451,
+            "recall": 0.8214,
+            "f1": 0.5823,
             "support": 112
           }
         },
         "confusion": {
           "SUPPORTED": {
-            "SUPPORTED": 42,
-            "CONTRADICTED": 9,
-            "NOT_ESTABLISHED": 73
+            "SUPPORTED": 33,
+            "CONTRADICTED": 12,
+            "NOT_ESTABLISHED": 79
           },
           "CONTRADICTED": {
-            "SUPPORTED": 2,
+            "SUPPORTED": 1,
             "CONTRADICTED": 30,
-            "NOT_ESTABLISHED": 32
+            "NOT_ESTABLISHED": 33
           },
           "NOT_ESTABLISHED": {
-            "SUPPORTED": 0,
-            "CONTRADICTED": 16,
-            "NOT_ESTABLISHED": 96
+            "SUPPORTED": 1,
+            "CONTRADICTED": 19,
+            "NOT_ESTABLISHED": 92
           }
         },
         "labels": [
@@ -105,44 +105,44 @@
         ]
       },
       "claim_aware_verifier": {
-        "accuracy": 0.66,
-        "macro_f1": 0.6487,
+        "accuracy": 0.6033,
+        "macro_f1": 0.59,
         "n": 300,
         "per_class": {
           "SUPPORTED": {
-            "precision": 0.9661,
-            "recall": 0.4597,
-            "f1": 0.623,
+            "precision": 0.9107,
+            "recall": 0.4113,
+            "f1": 0.5667,
             "support": 124
           },
           "CONTRADICTED": {
-            "precision": 0.6029,
-            "recall": 0.6406,
-            "f1": 0.6212,
+            "precision": 0.5135,
+            "recall": 0.5938,
+            "f1": 0.5507,
             "support": 64
           },
           "NOT_ESTABLISHED": {
-            "precision": 0.578,
-            "recall": 0.8929,
-            "f1": 0.7018,
+            "precision": 0.5412,
+            "recall": 0.8214,
+            "f1": 0.6525,
             "support": 112
           }
         },
         "confusion": {
           "SUPPORTED": {
-            "SUPPORTED": 57,
-            "CONTRADICTED": 15,
-            "NOT_ESTABLISHED": 52
+            "SUPPORTED": 51,
+            "CONTRADICTED": 19,
+            "NOT_ESTABLISHED": 54
           },
           "CONTRADICTED": {
             "SUPPORTED": 2,
-            "CONTRADICTED": 41,
-            "NOT_ESTABLISHED": 21
+            "CONTRADICTED": 38,
+            "NOT_ESTABLISHED": 24
           },
           "NOT_ESTABLISHED": {
-            "SUPPORTED": 0,
-            "CONTRADICTED": 12,
-            "NOT_ESTABLISHED": 100
+            "SUPPORTED": 3,
+            "CONTRADICTED": 17,
+            "NOT_ESTABLISHED": 92
           }
         },
         "labels": [
@@ -153,68 +153,16 @@
       }
     },
     "claim_aware_raw_label_distribution": {
-      "CONTRADICTED": 68,
-      "INSUFFICIENT_EVIDENCE": 119,
+      "CONTRADICTED": 74,
+      "INSUFFICIENT_EVIDENCE": 104,
       "PARTIALLY_SUPPORTED": 2,
-      "SUPPORTED": 59,
-      "UNCERTAIN": 52
+      "SUPPORTED": 56,
+      "UNCERTAIN": 64
     },
     "latency_s": {
       "similarity_threshold": 0.008,
-      "nli_top1": 0.0566,
-      "claim_aware_verifier": 0.1301
-    }
-  },
-  "retrieval": {
-    "n_queries": 188,
-    "n_abstracts": 5183,
-    "k": 10,
-    "index_time_s": 20.9,
-    "systems": {
-      "bm25": {
-        "p@1": 0.6489,
-        "r@3": 0.8121,
-        "r@10": 0.9139,
-        "mrr": 0.7441,
-        "ndcg@10": 0.7842,
-        "set_precision": 0.0989,
-        "set_recall": 0.9139,
-        "n_retrieved": 10.0,
-        "latency_s": 0.0227
-      },
-      "semantic": {
-        "p@1": 0.617,
-        "r@3": 0.8043,
-        "r@10": 0.9117,
-        "mrr": 0.7267,
-        "ndcg@10": 0.7714,
-        "set_precision": 0.1,
-        "set_recall": 0.9117,
-        "n_retrieved": 10.0,
-        "latency_s": 0.0223
-      },
-      "hybrid": {
-        "p@1": 0.6968,
-        "r@3": 0.8707,
-        "r@10": 0.9516,
-        "mrr": 0.7999,
-        "ndcg@10": 0.8351,
-        "set_precision": 0.1043,
-        "set_recall": 0.9516,
-        "n_retrieved": 10.0,
-        "latency_s": 0.0225
-      },
-      "adaptive_hybrid": {
-        "p@1": 0.7021,
-        "r@3": 0.8654,
-        "r@10": 0.9058,
-        "mrr": 0.7969,
-        "ndcg@10": 0.8182,
-        "set_precision": 0.3,
-        "set_recall": 0.9058,
-        "n_retrieved": 4.2074,
-        "latency_s": 0.0249
-      }
+      "nli_top1": 0.0463,
+      "claim_aware_verifier": 0.0783
     }
   }
 }
