@@ -15,15 +15,22 @@ from .query import _subject_end
 from .text_utils import split_sentences
 
 _PRONOUN_START = re.compile(r"^(it|they|this|that|these|those|he|she|which|who)\b", re.I)
+_SOURCE_NOUN = r"(?:evidence|sources?|documents?|text|passages?|context|reports?|study|articles?|information)"
+# Statements about the sources or the answer itself rather than about the world.
 _META_PATTERNS = re.compile(
-    r"^(i could not find|i cannot|i can't|i don't know|the (provided )?sources? (do|does) not|"
-    r"note:|caveat:|in summary|sure[,!]|here is|here's)", re.I)
+    r"^(i could not find|i cannot|i can't|i don't know|i'm sorry|unable to answer|"
+    rf"(?:the |these |this )?(?:provided |given )?{_SOURCE_NOUN} (?:do|does|did) not|"
+    rf"there is no (?:mention|information)|no information (?:is|was) (?:provided|given)|"
+    r"therefore, the answer is|note:|caveat:|in summary|sure[,!]|here is|here's|here are)", re.I)
 # Attribution wrappers that are not part of the factual content.
 _ATTRIBUTION = re.compile(
-    r"^(?:(?:the|this) (?:evidence|sources?|documents?|text|passage|report|study|article)s? "
-    r"(?:states?|says|shows|indicates|mentions|notes|reports|explains|suggests)(?: that)?,?\s+|"
-    r"according to (?:the )?(?:evidence|sources?|documents?|text|passage|report)\s*,?\s+|"
-    r"based on (?:the )?(?:evidence|sources?|documents?)\s*,?\s+)", re.I)
+    r"^(?:answer\s*:\s*|"
+    rf"(?:the |this |these |both |all )?(?:provided |given )?{_SOURCE_NOUN} (?:also )?"
+    r"(?:states?|says|shows|indicates|mentions?|notes?|reports?|explains?|suggests?|describes?|"
+    r"provides?|highlights?|emphasi[sz]es?)(?: that)?,?\s+|"
+    rf"according to (?:the )?(?:provided |given )?{_SOURCE_NOUN}\s*,?\s+|"
+    rf"based on (?:the )?(?:provided |given )?{_SOURCE_NOUN}\s*,?\s+|"
+    r"here(?:'s| is| are) [^:]{0,80}:\s*)", re.I)
 _CLAUSE_SPLIT = re.compile(r";\s+|,\s+(?:whereas|while|but)\s+|,\s+and\s+(?=(?:the|a|an|[A-Z])\w*\s)")
 _CAUSAL_SPLIT = re.compile(r"\s*,?\s+\b(because|since|as a result of|due to|owing to|caused by)\b\s+", re.I)
 
@@ -37,6 +44,9 @@ class CausalParts:
 
 def _strip_citations(text: str) -> str:
     text = re.sub(r"\s*\[(?:\d+(?:\s*,\s*\d+)*|[^\]]*#[^\]]*)\]", "", text)
+    # Source references such as "(Passage 3)" or "(passages 1 and 2)".
+    text = re.sub(r"\s*[\(\[](?:according to |see |from )?(?:passage|source|document|doc)s?\s*"
+                  r"\d+(?:\s*(?:,|and|&|-)\s*\d+)*[\)\]]", "", text, flags=re.I)
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -59,7 +69,9 @@ def extract_claims(text: str) -> list[str]:
     """Split text into atomic factual claims (conservatively)."""
     claims: list[str] = []
     for sentence in split_sentences(_strip_citations(text)):
-        sentence = _ATTRIBUTION.sub("", sentence).strip()
+        previous = None
+        while previous != sentence:   # wrappers can be nested ("Based on X, here's how...:")
+            previous, sentence = sentence, _ATTRIBUTION.sub("", sentence).strip()
         if sentence:
             sentence = sentence[0].upper() + sentence[1:]
         if not _is_factual(sentence):

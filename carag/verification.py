@@ -78,6 +78,13 @@ class ClaimVerifier:
             if windows:
                 window_vecs = self.index.embedder.encode([w[0] for w in windows])
                 premises += [(text, ids, float(vec @ claim_vec)) for (text, ids), vec in zip(windows, window_vecs)]
+        if cfg.use_multi_sentence and len(indices) >= 3:
+            # Claims that combine facts from non-adjacent sentences (typical of summaries):
+            # the top-k sentences together, in document order. Used only as support.
+            top = sorted(indices[: cfg.multi_sentence_k])
+            text = " ".join(self.index.units[i].text for i in top)
+            vec = self.index.embedder.encode([text])[0]
+            premises.append((text, [self.index.units[i].evidence_id for i in top], float(vec @ claim_vec)))
         # Most relevant evidence first (windows included), so budgeted verification
         # checks the passages most likely to decide the claim before the rest.
         premises.sort(key=lambda p: -p[2])
@@ -132,7 +139,8 @@ class ClaimVerifier:
         # more relevant to the claim than every single sentence.
         best_single = max((j.relevance for j in judgements if len(j.evidence_ids) == 1), default=0.0)
         contradicting = sorted([j for j in relevant
-                                if (len(j.evidence_ids) == 1 or j.relevance > best_single)
+                                if (len(j.evidence_ids) == 1
+                                    or (len(j.evidence_ids) == 2 and j.relevance > best_single))
                                 and j.relevance >= cfg.contradiction_relevance_threshold
                                 and j.contradiction >= cfg.contradiction_threshold],
                                key=lambda j: (-j.contradiction, len(j.evidence_ids)))
