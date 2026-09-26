@@ -1,0 +1,279 @@
+{
+  "group_size": 5,
+  "budgets_per_claim": [
+    2,
+    3,
+    4,
+    6
+  ],
+  "synthetic": [
+    {
+      "strategy": "exhaustive",
+      "budget_per_claim": null,
+      "nli_checks_per_claim": 15.03,
+      "latency_per_claim_s": 0.1426,
+      "accuracy_3way": 0.8667,
+      "macro_f1_3way": 0.8653,
+      "accuracy_raw": 0.8333,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 2,
+      "nli_checks_per_claim": 6.17,
+      "latency_per_claim_s": 0.0957,
+      "accuracy_3way": 0.8333,
+      "macro_f1_3way": 0.8359,
+      "accuracy_raw": 0.8,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 2,
+      "nli_checks_per_claim": 1.8,
+      "latency_per_claim_s": 0.0632,
+      "accuracy_3way": 0.7667,
+      "macro_f1_3way": 0.7714,
+      "accuracy_raw": 0.6667,
+      "uncertain_labels": 6
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 2,
+      "nli_checks_per_claim": 1.87,
+      "latency_per_claim_s": 0.0672,
+      "accuracy_3way": 0.7,
+      "macro_f1_3way": 0.7021,
+      "accuracy_raw": 0.6,
+      "uncertain_labels": 7
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 3,
+      "nli_checks_per_claim": 7.17,
+      "latency_per_claim_s": 0.083,
+      "accuracy_3way": 0.8333,
+      "macro_f1_3way": 0.8359,
+      "accuracy_raw": 0.8,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 3,
+      "nli_checks_per_claim": 2.9,
+      "latency_per_claim_s": 0.076,
+      "accuracy_3way": 0.8667,
+      "macro_f1_3way": 0.8681,
+      "accuracy_raw": 0.7667,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 3,
+      "nli_checks_per_claim": 2.9,
+      "latency_per_claim_s": 0.0775,
+      "accuracy_3way": 0.8667,
+      "macro_f1_3way": 0.8681,
+      "accuracy_raw": 0.7667,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 4,
+      "nli_checks_per_claim": 8.17,
+      "latency_per_claim_s": 0.0855,
+      "accuracy_3way": 0.8333,
+      "macro_f1_3way": 0.8359,
+      "accuracy_raw": 0.8,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 4,
+      "nli_checks_per_claim": 4.0,
+      "latency_per_claim_s": 0.0856,
+      "accuracy_3way": 0.8667,
+      "macro_f1_3way": 0.8681,
+      "accuracy_raw": 0.7667,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 4,
+      "nli_checks_per_claim": 4.0,
+      "latency_per_claim_s": 0.0888,
+      "accuracy_3way": 0.8667,
+      "macro_f1_3way": 0.8681,
+      "accuracy_raw": 0.7667,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 6,
+      "nli_checks_per_claim": 10.17,
+      "latency_per_claim_s": 0.0855,
+      "accuracy_3way": 0.8333,
+      "macro_f1_3way": 0.8359,
+      "accuracy_raw": 0.8,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 6,
+      "nli_checks_per_claim": 5.83,
+      "latency_per_claim_s": 0.1048,
+      "accuracy_3way": 0.9,
+      "macro_f1_3way": 0.8977,
+      "accuracy_raw": 0.8,
+      "uncertain_labels": 2
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 6,
+      "nli_checks_per_claim": 5.83,
+      "latency_per_claim_s": 0.1026,
+      "accuracy_3way": 0.9,
+      "macro_f1_3way": 0.8977,
+      "accuracy_raw": 0.8,
+      "uncertain_labels": 2
+    }
+  ],
+  "scifact_pool": {
+    "claims": 300,
+    "sentences": 2575,
+    "abstracts": 283,
+    "index_time_s": 5.83
+  },
+  "scifact": [
+    {
+      "strategy": "exhaustive",
+      "budget_per_claim": null,
+      "nli_checks_per_claim": 10.72,
+      "latency_per_claim_s": 0.1175,
+      "accuracy_3way": 0.57,
+      "macro_f1_3way": 0.5628,
+      "accuracy_raw": 0.3033,
+      "uncertain_labels": 71
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 2,
+      "nli_checks_per_claim": 2.19,
+      "latency_per_claim_s": 0.0706,
+      "accuracy_3way": 0.5367,
+      "macro_f1_3way": 0.5153,
+      "accuracy_raw": 0.2367,
+      "uncertain_labels": 38
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 2,
+      "nli_checks_per_claim": 1.97,
+      "latency_per_claim_s": 0.0641,
+      "accuracy_3way": 0.5467,
+      "macro_f1_3way": 0.5236,
+      "accuracy_raw": 0.2367,
+      "uncertain_labels": 44
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 2,
+      "nli_checks_per_claim": 1.96,
+      "latency_per_claim_s": 0.064,
+      "accuracy_3way": 0.53,
+      "macro_f1_3way": 0.5076,
+      "accuracy_raw": 0.23,
+      "uncertain_labels": 45
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 3,
+      "nli_checks_per_claim": 3.19,
+      "latency_per_claim_s": 0.0662,
+      "accuracy_3way": 0.5433,
+      "macro_f1_3way": 0.5253,
+      "accuracy_raw": 0.2467,
+      "uncertain_labels": 48
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 3,
+      "nli_checks_per_claim": 2.96,
+      "latency_per_claim_s": 0.0764,
+      "accuracy_3way": 0.5433,
+      "macro_f1_3way": 0.5256,
+      "accuracy_raw": 0.2533,
+      "uncertain_labels": 48
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 3,
+      "nli_checks_per_claim": 2.96,
+      "latency_per_claim_s": 0.0765,
+      "accuracy_3way": 0.5433,
+      "macro_f1_3way": 0.5266,
+      "accuracy_raw": 0.2533,
+      "uncertain_labels": 53
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 4,
+      "nli_checks_per_claim": 4.19,
+      "latency_per_claim_s": 0.0688,
+      "accuracy_3way": 0.5567,
+      "macro_f1_3way": 0.5396,
+      "accuracy_raw": 0.26,
+      "uncertain_labels": 59
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 4,
+      "nli_checks_per_claim": 3.93,
+      "latency_per_claim_s": 0.0863,
+      "accuracy_3way": 0.56,
+      "macro_f1_3way": 0.5444,
+      "accuracy_raw": 0.2733,
+      "uncertain_labels": 56
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 4,
+      "nli_checks_per_claim": 3.93,
+      "latency_per_claim_s": 0.0673,
+      "accuracy_3way": 0.55,
+      "macro_f1_3way": 0.5337,
+      "accuracy_raw": 0.2667,
+      "uncertain_labels": 58
+    },
+    {
+      "strategy": "fixed_split",
+      "budget_per_claim": 6,
+      "nli_checks_per_claim": 6.19,
+      "latency_per_claim_s": 0.0602,
+      "accuracy_3way": 0.56,
+      "macro_f1_3way": 0.5445,
+      "accuracy_raw": 0.27,
+      "uncertain_labels": 67
+    },
+    {
+      "strategy": "round_robin",
+      "budget_per_claim": 6,
+      "nli_checks_per_claim": 5.61,
+      "latency_per_claim_s": 0.0835,
+      "accuracy_3way": 0.5633,
+      "macro_f1_3way": 0.5526,
+      "accuracy_raw": 0.2933,
+      "uncertain_labels": 58
+    },
+    {
+      "strategy": "priority",
+      "budget_per_claim": 6,
+      "nli_checks_per_claim": 5.6,
+      "latency_per_claim_s": 0.0847,
+      "accuracy_3way": 0.57,
+      "macro_f1_3way": 0.5594,
+      "accuracy_raw": 0.2967,
+      "uncertain_labels": 62
+    }
+  ]
+}
