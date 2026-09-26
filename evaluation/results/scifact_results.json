@@ -5,7 +5,7 @@
     "n_queries": 188,
     "n_abstracts": 5183,
     "k": 10,
-    "index_time_s": 27.51,
+    "index_time_s": 20.0,
     "systems": {
       "bm25": {
         "p@1": 0.6489,
@@ -16,7 +16,7 @@
         "set_precision": 0.0989,
         "set_recall": 0.9139,
         "n_retrieved": 10.0,
-        "latency_s": 0.0273
+        "latency_s": 0.023
       },
       "semantic": {
         "p@1": 0.617,
@@ -27,7 +27,7 @@
         "set_precision": 0.1,
         "set_recall": 0.9117,
         "n_retrieved": 10.0,
-        "latency_s": 0.0267
+        "latency_s": 0.0221
       },
       "hybrid": {
         "p@1": 0.6968,
@@ -38,7 +38,7 @@
         "set_precision": 0.1043,
         "set_recall": 0.9516,
         "n_retrieved": 10.0,
-        "latency_s": 0.0265
+        "latency_s": 0.0224
       },
       "adaptive_hybrid": {
         "p@1": 0.7021,
@@ -49,7 +49,7 @@
         "set_precision": 0.3,
         "set_recall": 0.9058,
         "n_retrieved": 4.2074,
-        "latency_s": 0.0271
+        "latency_s": 0.0231
       }
     }
   },
@@ -211,9 +211,9 @@
       "UNCERTAIN": 64
     },
     "latency_s": {
-      "similarity_threshold": 0.0114,
-      "nli_top1": 0.0555,
-      "claim_aware_verifier": 0.1065
+      "similarity_threshold": 0.0082,
+      "nli_top1": 0.0473,
+      "claim_aware_verifier": 0.0796
     }
   }
 }
