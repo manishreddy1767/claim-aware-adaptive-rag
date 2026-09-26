@@ -63,6 +63,15 @@ def sidebar_config() -> RAGConfig:
                                                                  cfg.verification.contradiction_threshold, 0.05)
             cfg.verification.relevance_threshold = st.slider("Evidence relevance threshold", 0.1, 0.8,
                                                              cfg.verification.relevance_threshold, 0.05)
+        with st.expander("Evidence budget", expanded=False):
+            cfg.budget.enabled = st.checkbox("Share an evidence budget across claims", cfg.budget.enabled,
+                                             help="Verifies claims with a limited number of evidence checks, "
+                                                  "spending more on claims that are hard to settle.")
+            cfg.budget.checks_per_claim = st.slider("Evidence checks per claim (average)", 1.0, 12.0,
+                                                    cfg.budget.checks_per_claim, 0.5)
+            cfg.budget.strategy = st.selectbox("Scheduling", ["priority", "round_robin"],
+                                               help="priority = evidence-gain-aware (default); "
+                                                    "round_robin = baseline")
         with st.expander("Answering", expanded=False):
             cfg.answer.max_answer_sentences = st.slider("Max answer sentences", 1, 6,
                                                         cfg.answer.max_answer_sentences)
@@ -87,6 +96,15 @@ def render_claim(v: ClaimVerification, key: str) -> None:
             st.markdown(f"- Part: *{part.claim}* → **{part.status.value}**")
         if not v.supporting and not v.contradicting:
             st.caption("No evidence passage met the support or contradiction threshold.")
+
+
+def render_budget(report) -> None:
+    st.markdown(f"**Evidence budget:** used {report.used_total} of {report.budget} evidence checks"
+                + (" (budget exhausted)" if report.exhausted else ""))
+    st.dataframe(pd.DataFrame([{
+        "Claim": c["claim"], "Priority": c["base_priority"], "Retrieval steps": c["attempts"],
+        "Checks": f"{c['checks']}/{c['candidates']}", "Evidence gain": c["total_gain"], "Result": c["status"],
+    } for c in report.claims]), hide_index=True, use_container_width=True)
 
 
 def ingestion_panel(rag) -> None:
@@ -196,6 +214,8 @@ def ask_panel(rag) -> None:
             for reason in r.reasons:
                 st.caption(reason)
             st.json(r.trace, expanded=False)
+        if result.budget:
+            render_budget(result.budget)
         st.caption(f"Timings (s): {result.timings}")
 
 
@@ -209,14 +229,23 @@ def verify_panel(rag) -> None:
             st.warning("Add at least one document or webpage first.")
             return
         with st.spinner("Verifying..."):
-            results = rag.verify_text(text)
-        if not results:
+            check = rag.check_answer(text)
+        if not check.claims:
             st.info("No factual claims were found in the text.")
-        counts = pd.Series([v.status.value for v in results]).value_counts()
-        if len(counts):
-            st.write(dict(counts))
-        for n, v in enumerate(results):
+            return
+        st.markdown("#### Revised answer")
+        st.caption("Only statements supported by your sources are kept as facts; contradicted statements "
+                   "are corrected and unsupported ones removed.")
+        (st.warning if check.revised.abstained else st.success)(check.revised.text)
+        for i, unit in enumerate(check.revised.citations, start=1):
+            st.markdown(f"**[{i}]** {unit.citation()} · `{unit.evidence_id}`\n\n> {unit.text}")
+        st.markdown("#### Claim checks")
+        counts = pd.Series([v.status.value for v in check.claims]).value_counts()
+        st.write(dict(counts))
+        for n, v in enumerate(check.claims):
             render_claim(v, f"v{n}")
+        if check.budget:
+            render_budget(check.budget)
 
 
 def main() -> None:

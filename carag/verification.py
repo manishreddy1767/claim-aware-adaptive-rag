@@ -44,9 +44,13 @@ class ClaimVerifier:
         self.retriever = retriever
         self.nli = nli
         self.config = config or VerificationConfig()
+        self.nli_checks = 0   # number of (premise, claim) pairs scored by the NLI model
 
     # -- evidence gathering ----------------------------------------------------------
-    def _premises(self, claim: str, pool: list[ScoredEvidence] | None) -> list[tuple[str, list[str], float]]:
+    def candidate_premises(self, claim: str, pool: list[ScoredEvidence] | None = None
+                           ) -> list[tuple[str, list[str], float]]:
+        """Candidate evidence for a claim, most relevant single sentences first, then
+        two-sentence windows. Returns (premise_text, evidence_ids, relevance) tuples."""
         cfg = self.config
         ranked = self.retriever.rank(claim, cfg.evidence_per_claim, mode="hybrid")
         by_id = {e.unit.evidence_id: e for e in ranked}
@@ -76,7 +80,9 @@ class ClaimVerifier:
                 premises += [(text, ids, float(vec @ claim_vec)) for (text, ids), vec in zip(windows, window_vecs)]
         return premises
 
-    def _judge(self, claim: str, premises) -> list[EvidenceJudgement]:
+    def judge(self, claim: str, premises) -> list[EvidenceJudgement]:
+        """Score premises against the claim with the NLI model."""
+        self.nli_checks += len(premises)
         probs = self.nli.predict([(premise, claim) for premise, _, _ in premises])
         return [
             EvidenceJudgement(evidence_ids=ids, premise=premise,
@@ -88,13 +94,27 @@ class ClaimVerifier:
 
     # -- decision -------------------------------------------------------------------------
     def verify(self, claim: str, pool: list[ScoredEvidence] | None = None,
-               decompose: bool = True) -> ClaimVerification:
-        cfg = self.config
-        premises = self._premises(claim, pool)
+               decompose: bool = True, max_premises: int | None = None) -> ClaimVerification:
+        premises = self.candidate_premises(claim, pool)[:max_premises]
         if not premises:
             return ClaimVerification(claim, ClaimStatus.INSUFFICIENT_EVIDENCE,
                                      "No evidence is available in the ingested sources.")
-        judgements = self._judge(claim, premises)
+        result = self.decide(claim, self.judge(claim, premises), pool, decompose)
+        result.checks_used += len(premises)
+        return result
+
+    def decide(self, claim: str, judgements: list[EvidenceJudgement],
+               pool: list[ScoredEvidence] | None = None, decompose: bool = True,
+               part_premises: int | None = None) -> ClaimVerification:
+        """Apply the labelling rules (module docstring) to NLI judgements already collected.
+
+        ``part_premises`` caps the evidence checked per component of a causal claim
+        (used by the budgeted verifier); None means no cap.
+        """
+        cfg = self.config
+        if not judgements:
+            return ClaimVerification(claim, ClaimStatus.INSUFFICIENT_EVIDENCE,
+                                     "No evidence was checked for this claim.")
         relevant = [j for j in judgements if j.relevance >= cfg.relevance_threshold]
         claim_numbers = extract_numbers(claim)
 
@@ -155,10 +175,12 @@ class ClaimVerifier:
                                   "do not all appear in it.")
             return result
 
-        parts = decompose_causal(claim) if decompose else None
+        parts = decompose_causal(claim) if decompose and part_premises != 0 else None
         if parts is not None:
             sub_claims = [parts.effect] + ([parts.cause] if parts.cause else [])
-            result.parts = [self.verify(c, pool, decompose=False) for c in sub_claims]
+            result.parts = [self.verify(c, pool, decompose=False, max_premises=part_premises)
+                            for c in sub_claims]
+            result.checks_used += sum(p.checks_used for p in result.parts)
             statuses = [p.status for p in result.parts]
             if ClaimStatus.CONTRADICTED in statuses:
                 result.status = ClaimStatus.CONTRADICTED

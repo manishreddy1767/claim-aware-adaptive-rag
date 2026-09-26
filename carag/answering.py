@@ -18,6 +18,7 @@ from .config import AnswerConfig
 from .retrieval import AdaptiveRetriever, RetrievalResult
 from .schema import ClaimStatus, ClaimVerification, EvidenceUnit, ScoredEvidence
 from .text_utils import contains_marker
+from .budget import BudgetedVerifier, BudgetReport
 from .verification import ClaimVerifier
 
 _CAVEAT_MARKERS = ("however", "limitation", "limitations", "caveat", "preliminary",
@@ -60,6 +61,7 @@ class AnswerResult:
     retrieval: RetrievalResult | None = None
     notes: list[str] = field(default_factory=list)
     timings: dict[str, float] = field(default_factory=dict)
+    budget: BudgetReport | None = None
 
     @property
     def claims(self) -> list[ClaimVerification]:
@@ -79,15 +81,17 @@ class AnswerResult:
             "retrieval": self.retrieval.to_dict() if self.retrieval else None,
             "notes": self.notes,
             "timings": self.timings,
+            "budget": self.budget.to_dict() if self.budget else None,
         }
 
 
 class GroundedAnswerer:
     def __init__(self, retriever: AdaptiveRetriever, verifier: ClaimVerifier,
-                 config: AnswerConfig | None = None):
+                 config: AnswerConfig | None = None, budgeted: BudgetedVerifier | None = None):
         self.retriever = retriever
         self.verifier = verifier
         self.config = config or AnswerConfig()
+        self.budgeted = budgeted   # shared evidence budget across answer claims (optional)
 
     # -- helpers -------------------------------------------------------------------
     def _select_sentences(self, retrieval: RetrievalResult) -> list[ScoredEvidence]:
@@ -208,10 +212,20 @@ class GroundedAnswerer:
         used = {e.unit.evidence_id for e in selected}
         drafts = [(e, "answer") for e in selected] + [(e, "caveat") for e in self._caveats(retrieval, used)]
 
-        # 4. Verify each claim; drop unsupported/contradicted, qualify partial/uncertain.
-        for item, kind in drafts:
-            claims = extract_claims(item.unit.text) or [item.unit.text]
-            verdicts = [self.verifier.verify(c, retrieval.evidence) for c in claims] if verify else []
+        # 4. Verify each claim (under a shared evidence budget when enabled);
+        #    drop unsupported/contradicted claims, qualify partial/uncertain ones.
+        draft_claims = [extract_claims(item.unit.text) or [item.unit.text] for item, _ in drafts]
+        flat = [c for claims in draft_claims for c in claims]
+        if not verify:
+            flat_verdicts = []
+        elif self.budgeted is not None and self.budgeted.config.enabled:
+            flat_verdicts, result.budget = self.budgeted.verify_claims(flat, retrieval.evidence)
+        else:
+            flat_verdicts = [self.verifier.verify(c, retrieval.evidence) for c in flat]
+        cursor = 0
+        for (item, kind), claims in zip(drafts, draft_claims):
+            verdicts = flat_verdicts[cursor: cursor + len(claims)] if verify else []
+            cursor += len(claims)
             bad = [v for v in verdicts if v.status in (ClaimStatus.CONTRADICTED, ClaimStatus.INSUFFICIENT_EVIDENCE)]
             if bad and len(bad) == len(verdicts):
                 result.removed_claims.extend(bad)

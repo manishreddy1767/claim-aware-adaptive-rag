@@ -74,6 +74,9 @@ def main(argv: list[str] | None = None) -> int:
     verify = sub.add_parser("verify", help="Verify the claims in a piece of text against sources")
     verify.add_argument("sources", nargs="+")
     verify.add_argument("--text", required=True, help="Text whose claims should be checked")
+    verify.add_argument("--budget", type=int, default=None,
+                        help="Total NLI evidence checks shared by all claims (default: 4 per claim)")
+    verify.add_argument("--no-budget", action="store_true", help="Verify every claim exhaustively")
 
     for p in (ask, verify):
         p.add_argument("--json", action="store_true", help="Print machine-readable JSON")
@@ -100,14 +103,28 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.command == "verify":
-        results = rag.verify_text(args.text)
+        rag.config.budget.enabled = not args.no_budget
+        check = rag.check_answer(args.text, budget=args.budget)
         if args.json:
-            print(json.dumps([r.to_dict() for r in results], indent=2))
-        else:
-            if not results:
-                print("No factual claims were found in the text.")
-            for v in results:
-                _print_claim(v, indent="")
+            print(json.dumps(check.to_dict(), indent=2))
+            return 0
+        if not check.claims:
+            print("No factual claims were found in the text.")
+            return 0
+        print("CLAIMS")
+        for v in check.claims:
+            _print_claim(v)
+        print("\nREVISED ANSWER (only source-supported statements are presented as facts)")
+        print(f"  {check.revised.text}")
+        for i, unit in enumerate(check.revised.citations, start=1):
+            print(f"  [{i}] {unit.citation()} ({unit.evidence_id}): \"{unit.text}\"")
+        if check.budget:
+            b = check.budget
+            print(f"\nEVIDENCE BUDGET  used {b.used_total}/{b.budget} NLI checks "
+                  f"({b.extra_checks} on causal components), exhausted={b.exhausted}")
+            for c in b.claims:
+                print(f"  priority {c['base_priority']:.2f}  steps {c['attempts']}  checks {c['checks']}/"
+                      f"{c['candidates']}  gain {c['total_gain']:.2f}  {c['status']}: {c['claim'][:70]}")
         return 0
 
     questions = args.question or []

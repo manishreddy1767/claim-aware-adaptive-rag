@@ -79,6 +79,27 @@ class VerificationConfig:
 
 
 @dataclass
+class BudgetConfig:
+    """Shared evidence-check budget for verifying several claims (see carag/budget.py)."""
+
+    enabled: bool = True
+    # Total budget = checks_per_claim x number of claims (NLI premise checks).
+    checks_per_claim: float = 4.0
+    # Premises checked per retrieval step, and the per-claim cap.
+    step_size: int = 2
+    max_checks_per_claim: int = 12
+    # Priority = gap_weight * evidence gap + (1 - gap_weight) * linguistic uncertainty.
+    gap_weight: float = 0.7
+    # Evidence gain below this counts as a low-gain step (priority is penalized).
+    low_gain_threshold: float = 0.05
+    # Scheduling penalties: priority / (1 + a * attempts) / (1 + b * low_gain_streak).
+    attempt_penalty: float = 0.8
+    low_gain_penalty: float = 0.75
+    # "priority" (evidence-gain aware) or "round_robin" (baseline).
+    strategy: str = "priority"
+
+
+@dataclass
 class AnswerConfig:
     max_answer_sentences: int = 3
     # Only answer when the top answer sentence has at least this hybrid score.
@@ -96,6 +117,7 @@ class RAGConfig:
     ingestion: IngestionConfig = field(default_factory=IngestionConfig)
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
     verification: VerificationConfig = field(default_factory=VerificationConfig)
+    budget: BudgetConfig = field(default_factory=BudgetConfig)
     answer: AnswerConfig = field(default_factory=AnswerConfig)
 
     def to_dict(self) -> dict:

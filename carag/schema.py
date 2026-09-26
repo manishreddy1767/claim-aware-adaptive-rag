@@ -92,6 +92,8 @@ class ClaimVerification:
     best_entailment: float = 0.0
     best_contradiction: float = 0.0
     best_relevance: float = 0.0
+    checks_used: int = 0          # NLI evidence checks spent on this claim
+    priority: float | None = None  # scheduling priority when verified under a budget
 
     def to_dict(self) -> dict:
         return {
@@ -104,4 +106,6 @@ class ClaimVerification:
             "best_entailment": self.best_entailment,
             "best_contradiction": self.best_contradiction,
             "best_relevance": self.best_relevance,
+            "checks_used": self.checks_used,
+            "priority": self.priority,
         }
