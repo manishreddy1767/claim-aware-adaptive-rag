@@ -386,6 +386,51 @@ def html_to_document(html: str, url: str, config: IngestionConfig | None = None)
     return _finish(builder, title=title)
 
 
+def _render_with_browser(url: str, timeout_s: int) -> str | None:
+    """Return the DOM after JavaScript runs, or None if Playwright is unavailable."""
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        return None
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            try:
+                page = browser.new_page()
+                page.goto(url, timeout=timeout_s * 1000, wait_until="networkidle")
+                return page.content()
+            finally:
+                browser.close()
+    except Exception as exc:  # browser missing, navigation timeout, ...
+        logger.warning("Browser rendering of %s failed: %s", url, exc)
+        return None
+
+
+def _html_with_js_fallback(html: str, url: str, config: IngestionConfig) -> SourceDocument:
+    try:
+        document = html_to_document(html, url, config)
+        if len(document.units) >= config.js_min_units or not config.render_js:
+            return document
+    except IngestionError:
+        if not config.render_js:
+            raise
+        document = None
+    rendered = _render_with_browser(url, config.request_timeout)
+    if rendered is not None:
+        try:
+            js_document = html_to_document(rendered, url, config)
+            if document is None or len(js_document.units) > len(document.units):
+                js_document.warnings.append("Page content was produced by JavaScript; read via a headless browser.")
+                return js_document
+        except IngestionError:
+            pass
+    if document is None:
+        raise IngestionError(
+            f"No extractable text found at '{url}'. The page may require JavaScript; install the optional "
+            "'playwright' package and run 'python -m playwright install chromium' to render such pages.")
+    return document
+
+
 def load_url(url: str, config: IngestionConfig | None = None) -> SourceDocument:
     import requests
 
@@ -422,7 +467,7 @@ def load_url(url: str, config: IngestionConfig | None = None) -> SourceDocument:
             unit.url = url
             unit.source_type = "url"
         return document
-    return html_to_document(html, url, config)
+    return _html_with_js_fallback(html, url, config)
 
 
 def load_source(source: str, config: IngestionConfig | None = None) -> SourceDocument:

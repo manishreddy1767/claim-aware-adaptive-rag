@@ -133,3 +133,53 @@ def test_scanned_pdf_is_read_with_ocr(test_pdf, tmp_path):
     assert "118 milliwatt-hours per day" in text and "12 short pollution spikes" in text
     assert all(u.page == 1 for u in doc.units)
     assert any("OCR" in w for w in doc.warnings)
+
+
+JS_PAGE = """<html><head><title>JS app</title></head><body><div id="app">Loading...</div>
+<script>
+document.getElementById("app").innerHTML =
+  "<p>The rover landed in Jezero Crater in February 2021.</p>" +
+  "<p>It collected rock samples for a future return mission.</p>" +
+  "<p>The helicopter completed more than seventy flights.</p>";
+</script></body></html>"""
+
+
+def _serve(html: str):
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            body = html.encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server
+
+
+def test_javascript_rendered_page(tmp_path):
+    pytest.importorskip("playwright")
+    server = _serve(JS_PAGE)
+    try:
+        doc = load_url(f"http://localhost:{server.server_port}/app")
+    finally:
+        server.shutdown()
+    texts = [u.text for u in doc.units]
+    assert "The rover landed in Jezero Crater in February 2021." in texts
+    assert any("JavaScript" in w for w in doc.warnings)
+
+
+def test_javascript_page_without_browser_gives_hint(monkeypatch):
+    import carag.ingestion as ingestion
+    monkeypatch.setattr(ingestion, "_render_with_browser", lambda url, timeout: None)
+    server = _serve(JS_PAGE)
+    try:
+        with pytest.raises(IngestionError, match="playwright"):
+            load_url(f"http://localhost:{server.server_port}/app")
+    finally:
+        server.shutdown()

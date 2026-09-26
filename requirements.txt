@@ -11,6 +11,8 @@ requests>=2.31
 pypdfium2>=4.30
 rapidocr>=3.0
 onnxruntime>=1.20
+# Optional: JavaScript-rendered webpages (then run: python -m playwright install chromium)
+playwright>=1.45
 # Web UI
 streamlit>=1.38
 pandas>=2.2

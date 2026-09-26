@@ -31,6 +31,10 @@ class IngestionConfig:
     # OCR pages without a text layer (scanned PDFs) when pypdfium2 + rapidocr are installed.
     ocr: bool = True
     ocr_scale: float = 3.0
+    # Render pages whose static HTML yields fewer than js_min_units sentences in a
+    # headless browser (optional dependency: playwright + its chromium).
+    render_js: bool = True
+    js_min_units: int = 3
 
 
 @dataclass
