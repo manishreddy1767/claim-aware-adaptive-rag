@@ -62,6 +62,8 @@ class AnswerResult:
     notes: list[str] = field(default_factory=list)
     timings: dict[str, float] = field(default_factory=dict)
     budget: BudgetReport | None = None
+    answer_span: str | None = None          # short answer extracted by the QA model
+    answerability: float | None = None      # QA margin: best span score - "no answer" score
 
     @property
     def claims(self) -> list[ClaimVerification]:
@@ -82,16 +84,35 @@ class AnswerResult:
             "notes": self.notes,
             "timings": self.timings,
             "budget": self.budget.to_dict() if self.budget else None,
+            "answer_span": self.answer_span,
+            "answerability": self.answerability,
         }
 
 
 class GroundedAnswerer:
     def __init__(self, retriever: AdaptiveRetriever, verifier: ClaimVerifier,
-                 config: AnswerConfig | None = None, budgeted: BudgetedVerifier | None = None):
+                 config: AnswerConfig | None = None, budgeted: BudgetedVerifier | None = None,
+                 span_qa=None):
         self.retriever = retriever
         self.verifier = verifier
         self.config = config or AnswerConfig()
         self.budgeted = budgeted   # shared evidence budget across answer claims (optional)
+        self.span_qa = span_qa     # extractive QA model for answer relevance (optional)
+
+    def _locate_answer(self, question: str, retrieval: RetrievalResult):
+        """Run the QA model over the best evidence; return (span, margin, evidence sentence)."""
+        pool = {e.unit.evidence_id: e for e in self.retriever.rank(question, self.config.relevance_context_k)}
+        for e in retrieval.evidence:
+            pool.setdefault(e.unit.evidence_id, e)
+        ordered = sorted(pool.values(), key=lambda e: (e.unit.source, e.unit.position))
+        context, spans = "", []
+        for e in ordered:
+            start = len(context)
+            context += e.unit.text + " "
+            spans.append((start, start + len(e.unit.text), e))
+        span = self.span_qa.answer(question, context)
+        holder = next((e for a, b, e in spans if a <= span.start < b), None) if span.text else None
+        return span, holder
 
     # -- helpers -------------------------------------------------------------------
     def _select_sentences(self, retrieval: RetrievalResult) -> list[ScoredEvidence]:
@@ -199,13 +220,29 @@ class GroundedAnswerer:
                     timings["verification_s"] = round(time.perf_counter() - start, 3)
                     return self._abstain(result, "The sources neither confirm nor contradict this statement.")
 
-        # 2. Abstain when retrieval could not find sufficient evidence.
-        if adaptive and not retrieval.sufficient:
+        # 2. Answerability: with the QA model, it decides whether the evidence contains an
+        #    answer and which sentence holds it; otherwise retrieval sufficiency decides.
+        span_evidence = None
+        if adaptive and self.span_qa is not None:
+            span, span_evidence = self._locate_answer(question, retrieval)
+            result.answerability = round(span.margin, 3)
+            if span.margin < cfg.answerability_margin or span_evidence is None:
+                timings["verification_s"] = round(time.perf_counter() - start, 3)
+                return self._abstain(result, "The retrieved evidence does not appear to contain an answer "
+                                             f"(QA answerability {span.margin:.1f}).")
+            result.answer_span = span.text.strip()
+            if not retrieval.sufficient:
+                result.notes.append("Retrieval heuristics flagged: " + " ".join(retrieval.reasons))
+        elif adaptive and not retrieval.sufficient:
             timings["verification_s"] = round(time.perf_counter() - start, 3)
             return self._abstain(result, "Insufficient evidence: " + " ".join(retrieval.reasons))
 
         # 3. Compose an extractive answer from the best evidence.
         selected = self._select_sentences(retrieval)
+        if span_evidence is not None:
+            others = [e for e in selected if e.unit.evidence_id != span_evidence.unit.evidence_id]
+            selected = sorted([span_evidence] + others[: cfg.max_answer_sentences - 1],
+                              key=lambda e: (e.unit.source, e.unit.position))
         if not selected:
             timings["verification_s"] = round(time.perf_counter() - start, 3)
             return self._abstain(result, "No retrieved sentence was relevant enough to answer.")

@@ -67,11 +67,20 @@ class ClaimAwareRAG:
     @property
     def answerer(self) -> GroundedAnswerer:
         if self._answerer is None:
-            self._answerer = GroundedAnswerer(self.retriever, self.verifier, self.config.answer, self.budgeted)
+            span_qa = None
+            if self.config.answer.relevance_check:
+                from .relevance import SpanQA
+                span_qa = SpanQA(self.config.answer.relevance_model, self.config.models.device)
+            self._answerer = GroundedAnswerer(self.retriever, self.verifier, self.config.answer,
+                                              self.budgeted, span_qa)
         return self._answerer
 
     def apply_config(self, config: RAGConfig) -> None:
         """Swap thresholds without reloading models or re-indexing."""
+        if (self._answerer is not None and
+                (config.answer.relevance_check, config.answer.relevance_model)
+                != (self.config.answer.relevance_check, self.config.answer.relevance_model)):
+            self._answerer = None   # rebuilt lazily with/without the QA model
         self.config = config
         self.retriever.config = config.retrieval
         self.retriever.scorer.config = config.retrieval

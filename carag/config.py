@@ -105,6 +105,13 @@ class AnswerConfig:
     # Only answer when the top answer sentence has at least this hybrid score.
     min_answer_score: float = 0.40
     check_question_premise: bool = True
+    # Answer relevance / answerability via an extractive QA model (carag/relevance.py).
+    relevance_check: bool = True
+    relevance_model: str = "deepset/minilm-uncased-squad2"
+    # Abstain when the QA model's best-span margin over "no answer" is below this
+    # (0 = the model's own no-answer decision; not tuned).
+    answerability_margin: float = 0.0
+    relevance_context_k: int = 8
     abstain_message: str = (
         "I could not find sufficient evidence in the provided sources to "
         "answer this question reliably."

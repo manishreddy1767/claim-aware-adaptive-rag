@@ -69,3 +69,11 @@ def test_baseline_modes_run(rag):
 def test_empty_question_rejected(rag):
     with pytest.raises(ValueError):
         rag.ask("   ")
+
+
+def test_qa_answerability_extracts_span_and_abstains(rag):
+    result = rag.ask("How long did each trial run?")
+    assert result.answer_span == "14 days" and result.answerability > 0
+    assert "Each trial ran for 14 days" in result.answer
+    absent = rag.ask("How much did each sensor node cost?")
+    assert absent.abstained and absent.answerability < 0

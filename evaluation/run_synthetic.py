@@ -8,6 +8,7 @@ questions.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import time
 from pathlib import Path
@@ -132,7 +133,11 @@ def naive_answer(rag: ClaimAwareRAG, question: str) -> dict:
             "cited_ids": [e.unit.evidence_id for e in top], "premise_status": None}
 
 
-def pipeline_answer(rag: ClaimAwareRAG, question: str, verify: bool) -> dict:
+def pipeline_answer(rag: ClaimAwareRAG, question: str, verify: bool, use_qa: bool = False) -> dict:
+    if rag.config.answer.relevance_check != use_qa:
+        cfg = copy.deepcopy(rag.config)
+        cfg.answer.relevance_check = use_qa
+        rag.apply_config(cfg)
     result = rag.ask(question, verify=verify, adaptive=True)
     return {"answer": result.answer, "abstained": result.abstained,
             "cited_ids": [c.unit.evidence_id for c in result.citations],
@@ -170,6 +175,7 @@ def evaluate_answers(rag: ClaimAwareRAG, questions: list[dict]) -> dict:
         "fixed_top3_no_verification": lambda q: naive_answer(rag, q),
         "adaptive_no_verification": lambda q: pipeline_answer(rag, q, verify=False),
         "adaptive_with_claim_verification": lambda q: pipeline_answer(rag, q, verify=True),
+        "full_system_with_qa_answerability": lambda q: pipeline_answer(rag, q, verify=True, use_qa=True),
     }
     report = {"n_questions": len(questions), "systems": {}}
     for name, run in systems.items():
