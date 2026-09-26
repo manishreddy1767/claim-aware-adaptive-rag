@@ -180,6 +180,33 @@ def _finish(builder: _UnitBuilder, pages: int | None = None, title: str | None =
 # File loaders
 # ---------------------------------------------------------------------------
 
+_OCR_ENGINE = None
+
+
+def _ocr_available() -> bool:
+    try:
+        import pypdfium2  # noqa: F401
+        import rapidocr  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def _ocr_page(data: bytes, page_index: int, scale: float) -> str:
+    """OCR one PDF page (optional dependencies: pypdfium2, rapidocr)."""
+    global _OCR_ENGINE
+    import numpy as np
+    import pypdfium2 as pdfium
+    from rapidocr import RapidOCR
+
+    if _OCR_ENGINE is None:
+        _OCR_ENGINE = RapidOCR()
+        logging.getLogger("RapidOCR").setLevel(logging.WARNING)   # set after init (it resets it)
+    image = pdfium.PdfDocument(data)[page_index].render(scale=scale).to_pil().convert("RGB")
+    result = _OCR_ENGINE(np.array(image))
+    return "\n".join(result.txts or ())
+
+
 def load_pdf(data: bytes, name: str, config: IngestionConfig) -> SourceDocument:
     from pypdf import PdfReader
     from pypdf.errors import PdfReadError
@@ -197,7 +224,8 @@ def load_pdf(data: bytes, name: str, config: IngestionConfig) -> SourceDocument:
 
     builder = _UnitBuilder(name, "pdf", config)
     warnings: list[str] = []
-    empty_pages = []
+    empty_pages, ocr_pages = [], []
+    use_ocr = config.ocr and _ocr_available()
     section: str | None = None
     for page_number, page in enumerate(pages, start=1):
         try:
@@ -205,6 +233,13 @@ def load_pdf(data: bytes, name: str, config: IngestionConfig) -> SourceDocument:
         except Exception as exc:  # pypdf can fail on individual malformed pages
             warnings.append(f"Page {page_number}: text extraction failed ({exc}).")
             continue
+        if not text.strip() and use_ocr:
+            try:
+                text = _ocr_page(data, page_number - 1, config.ocr_scale)
+                if text.strip():
+                    ocr_pages.append(page_number)
+            except Exception as exc:  # OCR is best effort
+                warnings.append(f"Page {page_number}: OCR failed ({exc}).")
         if not text.strip():
             empty_pages.append(page_number)
             continue
@@ -213,11 +248,14 @@ def load_pdf(data: bytes, name: str, config: IngestionConfig) -> SourceDocument:
                 section = clean_text(block)
             else:
                 builder.add_text(block, page=page_number, section=section)
-    if empty_pages:
+    if ocr_pages:
         warnings.append(
-            f"No text on page(s) {', '.join(map(str, empty_pages))} "
-            "(possibly scanned images; OCR is not supported)."
-        )
+            f"Page(s) {', '.join(map(str, ocr_pages))} had no text layer and were read with OCR; "
+            "the text may contain recognition errors.")
+    if empty_pages:
+        hint = ("OCR found no text" if use_ocr else
+                "install the optional OCR packages 'pypdfium2' and 'rapidocr' to read scanned pages")
+        warnings.append(f"No text on page(s) {', '.join(map(str, empty_pages))} ({hint}).")
     return _finish(builder, pages=len(pages), warnings=warnings)
 
 

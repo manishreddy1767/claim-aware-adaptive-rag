@@ -118,3 +118,18 @@ def test_empty_and_unsupported_files(tmp_path):
         load_bytes(b"this is not a pdf", "fake.pdf")
     with pytest.raises(IngestionError, match="not found"):
         load_file(tmp_path / "missing.pdf")
+
+
+def test_scanned_pdf_is_read_with_ocr(test_pdf, tmp_path):
+    pdfium = pytest.importorskip("pypdfium2")
+    pytest.importorskip("rapidocr")
+    # Build an image-only ("scanned") PDF from page 2 of the test document.
+    image = pdfium.PdfDocument(str(test_pdf))[1].render(scale=2).to_pil().convert("RGB")
+    scanned = tmp_path / "scanned.pdf"
+    image.save(scanned, "PDF", resolution=144)
+    doc = load_file(scanned)
+    text = " ".join(u.text for u in doc.units)
+    # OCR is imperfect (a few lines can be garbled); check robust content.
+    assert "118 milliwatt-hours per day" in text and "12 short pollution spikes" in text
+    assert all(u.page == 1 for u in doc.units)
+    assert any("OCR" in w for w in doc.warnings)

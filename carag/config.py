@@ -28,6 +28,9 @@ class IngestionConfig:
     max_sentence_chars: int = 1200
     request_timeout: int = 20
     max_download_bytes: int = 10_000_000
+    # OCR pages without a text layer (scanned PDFs) when pypdfium2 + rapidocr are installed.
+    ocr: bool = True
+    ocr_scale: float = 3.0
 
 
 @dataclass
