@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project: downloaded evaluation datasets and model caches
+data/
+.hf_cache/

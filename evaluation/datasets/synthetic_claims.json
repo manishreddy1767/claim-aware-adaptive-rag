@@ -1,0 +1,39 @@
+{
+  "description": "SYNTHETIC claim-verification set for claim_aware_rag_test_document.pdf. Gold labels were assigned by the project author (single annotator) relative to the document only, not to real-world truth. A claim with a false component is labelled CONTRADICTED; a causal claim whose effect is stated but whose cause is absent from the document is labelled PARTIALLY_SUPPORTED. Small (n=30); treat results as a sanity check, not a benchmark.",
+  "document": "claim_aware_rag_test_document.pdf",
+  "claims": [
+    {"claim": "Trial Two sampled the sensors at 10 Hz.", "label": "SUPPORTED"},
+    {"claim": "Trial One consumed an average of 42 milliwatt-hours per day.", "label": "SUPPORTED"},
+    {"claim": "Both trials used the same firmware version.", "label": "SUPPORTED"},
+    {"claim": "Trial Two consumed more energy because of its higher sampling frequency.", "label": "SUPPORTED"},
+    {"claim": "The reboots of Node B were caused by a loose power connector.", "label": "SUPPORTED"},
+    {"claim": "Data were transmitted over LoRaWAN every 5 minutes.", "label": "SUPPORTED"},
+    {"claim": "The study used only one site.", "label": "SUPPORTED"},
+    {"claim": "The battery in Trial One was projected to last 71 days.", "label": "SUPPORTED"},
+    {"claim": "Node B in Trial Two rebooted twice during a thunderstorm.", "label": "SUPPORTED"},
+    {"claim": "Trial Two recorded 12 short pollution spikes.", "label": "SUPPORTED"},
+
+    {"claim": "Trial One sampled the sensors at 10 Hz.", "label": "CONTRADICTED"},
+    {"claim": "Trial Two consumed an average of 42 milliwatt-hours per day.", "label": "CONTRADICTED"},
+    {"claim": "The reboots were caused by the sampling configuration.", "label": "CONTRADICTED"},
+    {"claim": "The two trials used different firmware versions.", "label": "CONTRADICTED"},
+    {"claim": "Radio transmission energy was much higher in Trial Two than in Trial One.", "label": "CONTRADICTED"},
+    {"claim": "The battery in Trial Two was projected to last 71 days.", "label": "CONTRADICTED"},
+    {"claim": "Each trial ran for 30 days.", "label": "CONTRADICTED"},
+    {"claim": "Trial Two consumed more energy because it transmitted data more frequently.", "label": "CONTRADICTED"},
+    {"claim": "Trial One recorded more short pollution spikes than Trial Two.", "label": "CONTRADICTED"},
+
+    {"claim": "The sensor nodes cost 50 dollars each.", "label": "INSUFFICIENT_EVIDENCE"},
+    {"claim": "The gateway was located two kilometres from the rooftop.", "label": "INSUFFICIENT_EVIDENCE"},
+    {"claim": "The microcontroller was manufactured by Texas Instruments.", "label": "INSUFFICIENT_EVIDENCE"},
+    {"claim": "The collected data were stored in a cloud database.", "label": "INSUFFICIENT_EVIDENCE"},
+    {"claim": "The study was funded by a national research agency.", "label": "INSUFFICIENT_EVIDENCE"},
+    {"claim": "The particulate matter sensor was calibrated every week.", "label": "INSUFFICIENT_EVIDENCE"},
+    {"claim": "The nodes were enclosed in waterproof plastic housings.", "label": "INSUFFICIENT_EVIDENCE"},
+
+    {"claim": "Trial Two consumed more energy because its nodes were placed in direct sunlight.", "label": "PARTIALLY_SUPPORTED"},
+    {"claim": "Trial One's battery lasted longer because its humidity sensor was disabled.", "label": "PARTIALLY_SUPPORTED"},
+    {"claim": "Node B rebooted twice during a thunderstorm because lightning struck the gateway.", "label": "PARTIALLY_SUPPORTED"},
+    {"claim": "Higher sampling frequency improved the detection of short pollution events because the sensors were replaced with newer models.", "label": "PARTIALLY_SUPPORTED"}
+  ]
+}
