@@ -55,6 +55,14 @@ def sidebar_config() -> RAGConfig:
             cfg.retrieval.semantic_weight = st.slider("Semantic vs. keyword weight", 0.0, 1.0,
                                                       cfg.retrieval.semantic_weight, 0.05)
             cfg.retrieval.lexical_weight = round(1.0 - cfg.retrieval.semantic_weight, 2)
+        with st.expander("Models", expanded=False):
+            cfg.models.nli_model = st.selectbox(
+                "Claim-checking model",
+                ["cross-encoder/nli-deberta-v3-base", "cross-encoder/nli-deberta-v3-small"],
+                help="base is more accurate (measured); small uses about half the GPU memory.")
+            cfg.answer.relevance_check = st.checkbox(
+                "Check that the evidence actually answers the question", cfg.answer.relevance_check,
+                help="Uses a small extractive QA model; greatly reduces answers to unanswerable questions.")
         with st.expander("Verification", expanded=False):
             cfg.verification.support_threshold = st.slider("Support threshold (P entailment)", 0.5, 0.95,
                                                            cfg.verification.support_threshold, 0.05)
@@ -170,6 +178,8 @@ def ask_panel(rag) -> None:
         st.warning(result.answer)
     else:
         st.markdown("#### Answer")
+        if result.answer_span:
+            st.markdown(f"**Short answer:** {result.answer_span}")
         st.info(result.answer)
     for note in result.notes:
         st.caption(f"ℹ️ {note}")

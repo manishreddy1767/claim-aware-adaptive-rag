@@ -30,6 +30,8 @@ def _print_claim(v: ClaimVerification, indent: str = "  ") -> None:
 def _print_answer(result, show_evidence: bool) -> None:
     print("\nANSWER")
     print(f"  {result.answer}")
+    if result.answer_span:
+        print(f"  Short answer: {result.answer_span} (QA answerability {result.answerability:.1f})")
     for note in result.notes:
         print(f"  Note: {note}")
     if result.citations:
@@ -81,6 +83,11 @@ def main(argv: list[str] | None = None) -> int:
     for p in (ask, verify):
         p.add_argument("--json", action="store_true", help="Print machine-readable JSON")
         p.add_argument("--device", default="auto", help="auto | cpu | cuda")
+        p.add_argument("--nli-model", default=None,
+                       help="NLI model (default cross-encoder/nli-deberta-v3-base; "
+                            "cross-encoder/nli-deberta-v3-small uses less memory)")
+        p.add_argument("--no-qa-check", action="store_true",
+                       help="Disable the extractive-QA answerability check")
         p.add_argument("-v", "--verbose", action="store_true")
 
     args = parser.parse_args(argv)
@@ -89,6 +96,9 @@ def main(argv: list[str] | None = None) -> int:
 
     config = RAGConfig()
     config.models.device = args.device
+    if args.nli_model:
+        config.models.nli_model = args.nli_model
+    config.answer.relevance_check = not args.no_qa_check
     try:
         from .pipeline import ClaimAwareRAG
         rag = ClaimAwareRAG(config)

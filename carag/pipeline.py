@@ -81,6 +81,8 @@ class ClaimAwareRAG:
                 (config.answer.relevance_check, config.answer.relevance_model)
                 != (self.config.answer.relevance_check, self.config.answer.relevance_model)):
             self._answerer = None   # rebuilt lazily with/without the QA model
+        if config.models.nli_model != self.config.models.nli_model:
+            self._verifier = self._budgeted = self._answerer = None   # reload with the new NLI model
         self.config = config
         self.retriever.config = config.retrieval
         self.retriever.scorer.config = config.retrieval

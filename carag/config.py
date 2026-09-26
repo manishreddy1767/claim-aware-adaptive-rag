@@ -14,7 +14,9 @@ from dataclasses import dataclass, field, asdict
 @dataclass
 class ModelConfig:
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
-    nli_model: str = "cross-encoder/nli-deberta-v3-small"
+    # nli-deberta-v3-base measured better than -small on SciFact (macro-F1 0.649 vs 0.590)
+    # and on the synthetic claims; -small remains available for low-memory machines.
+    nli_model: str = "cross-encoder/nli-deberta-v3-base"
     # "auto" picks CUDA when available and falls back to CPU.
     device: str = "auto"
     batch_size: int = 32

@@ -104,7 +104,7 @@ def evaluate_retrieval(claims: list[dict], corpus: list[dict], k: int = 10) -> d
     return report
 
 
-def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict]) -> dict:
+def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict], nli_model: str | None = None) -> dict:
     gold, preds = [], {"similarity_threshold": [], "nli_top1": [], "claim_aware_verifier": []}
     five_way = []
     latency = {k: [] for k in preds}
@@ -119,7 +119,10 @@ def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict]) -> 
         doc = corpus_by_id.get(int(doc_id))
         if doc is None:
             continue
-        rag = ClaimAwareRAG(RAGConfig())
+        config = RAGConfig()
+        if nli_model:
+            config.models.nli_model = nli_model
+        rag = ClaimAwareRAG(config)
         rag.add_document(sentence_document(doc))
         gold.append(label)
         for name, fn in (("similarity_threshold", baseline_similarity), ("nli_top1", baseline_nli_top1)):
@@ -144,7 +147,9 @@ def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict]) -> 
 def main(argv: list[str] | None = None) -> dict:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit", type=int, default=None, help="Use only the first N dev claims")
-    parser.add_argument("--output", default=str(RESULTS / "scifact_results.json"))
+    parser.add_argument("--output", default=None)
+    parser.add_argument("--nli-model", default=None, help="Override the NLI model (verification only)")
+    parser.add_argument("--skip-retrieval", action="store_true")
     args = parser.parse_args(argv)
 
     data = ensure_data()
@@ -152,18 +157,23 @@ def main(argv: list[str] | None = None) -> dict:
     claims = read_jsonl(data / "claims_dev.jsonl")[: args.limit]
     corpus_by_id = {d["doc_id"]: d for d in corpus}
 
-    results = {"dataset": "SciFact dev (real, expert-annotated)", "source": URL,
-               "retrieval": evaluate_retrieval(claims, corpus),
-               "verification": evaluate_verification(claims, corpus_by_id)}
+    nli_name = args.nli_model or RAGConfig().models.nli_model
+    if args.output is None:
+        suffix = "" if args.nli_model is None else "_" + args.nli_model.split("/")[-1]
+        args.output = str(RESULTS / f"scifact_results{suffix}.json")
+    results = {"dataset": "SciFact dev (real, expert-annotated)", "source": URL, "nli_model": nli_name,
+               "verification": evaluate_verification(claims, corpus_by_id, args.nli_model)}
+    if not args.skip_retrieval:
+        results["retrieval"] = evaluate_retrieval(claims, corpus)
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(json.dumps(results, indent=2), encoding="utf-8")
 
     print("\n== SciFact abstract retrieval ==")
-    for name, m in results["retrieval"]["systems"].items():
+    for name, m in results.get("retrieval", {}).get("systems", {}).items():
         print(f"  {name:16s} P@1={m['p@1']:.3f} R@3={m['r@3']:.3f} R@10={m['r@10']:.3f} MRR={m['mrr']:.3f} "
               f"nDCG@10={m['ndcg@10']:.3f} setP={m['set_precision']:.3f} setR={m['set_recall']:.3f} "
               f"k={m['n_retrieved']:.1f}")
-    print("\n== SciFact claim verification (oracle abstract, 3-way) ==")
+    print(f"\n== SciFact claim verification (oracle abstract, 3-way, NLI={nli_name}) ==")
     print(f"  gold distribution: {results['verification']['gold_distribution']}")
     for name, m in results["verification"]["three_way"].items():
         pc = m["per_class"]
