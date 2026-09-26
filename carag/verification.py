@@ -49,8 +49,8 @@ class ClaimVerifier:
     # -- evidence gathering ----------------------------------------------------------
     def candidate_premises(self, claim: str, pool: list[ScoredEvidence] | None = None
                            ) -> list[tuple[str, list[str], float]]:
-        """Candidate evidence for a claim, most relevant single sentences first, then
-        two-sentence windows. Returns (premise_text, evidence_ids, relevance) tuples."""
+        """Candidate evidence for a claim: single sentences and two-sentence windows, sorted
+        by relevance. Returns (premise_text, evidence_ids, relevance) tuples."""
         cfg = self.config
         ranked = self.retriever.rank(claim, cfg.evidence_per_claim, mode="hybrid")
         by_id = {e.unit.evidence_id: e for e in ranked}
@@ -78,6 +78,9 @@ class ClaimVerifier:
             if windows:
                 window_vecs = self.index.embedder.encode([w[0] for w in windows])
                 premises += [(text, ids, float(vec @ claim_vec)) for (text, ids), vec in zip(windows, window_vecs)]
+        # Most relevant evidence first (windows included), so budgeted verification
+        # checks the passages most likely to decide the claim before the rest.
+        premises.sort(key=lambda p: -p[2])
         return premises
 
     def judge(self, claim: str, premises) -> list[EvidenceJudgement]:

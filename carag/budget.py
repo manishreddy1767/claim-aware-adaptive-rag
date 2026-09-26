@@ -105,7 +105,7 @@ class BudgetedVerifier:
                       budget: int | None = None) -> tuple[list[ClaimVerification], BudgetReport]:
         cfg = self.config
         if budget is None:
-            budget = math.ceil(cfg.checks_per_claim * len(claims))
+            budget = max(cfg.min_budget, math.ceil(cfg.checks_per_claim * len(claims))) if claims else 0
         states = []
         for i, claim in enumerate(claims):
             premises = self.verifier.candidate_premises(claim, pool)[: cfg.max_checks_per_claim]

@@ -94,6 +94,8 @@ class BudgetConfig:
     enabled: bool = True
     # Total budget = checks_per_claim x number of claims (NLI premise checks).
     checks_per_claim: float = 4.0
+    # Floor on the total budget so answers with one or two claims are not starved.
+    min_budget: int = 6
     # Premises checked per retrieval step, and the per-claim cap.
     step_size: int = 2
     max_checks_per_claim: int = 12

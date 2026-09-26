@@ -72,3 +72,16 @@ def test_answers_report_budget_use(rag):
     result = rag.ask("Why did Trial Two consume more energy than Trial One?")
     assert result.budget is not None
     assert result.budget.used_total <= result.budget.budget
+
+
+def test_local_llm_answer_is_verified_and_gated(rag):
+    pytest.importorskip("transformers")
+    try:
+        answered = rag.generate_answer("How much energy did Trial One consume per day?")
+    except Exception as exc:  # pragma: no cover - model download unavailable
+        pytest.skip(f"Local LLM unavailable: {exc}")
+    assert answered.check is not None
+    assert all(c.status == S.SUPPORTED for c in answered.check.claims)
+    assert "42 milliwatt-hours" in answered.final_text and answered.check.revised.citations
+    gated = rag.generate_answer("Which company manufactured the microcontroller?")
+    assert gated.abstained and gated.check is None   # QA answerability gate: nothing generated

@@ -85,7 +85,7 @@ def _subject_end(tokens: list[str], expect_verb: bool) -> int:
     if not tokens:
         return 0
     i = 0
-    if tokens[0][:1].isupper() or tokens[0][:1].isdigit():
+    if tokens[0].lower() not in _DETERMINERS and (tokens[0][:1].isupper() or tokens[0][:1].isdigit()):
         while i < len(tokens) and (tokens[i][:1].isupper() or tokens[i][:1].isdigit()):
             i += 1
         return i

@@ -72,6 +72,9 @@ def main(argv: list[str] | None = None) -> int:
     ask.add_argument("--no-verify", action="store_true", help="Skip claim verification (baseline)")
     ask.add_argument("--fixed-k", action="store_true", help="Use fixed top-k semantic retrieval (baseline)")
     ask.add_argument("--show-evidence", action="store_true", help="Print retrieved evidence with scores")
+    ask.add_argument("--generate", action="store_true",
+                     help="Experimental: draft the answer with a local LLM (Qwen2.5-0.5B-Instruct), "
+                          "then verify and revise it. The default extractive answerer measured better.")
 
     verify = sub.add_parser("verify", help="Verify the claims in a piece of text against sources")
     verify.add_argument("sources", nargs="+")
@@ -152,6 +155,20 @@ def main(argv: list[str] | None = None) -> int:
                 break
             question = questions.pop(0)
             print(f"\nQUESTION: {question}")
+        if args.generate:
+            gen = rag.generate_answer(question)
+            if args.json:
+                print(json.dumps(gen.to_dict(), indent=2))
+                continue
+            print(f"\nLLM DRAFT\n  {gen.draft}")
+            print(f"\nVERIFIED ANSWER\n  {gen.final_text}")
+            if gen.check:
+                for i, unit in enumerate(gen.check.revised.citations, start=1):
+                    print(f"  [{i}] {unit.citation()} ({unit.evidence_id}): \"{unit.text}\"")
+                print("\nCLAIM VERIFICATION")
+                for v in gen.check.claims:
+                    _print_claim(v)
+            continue
         result = rag.ask(question, verify=not args.no_verify, adaptive=not args.fixed_k)
         if args.json:
             print(json.dumps(result.to_dict(), indent=2))

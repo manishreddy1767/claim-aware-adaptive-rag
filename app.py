@@ -159,13 +159,31 @@ def ingestion_panel(rag) -> None:
 def ask_panel(rag) -> None:
     st.subheader("2. Ask a question")
     question = st.text_input("Question", placeholder="Why did Trial Two consume more energy?")
-    c1, c2 = st.columns(2)
+    c1, c2, c3 = st.columns(3)
     adaptive = c1.toggle("Adaptive retrieval", True, help="Off = fixed top-k semantic baseline")
     verify = c2.toggle("Claim verification", True, help="Off = answer without checking claims")
+    generate = c3.toggle("Local LLM draft (experimental)", False,
+                         help="Draft the answer with Qwen2.5-0.5B-Instruct, then verify and revise it. "
+                              "The default extractive answers measured more accurate.")
     if not st.button("Answer", type="primary", disabled=not question):
         return
     if not rag.index.documents:
         st.warning("Add at least one document or webpage first.")
+        return
+    if generate:
+        with st.spinner("Generating a draft with the local LLM and verifying it (first use downloads ~1 GB)..."):
+            gen = rag.generate_answer(question)
+        st.markdown("#### LLM draft (unverified)")
+        st.caption(gen.draft)
+        st.markdown("#### Verified answer")
+        (st.warning if gen.abstained else st.success)(gen.final_text)
+        if gen.check:
+            for i, unit in enumerate(gen.check.revised.citations, start=1):
+                st.markdown(f"**[{i}]** {unit.citation()} · `{unit.evidence_id}`\n\n> {unit.text}")
+            for n, v in enumerate(gen.check.claims):
+                render_claim(v, f"g{n}")
+            if gen.check.budget:
+                render_budget(gen.check.budget)
         return
     try:
         with st.spinner("Retrieving evidence and verifying claims..."):

@@ -1,0 +1,2766 @@
+{
+  "generator": "Qwen/Qwen2.5-0.5B-Instruct",
+  "squad_test": {
+    "summary": {
+      "n": 144,
+      "n_answerable": 72,
+      "n_unanswerable": 72,
+      "draft": {
+        "answer_accuracy": 0.5694,
+        "over_abstention": 0.1389,
+        "false_answer_rate": 0.25,
+        "overall_accuracy": 0.6597
+      },
+      "revised": {
+        "answer_accuracy": 0.4444,
+        "over_abstention": 0.3889,
+        "false_answer_rate": 0.1667,
+        "overall_accuracy": 0.6389
+      },
+      "extractive": {
+        "answer_accuracy": 0.8333,
+        "over_abstention": 0.1389,
+        "false_answer_rate": 0.25,
+        "overall_accuracy": 0.7917
+      },
+      "draft_claim_labels": {
+        "CONTRADICTED": 7,
+        "INSUFFICIENT_EVIDENCE": 5,
+        "SUPPORTED": 49,
+        "UNCERTAIN": 8
+      },
+      "mean_generation_latency_s": 0.5272
+    },
+    "rows": [
+      {
+        "question": "What can sympathetic Jurors in cases with civil disobedients?",
+        "answerable": true,
+        "gold": [
+          "jury nullification",
+          "jury nullification",
+          "jury nullification",
+          "nullification",
+          "nullification"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 12.888
+      },
+      {
+        "question": "What was the result of the disobedience protesting the nuclear site?",
+        "answerable": true,
+        "gold": [
+          "arrested",
+          "arrest",
+          "were immediately arrested",
+          "one at a time they stepped across the \"line\" and were immediately arrested",
+          "put on a bus and taken to the Nye County seat of Tonopah, Nevada, and arraigned for trial before the local Justice of the Peace"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What issue plagues the literature about civil disobedience?",
+        "answerable": true,
+        "gold": [
+          "semantical problems and grammatical niceties",
+          "maze of semantical problems and grammatical niceties",
+          "semantical problems and grammatical niceties",
+          "semantical problems and grammatical niceties"
+        ],
+        "draft": "The evidence states that there are semantical problems and grammatical niceties surrounding the use of the term \"civil disobedience.\"",
+        "revised": "There are semantical problems and grammatical niceties surrounding the use of the term \"civil disobedience.\". [1]",
+        "extractive": "In reviewing the voluminous literature on the subject, the student of civil disobedience rapidly finds himself surrounded by a maze of semantical problems and grammatical niceties. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.535
+      },
+      {
+        "question": "Stephen Eilmann demonstrates covert law breaking in Nazi Germany.   Citizen's illegally had been doing what? ",
+        "answerable": true,
+        "gold": [
+          "hiding a Jew in their house",
+          "hiding a Jew",
+          "hiding a Jew in their house",
+          "hiding a Jew in their house",
+          "hiding a Jew"
+        ],
+        "draft": "Civil disobedience",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "But Stephen Eilmann argues that if it is necessary to disobey rules that conflict with morality, we might ask why disobedience should take the form of public civil disobedience rather than simply covert lawbreaking. [1] The Fully Informed Jury Association's publication \"A Primer for Prospective Jurors\" notes, \"Think of the dilemma faced by German citizens when Hitler's secret police demanded to know if they were hiding a Jew in their house.\" [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.188
+      },
+      {
+        "question": "What two public agencies conflict under the defnintion of civil disobedience?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The two public agencies that conflict under the definition of civil disobedience are two equally sovereign branches of government.",
+        "revised": "The two public agencies that conflict under the definition of civil disobedience are two equally sovereign branches of government. [1]",
+        "extractive": "Civil disobedience is usually defined as pertaining to a citizen's relation to the state and its laws, as distinguished from a constitutional impasse in which two public agencies, especially two equally sovereign branches of government, conflict. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.94
+      },
+      {
+        "question": "How many missles were at the nuclear test site?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What applies to both collecting taxes and searching property?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "In what country was the 2004 Velvet Revolution?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The 2004 Velvet Revolution took place in Ukraine.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Unverified statements: [Unverified] The 2004 Velvet Revolution took place in Ukraine.",
+        "extractive": "It has been used in many nonviolent resistance movements in India (Gandhi's campaigns for independence from the British Empire), in Czechoslovakia's Velvet Revolution and in East Germany to oust their communist governments, In South Africa in the fight against apartheid, in the American Civil Rights Movement, in the Singing Revolution to bring independence to the Baltic countries from the Soviet Union, recently with the 2003 Rose Revolution in Georgia and the 2004 Orange Revolution in Ukraine, among other various movements worldwide. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 0.706
+      },
+      {
+        "question": "Construction involves the translation of what?",
+        "answerable": true,
+        "gold": [
+          "designs into reality",
+          "designs into reality",
+          "designs into reality"
+        ],
+        "draft": "Construction involves the translation of designs into reality.",
+        "revised": "Construction involves the translation of designs into reality. [1]",
+        "extractive": "In the modern industrialized world, construction usually involves the translation of designs into reality. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.463
+      },
+      {
+        "question": "What is the process of adding structure to real property or construction of buildings?",
+        "answerable": true,
+        "gold": [
+          "Building construction",
+          "Building construction",
+          "Building construction"
+        ],
+        "draft": "The process of adding structure to real property or construction of buildings involves building construction.",
+        "revised": "The process of adding structure to real property or construction of buildings involves building construction. [1]",
+        "extractive": "Building construction is the process of adding structure to real property or construction of buildings. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.736
+      },
+      {
+        "question": "What is one of the most dangerous occupations in the world?",
+        "answerable": true,
+        "gold": [
+          "Construction",
+          "Construction",
+          "Construction"
+        ],
+        "draft": "Construction is one of the most dangerous occupations in the world.",
+        "revised": "Construction is one of the most dangerous occupations in the world. [1]",
+        "extractive": "Construction is one of the most dangerous occupations in the world, incurring more occupational fatalities than any other sector in both the United States and in the European Union. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.574
+      },
+      {
+        "question": "What is PPP?",
+        "answerable": true,
+        "gold": [
+          "Public-Private Partnering",
+          "Public-Private Partnering",
+          "Public-Private Partnering"
+        ],
+        "draft": "PPP refers to a partnership between public and private entities for the provision of services or goods.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Unverified statements: [Unverified] PPP refers to a partnership between public and private entities for the provision of services or goods.",
+        "extractive": "New forms include partnering such as Public-Private Partnering (PPPs) aka private finance initiatives (PFIs) and alliances such as \"pure\" or \"project\" alliances and \"impure\" or \"strategic\" alliances. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 0.873
+      },
+      {
+        "question": "What does the owner produce to show how to attain the goals?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The owner produces a list of requirements and several D&B contractors' ideas to show how to attain the goals.",
+        "revised": "The owner produces a list of requirements and several D&B contractors' ideas to show how to attain the goals. [1][2]",
+        "extractive": "The owner produces a list of requirements for a project, giving an overall view of the project's goals. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.962
+      },
+      {
+        "question": "What is a trade magazine for design industry?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.026
+      },
+      {
+        "question": "What sector includes large public works but not utility distribution?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What does the contractor produce to let everyone see the project's goals?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "Where is Samuel Marsden Collegiate School located?",
+        "answerable": true,
+        "gold": [
+          "Wellington",
+          "Wellington",
+          "Wellington"
+        ],
+        "draft": "Samuel Marsden Collegiate School is located in Wellington.",
+        "revised": "Samuel Marsden Collegiate School is located in Wellington. [1]",
+        "extractive": "Private schools are often Anglican, such as King's College and Diocesan School for Girls in Auckland, St Paul's Collegiate School in Hamilton, St Peter's School in Cambridge, Samuel Marsden Collegiate School in Wellington, and Christ's College and St Margaret's College in Christchurch; or Presbyterian, such as Saint Kentigern College and St Cuthbert's College in Auckland, Scots College and Queen Margaret College in Wellington, and St Andrew's College and Rangi Ruru Girls' School in Christchurch. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.615
+      },
+      {
+        "question": "What are private secondary schools in Germany called?",
+        "answerable": true,
+        "gold": [
+          "Erg\u00e4nzungsschulen",
+          "Erg\u00e4nzungsschulen",
+          "Erg\u00e4nzungsschulen"
+        ],
+        "draft": "[3]",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "Nevertheless, Private Schools became insolvent in the past in Germany. [1] Erg\u00e4nzungsschulen are secondary or post-secondary (non-tertiary) schools, which are run by private individuals, private organizations or rarely, religious groups and offer a type of education which is not available at public schools. [2] Private schools generally prefer to be called independent schools, because of their freedom to operate outside of government and local government control. [3] Caveat: The right to create private schools in Germany is in Article 7, Paragraph 4 of the Grundgesetz and cannot be suspended even in a state of emergency. [4]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.186
+      },
+      {
+        "question": "The prospect of what event compelled the protection of German private schools?",
+        "answerable": true,
+        "gold": [
+          "second Gleichschaltung",
+          "a second Gleichschaltung",
+          "a second Gleichschaltung"
+        ],
+        "draft": "The prospect of a second Gleichschaltung compelled the protection of German private schools.",
+        "revised": "The prospect of a second Gleichschaltung compelled the protection of German private schools. [1][2]",
+        "extractive": "This unusual protection of private schools was implemented to protect these schools from a second Gleichschaltung or similar event in the future. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.806
+      },
+      {
+        "question": "In what century did missionaries notably establish church schools in South Africa?",
+        "answerable": true,
+        "gold": [
+          "nineteenth",
+          "nineteenth",
+          "nineteenth century"
+        ],
+        "draft": "The evidence states that some of the oldest schools in South Africa are private church schools that were established by missionaries in the early nineteenth century. Therefore, the missionaries notably established church schools in South Africa in the 1800s.",
+        "revised": "Some of the oldest schools in South Africa are private church schools that were established by missionaries in the early nineteenth century. [1] [Unverified] Therefore, the missionaries notably established church schools in South Africa in the 1800s.",
+        "extractive": "Some of the oldest schools in South Africa are private church schools that were established by missionaries in the early nineteenth century. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED",
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 2.074
+      },
+      {
+        "question": "What was abolished during the apartheid era?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What Catholic society in Wanganui is affiliated with Academic Colleges Group?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The Catholic schismatic group, the Society of St Pius X, operates three private schools in Wanganui.",
+        "revised": "The Catholic schismatic group, the Society of St Pius X, operates three private schools in Wanganui. [1]",
+        "extractive": "There are three private schools (including the secondary school, St Dominic's College) operated by the Catholic schismatic group, the Society of St Pius X in Wanganui. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.018
+      },
+      {
+        "question": "What program provides financial assistance for tuition and fees for a college or technical education?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "Who was part of the case with Wisconsin in 1976?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What is the size of the school's endowment?",
+        "answerable": true,
+        "gold": [
+          "$37.6 billion",
+          "$37.6 billion",
+          "$37.6 billion"
+        ],
+        "draft": "The Harvard endowment is the largest of any academic institution.",
+        "revised": "The Harvard endowment is the largest of any academic institution. [1]",
+        "extractive": "Harvard's $37.6 billion financial endowment is the largest of any academic institution. [1] Harvard has the largest university endowment in the world. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.589
+      },
+      {
+        "question": "Agassiz's approach to science combined observation and what?",
+        "answerable": true,
+        "gold": [
+          "intuition",
+          "intuition",
+          "intuition"
+        ],
+        "draft": "intuition",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "Agassiz's perspective on science combined observation with intuition and the assumption that a person can grasp the \"divine plan\" in all phenomena. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.158
+      },
+      {
+        "question": "After 2007 how much do student from families earning less than $60,000 pay for school?",
+        "answerable": true,
+        "gold": [
+          "nothing for their children to attend, including room and board",
+          "nothing",
+          "nothing"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.038
+      },
+      {
+        "question": "What Shakespeare Scholar is a faculty member at Harvard?",
+        "answerable": true,
+        "gold": [
+          "Stephen Greenblatt",
+          "Stephen Greenblatt",
+          "Stephen Greenblatt"
+        ],
+        "draft": "The Shakespeare Scholar is a faculty member at Harvard.",
+        "revised": "The Shakespeare Scholar is a faculty member at Harvard. [1]",
+        "extractive": "Harvard's alumni include eight U.S. presidents, several foreign heads of state, 62 living billionaires, 335 Rhodes Scholars, and 242 Marshall Scholars. [1] Moreover, the honors of \"John Harvard Scholar\" and \"Harvard College Scholar\" will now be given only to the top 5 percent and the next 5 percent of each class. [2] Harvard's faculty includes scholars such as biologist E. O. Wilson, cognitive scientist Steven Pinker, physicists Lisa Randall and Roy Glauber, chemists Elias Corey, Dudley R. Herschbach and George M. Whitesides, computer scientists Michael O. Rabin and Leslie Valiant, Shakespeare scholar Stephen Greenblatt, writer Louis Menand, critic Helen Vendler, historians Henry Louis Gates, Jr. and Niall Ferguson, economists Amartya Sen, N. Gregory Mankiw, Robert Barro, Stephen A. Marglin, Don M. Wilson III and Martin Feldstein, political philosophers Harvey Mansfield, Baroness Shirley Williams and Michael Sandel, Fields Medalist mathematician Shing-Tung Yau, political scientists Robert Putnam, Joseph Nye, and Stanley Hoffmann, scholar/composers Robert Levin and Bernard Rands, astrophysicist Alyssa A. Goodman, and legal scholars Alan Dershowitz and Lawrence Lessig. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.593
+      },
+      {
+        "question": "How many books are endorsed by the American Library Association?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "During what period were women not banned from being admitted to Radcliffe?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What event did Cornell win in 2003?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What applicants does the Carnegie Foundation want to have more support for?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What is the land area of Jacksonville?",
+        "answerable": true,
+        "gold": [
+          "874.3 square miles",
+          "874.3 square miles",
+          "874.3 square miles"
+        ],
+        "draft": "The land area of Jacksonville is 874.3 square miles (2,264 km\u00b2).",
+        "revised": "The land area of Jacksonville is 874.3 square miles (2,264 km\u00b2). [1]",
+        "extractive": "According to the United States Census Bureau, the city has a total area of 874.3 square miles (2,264 km2), making Jacksonville the largest city in land area in the contiguous United States; of this, 86.66% (757.7 sq mi or 1,962 km2) is land and; 13.34% (116.7 sq mi or 302 km2) is water. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.009
+      },
+      {
+        "question": "Who gained control of Florida after the conclusion of the Revolutionary War?",
+        "answerable": true,
+        "gold": [
+          "Spain",
+          "Spain",
+          "Spain"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "When does rain typically fall in Jacksonville?",
+        "answerable": true,
+        "gold": [
+          "May through September",
+          "May through September",
+          "the warmest months from May through September"
+        ],
+        "draft": "May through September.",
+        "revised": "May through September. [1]",
+        "extractive": "Like much of the south Atlantic region of the United States, Jacksonville has a humid subtropical climate (K\u00f6ppen Cfa), with mild weather during winters and hot and humid weather during summers. [1] Seasonal rainfall is concentrated in the warmest months from May through September, while the driest months are from November through April. [2] Due to Jacksonville's low latitude and coastal location, the city sees very little cold weather, and winters are typically mild and sunny. [3]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.344
+      },
+      {
+        "question": "Other than the steamboat, what modern form of travel brought visitors to Florida?",
+        "answerable": true,
+        "gold": [
+          "railroad",
+          "railroad",
+          "railroad"
+        ],
+        "draft": "The evidence states that visitors arrived by steamboat and later by railroad.",
+        "revised": "Visitors arrived by steamboat and later by railroad. [1]",
+        "extractive": "As a result, the northeastern Florida area prospered economically more than it had under the Spanish. [1] Visitors arrived by steamboat and later by railroad. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.655
+      },
+      {
+        "question": "What has made Jacksonville a major military and civilian court since the 1900s?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "How many women older than eighteen are there for every 100 men?",
+        "answerable": false,
+        "gold": [],
+        "draft": "For every 100 females age 18 and over, there were 91.3 males.",
+        "revised": "For every 100 females age 18 and over, there were 91.3 males. [1]",
+        "extractive": "For every 100 females there were 94.1 males. [1] For every 100 females age 18 and over, there were 91.3 males. [2]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.069
+      },
+      {
+        "question": "What did Jacksonville suffer from following World War I?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.035
+      },
+      {
+        "question": "What was the name of the battle that marked the first Confederate loss in Florida?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What does the marginal value added by an economic actor determine?",
+        "answerable": true,
+        "gold": [
+          "wages and profits",
+          "wages and profits",
+          "wages and profits"
+        ],
+        "draft": "The marginal value added by an economic actor determines their wage and profit levels.",
+        "revised": "The marginal value added by an economic actor determines their wage and profit levels. [1]",
+        "extractive": "In this perspective, wages and profits are determined by the marginal value added of each economic actor (worker, capitalist/business owner, landlord). [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.698
+      },
+      {
+        "question": "Who does a gender pay gap tend to favor?",
+        "answerable": true,
+        "gold": [
+          "males in the labor market",
+          "males",
+          "males"
+        ],
+        "draft": "Males.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "In many countries, there is a Gender pay gap in favor of males in the labor market. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.186
+      },
+      {
+        "question": "What do wages work in the same way as for any other good?",
+        "answerable": true,
+        "gold": [
+          "prices",
+          "function of market price of skill",
+          "prices"
+        ],
+        "draft": "Wages work in the same way as for any other good because they are functions of market price of skill.",
+        "revised": "Wages work in the same way as for any other good because they are functions of market price of skill. [1][2]",
+        "extractive": "Wages work in the same way as prices for any other good. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.959
+      },
+      {
+        "question": "What do conservative researchers fell should be a measure of inequality?",
+        "answerable": true,
+        "gold": [
+          "consumption",
+          "consumption",
+          "consumption"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What scale doesn't trade liberalization shift economic inequality from?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What is the potential earnings for a job where there are many skilled workers but many available positions?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The potential earnings for a job where there are many skilled workers but many available positions would likely be lower than if there were fewer skilled workers.",
+        "revised": "Correction: the claim \"The potential earnings for a job where there are many skilled workers but many available positions would likely be lower than if there were fewer skilled workers.\" conflicts with the sources, which state: A job where there are few able or willing workers (low supply), but a large need for the positions (high demand), will result in high wages for that job. [1]",
+        "extractive": "A job where there are few able or willing workers (low supply), but a large need for the positions (high demand), will result in high wages for that job. (verification was inconclusive) [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 1.269
+      },
+      {
+        "question": "What can and old, ill man do?",
+        "answerable": false,
+        "gold": [],
+        "draft": "An old, ill man can't earn as much as a healthy young man.",
+        "revised": "An old, ill man can't earn as much as a healthy young man. [1]",
+        "extractive": "An old, ill man cannot earn as much as a healthy young man; gender roles and customs may prevent a woman from receiving an education or working outside the home. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.754
+      },
+      {
+        "question": "What do the top 400 richest Americans have less of than half of all Americans combined?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What division offers more then one branch of studies that don't fit in with the other four?",
+        "answerable": true,
+        "gold": [
+          "the New Collegiate Division",
+          "New Collegiate Division",
+          "New Collegiate Division"
+        ],
+        "draft": "The New Collegiate Division offers more than one branch of studies that don't fit in with the other four divisions.",
+        "revised": "The New Collegiate Division offers more than one branch of studies that don't fit in with the other four divisions. [1]",
+        "extractive": "The first four are sections within their corresponding graduate divisions, while the New Collegiate Division administers interdisciplinary majors and studies which do not fit in one of the other four divisions. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.055
+      },
+      {
+        "question": "What is the name of the Pulitzer Prize novelist who was also a university alumni? ",
+        "answerable": true,
+        "gold": [
+          "Philip Roth",
+          "Philip Roth",
+          "Philip Roth"
+        ],
+        "draft": "Philip Roth is the Pulitzer Prize novelist who was also an alumni.",
+        "revised": "Philip Roth is the Pulitzer Prize novelist who was also an alumni. [1]",
+        "extractive": "In literature, author of the New York Times bestseller Before I Fall Lauren Oliver, Pulitzer Prize winning novelist Philip Roth, Canadian-born Pulitzer Prize and Nobel Prize for Literature winning writer Saul Bellow, political philosopher, literary critic and author of the New York Times bestseller \"The Closing of the American Mind\" Allan Bloom, ''The Good War\" author Studs Terkel, American writer, essayist, filmmaker, teacher, and political activist Susan Sontag, analytic philosopher and Stanford University Professor of Comparative Literature Richard Rorty, and American writer and satirist Kurt Vonnegut are notable alumni. (verification was inconclusive) [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.671
+      },
+      {
+        "question": "When was the University of Chicago established?",
+        "answerable": true,
+        "gold": [
+          "1890",
+          "1890",
+          "1890",
+          "1890"
+        ],
+        "draft": "The University of Chicago was established in 1890.",
+        "revised": "The University of Chicago was established in 1890. [1][2]",
+        "extractive": "The University of Chicago (UChicago, Chicago, or U of C) is a private research university in Chicago. [1] The university, established in 1890, consists of The College, various graduate programs, interdisciplinary committees organized into four academic research divisions and seven professional schools. [2] In 2008, the University of Chicago announced plans to establish the Milton Friedman Institute which attracted both support and controversy from faculty members and students. [3]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.612
+      },
+      {
+        "question": "What are the first buildings the university built knows as today?",
+        "answerable": true,
+        "gold": [
+          "the Main Quadrangles",
+          "Main Quadrangles",
+          "the Main Quadrangles",
+          "the Main Quadrangles"
+        ],
+        "draft": "The first buildings the university built know as today are the Main Quadrangles.",
+        "revised": "The first buildings the university built know as today are the Main Quadrangles. [1][2]",
+        "extractive": "The first buildings of the University of Chicago campus, which make up what is now known as the Main Quadrangles, were part of a \"master plan\" conceived by two University of Chicago trustees and plotted by Chicago architect Henry Ives Cobb. [1] In 1955, Eero Saarinen was contracted to develop a second master plan, which led to the construction of buildings both north and south of the Midway, including the Laird Bell Law Quadrangle (a complex designed by Saarinen); a series of arts buildings; a building designed by Ludwig Mies van der Rohe for the university's School of Social Service Administration;, a building which is to become the home of the Harris School of Public Policy Studies by Edward Durrell Stone, and the Regenstein Library, the largest building on campus, a brutalist structure designed by Walter Netsch of the Chicago firm Skidmore, Owings & Merrill. (verification was inconclusive) [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.726
+      },
+      {
+        "question": "In what year did the Walker Museum create and incorporate the U of C as a coed institution?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.039
+      },
+      {
+        "question": "What year did the College have the highest acceptance rate in its history?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.037
+      },
+      {
+        "question": "Which University's College grants academic minors in 50 subject areas?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The University that grants academic minors in 50 subject areas is the College of the University of Chicago.",
+        "revised": "Correction: the claim \"The University that grants academic minors in 50 subject areas is the College of the University of Chicago.\" conflicts with the sources, which state: The College of the University of Chicago grants Bachelor of Arts and Bachelor of Science degrees in 50 academic majors and 28 minors. [1]",
+        "extractive": "The College of the University of Chicago grants Bachelor of Arts and Bachelor of Science degrees in 50 academic majors and 28 minors. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 0.924
+      },
+      {
+        "question": "When was the Miller-Urey experiment conducted?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.036
+      },
+      {
+        "question": "What was the Song dynasty's capital?",
+        "answerable": true,
+        "gold": [
+          "Hangzhou",
+          "Hangzhou",
+          "Hangzhou"
+        ],
+        "draft": "Hangzhou",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "Kublai captured the Song capital of Hangzhou in 1276, the wealthiest city of China. [1] Song loyalists escaped from the capital and enthroned a young child as Emperor Bing of Song. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.154
+      },
+      {
+        "question": "When did the Jin dynasty end?",
+        "answerable": true,
+        "gold": [
+          "1234",
+          "1234",
+          "1234"
+        ],
+        "draft": "The Jin dynasty ended in 1368.",
+        "revised": "Correction: the claim \"The Jin dynasty ended in 1368.\" conflicts with the sources, which state: One of his successful projects was to finish the long-stalled official histories of the Liao, Jin, and Song dynasties, which were eventually completed in 1345. [1]",
+        "extractive": "Shi Tianze was a Han Chinese who lived in the Jin dynasty. [1] During the Southern Song dynasty the descendant of Confucius at Qufu, the Duke Yansheng Kong Duanyou fled south with the Song Emperor to Quzhou, while the newly established Jin dynasty (1115\u20131234) in the north appointed Kong Duanyou's brother Kong Duancao who remained in Qufu as Duke Yansheng. [2] The last Song emperor drowned, bringing an end to the Song dynasty. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 0.547
+      },
+      {
+        "question": "There were many Chinese with what unexpected status?",
+        "answerable": true,
+        "gold": [
+          "rich and well socially standing",
+          "rich and well",
+          "rich and well socially standing"
+        ],
+        "draft": "The evidence states that there were many Chinese with second-class citizenship.",
+        "revised": "There were many Chinese with second-class citizenship. [1][2]",
+        "extractive": "Nevertheless, socially the educated Chinese elite were in general not given the degree of esteem that they had been accorded previously under native Chinese dynasties. [1] Although the traditional Chinese elite were not given their share of power, the Mongols and the Semuren (various allied groups from Central Asia and the western end of the empire) largely remained strangers to the mainstream Chinese culture, and this dichotomy gave the Yuan regime a somewhat strong \"colonial\" coloration. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "wrong",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.658
+      },
+      {
+        "question": "What Jewish practice did the Yuan ban?",
+        "answerable": true,
+        "gold": [
+          "Kosher butchering",
+          "Kosher butchering"
+        ],
+        "draft": "[2] Some policies of the Yuan Emperors severely discriminated against them, restricting Halal slaughter and other Islamic practices like circumcision, as well as Kosher butchering for Jews, forcing them to eat food the Mongol way.",
+        "revised": "Some policies of the Yuan Emperors severely discriminated against them, restricting Halal slaughter and other Islamic practices like circumcision, as well as Kosher butchering for Jews, forcing them to eat food the Mongol way. [1]",
+        "extractive": "There were many religions practiced during the Yuan dynasty, such as Buddhism, Islam, and Christianity. [1] Despite the high position given to Muslims, some policies of the Yuan Emperors severely discriminated against them, restricting Halal slaughter and other Islamic practices like circumcision, as well as Kosher butchering for Jews, forcing them to eat food the Mongol way. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 2.001
+      },
+      {
+        "question": "When did Zhu Shijie get a new job?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "Who was Ayurbarwada's daughter?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": " Which sciences were often practiced together by the same artists?",
+        "answerable": false,
+        "gold": [],
+        "draft": "Calligraphy and poetry.",
+        "revised": "Calligraphy and poetry. [1]",
+        "extractive": "Due to the coming together of painting, poetry, and calligraphy at this time many of the artists practicing these different pursuits were the same individuals, though perhaps more famed for one area of their achievements than others. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.311
+      },
+      {
+        "question": "Who were the Samuron?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.039
+      },
+      {
+        "question": "Low doses of anti-inflammatories are sometimes used with what classes of drugs?",
+        "answerable": true,
+        "gold": [
+          "cytotoxic or immunosuppressive drugs",
+          "cytotoxic or immunosuppressive",
+          "Cytotoxic drugs"
+        ],
+        "draft": "Lower doses of anti-inflammatory drugs are often used in conjunction with cytotoxic or immunosuppressive drugs like methotrexate or azathioprine.",
+        "revised": "Lower doses of anti-inflammatory drugs are often used in conjunction with cytotoxic or immunosuppressive drugs like methotrexate or azathioprine. [1]",
+        "extractive": "Lower doses of anti-inflammatory drugs are often used in conjunction with cytotoxic or immunosuppressive drugs such as methotrexate or azathioprine. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.308
+      },
+      {
+        "question": "When was the first known historical reference to immunity?",
+        "answerable": true,
+        "gold": [
+          "Athens in 430 BC",
+          "430 BC",
+          "430 BC."
+        ],
+        "draft": "The earliest known historical reference to immunity was during the plague of Athens in 430 BC.",
+        "revised": "The earliest known historical reference to immunity was during the plague of Athens in 430 BC. [1][2]",
+        "extractive": "The earliest known reference to immunity was during the plague of Athens in 430 BC. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.944
+      },
+      {
+        "question": "What are two examples of cytotoxic or immunosuppressive drugs?",
+        "answerable": true,
+        "gold": [
+          "methotrexate or azathioprine",
+          "methotrexate or azathioprine",
+          "methotrexate or azathioprine"
+        ],
+        "draft": "Cytotoxic drugs and immunosuppressive drugs are examples given.",
+        "revised": "Cytotoxic drugs and immunosuppressive drugs are examples given. [1][2]",
+        "extractive": "Lower doses of anti-inflammatory drugs are often used in conjunction with cytotoxic or immunosuppressive drugs such as methotrexate or azathioprine. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.654
+      },
+      {
+        "question": "Melatonin during sleep can actively counteract the production of what?",
+        "answerable": true,
+        "gold": [
+          "free radical production",
+          "free radical",
+          "free radical production"
+        ],
+        "draft": "Melatonin during sleep can actively counteract the production of free radicals.",
+        "revised": "Melatonin during sleep can actively counteract the production of free radicals. [1]",
+        "extractive": "Inflammation causes a great deal of oxidative stress and the presence of melatonin during sleep times could actively counteract free radical production during this time. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.657
+      },
+      {
+        "question": "What is a hormone that does not effect the immune system?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What cells attack smaller pathogens through contact?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.026
+      },
+      {
+        "question": "What are the least powerful anti-inflammatory drugs?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What is an infection caused by an overgrowth of bacteria?",
+        "answerable": false,
+        "gold": [],
+        "draft": "A vaginal candidiasis caused by an overgrowth of fungi.",
+        "revised": "A vaginal candidiasis caused by an overgrowth of fungi. [1]",
+        "extractive": "However, since most antibiotics non-specifically target bacteria and do not affect fungi, oral antibiotics can lead to an \"overgrowth\" of fungi and cause conditions such as a vaginal candidiasis (a yeast infection). [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.664
+      },
+      {
+        "question": "Who is the chair of the IPCC?",
+        "answerable": true,
+        "gold": [
+          "Hoesung Lee",
+          "Hoesung Lee",
+          "Hoesung Lee"
+        ],
+        "draft": "The chair of the IPCC is Hoesung Lee.",
+        "revised": "The chair of the IPCC is Hoesung Lee. [1]",
+        "extractive": "Korean economist Hoesung Lee is the chair of the IPCC since October 8, 2015, following the election of the new IPCC Bureau. [1] Before this election, the IPCC was led by his vice-Chair Ismail El Gizouli, who was designated acting Chair after the resignation of Rajendra K. Pachauri in February 2015. [2] The chair is assisted by an elected bureau including vice-chairs, working group co-chairs, and a secretariat. [3]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.54
+      },
+      {
+        "question": "When was a study published confirming the 2001 IPCC projections?",
+        "answerable": true,
+        "gold": [
+          "1 February 2007",
+          "1 February 2007",
+          "1 February 2007"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "When was the IPCC Fourth Assessment Report published?",
+        "answerable": true,
+        "gold": [
+          "2007",
+          "2007",
+          "2007"
+        ],
+        "draft": "February 2010",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "In addition to climate assessment reports, the IPCC is publishing Special Reports on specific topics. [1] The IPCC Fourth Assessment Report (AR4) published in 2007 featured a graph showing 12 proxy based temperature reconstructions, including the three highlighted in the 2001 Third Assessment Report (TAR); Mann, Bradley & Hughes 1999 as before, Jones et al. 1998 and Briffa 2000 had both been calibrated by newer studies. [2] In February 2010, in response to controversies regarding claims in the Fourth Assessment Report, five climate scientists \u2013 all contributing or lead IPCC report authors \u2013 wrote in the journal Nature calling for changes to the IPCC. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.325
+      },
+      {
+        "question": "Who was chairman of the House Science Committee?",
+        "answerable": true,
+        "gold": [
+          "Sherwood Boehlert",
+          "Sherwood Boehlert",
+          "Sherwood Boehlert"
+        ],
+        "draft": "Sherwood Boehlert",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "Joe Barton, chairman of the House Committee on Energy and Commerce wrote joint letters with Ed Whitfield, Chairman of the Subcommittee on Oversight and Investigations demanding full records on climate research, as well as personal information about their finances and careers, from Mann, Bradley and Hughes. [1] Sherwood Boehlert, chairman of the House Science Committee, said this was a \"misguided and illegitimate investigation\" apparently aimed at intimidating scientists, and at his request the U.S. National Academy of Sciences arranged for its National Research Council to set up a special investigation. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.271
+      },
+      {
+        "question": "What metaphors explained global warming? ",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What year did more than 375 officials attend the IPCC Bureau session?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What organization can only certain members belong to?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "When will enhanced greenhouse effect reach alarming levels?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.036
+      },
+      {
+        "question": "Of what form are Sophie Germain primes?",
+        "answerable": true,
+        "gold": [
+          "2p + 1",
+          "2p + 1 with p prime",
+          "2p + 1 with p prime",
+          "2p + 1",
+          "2p + 1"
+        ],
+        "draft": "Sophie Germain primes are of the form \\(2p+1\\) with \\(p\\) being a prime number.",
+        "revised": "Sophie Germain primes are of the form \\(2p+1\\) with \\(p\\) being a prime number. [1]",
+        "extractive": "Other primes where either p + 1 or p \u2212 1 is of a particular shape include the Sophie Germain primes (primes of the form 2p + 1 with p prime), primorial primes, Fermat primes and Mersenne primes, that is, prime numbers that are of the form 2p \u2212 1, where p is an arbitrary prime. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.043
+      },
+      {
+        "question": "Besides public key cryptography, what is another application for prime numbers?",
+        "answerable": true,
+        "gold": [
+          "hash tables",
+          "hash tables",
+          "hash tables and pseudorandom number generators",
+          "hash tables and pseudorandom number generators"
+        ],
+        "draft": "Hash tables and pseudorandom number generators use prime numbers.",
+        "revised": "Hash tables and pseudorandom number generators use prime numbers. [1]",
+        "extractive": "However, this vision was shattered in the 1970s, when it was publicly announced that prime numbers could be used as the basis for the creation of public key cryptography algorithms. [1] Prime numbers are also used for hash tables and pseudorandom number generators. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.582
+      },
+      {
+        "question": "What theorem remains valid in unique factorization domains?",
+        "answerable": true,
+        "gold": [
+          "The fundamental theorem of arithmetic",
+          "theorem of arithmetic",
+          "fundamental theorem of arithmetic",
+          "The fundamental theorem of arithmetic"
+        ],
+        "draft": "The fundamental theorem of arithmetic remains valid in unique factorization domains.",
+        "revised": "The fundamental theorem of arithmetic remains valid in unique factorization domains. [1]",
+        "extractive": "The fundamental theorem of arithmetic continues to hold in unique factorization domains. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.619
+      },
+      {
+        "question": "Which theorem states that all large odd integers can be expressed as a sum of three primes?",
+        "answerable": true,
+        "gold": [
+          "Vinogradov's theorem",
+          "Vinogradov's",
+          "Vinogradov's theorem",
+          "Vinogradov's theorem"
+        ],
+        "draft": "Vinogradov's theorem",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Unverified statements: [Unverified] Vinogradov's theorem.",
+        "extractive": "Weaker statements than this have been proven, for example Vinogradov's theorem says that every sufficiently large odd integer can be written as a sum of three primes. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 0.372
+      },
+      {
+        "question": "If 15 were to be considered as prime what would the sieve of Eratosthenes yield for all other numbers?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "How can any knot be a field of F?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "What is the name of one algorithm useful for conveniently testing the primality of decimal digits?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The name of one algorithm useful for conveniently testing the primality of decimal digits is the Miller\u2013Rabin primality test.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Unverified statements: [Unverified] The name of one algorithm useful for conveniently testing the primality of decimal digits is the Miller\u2013Rabin primality test.",
+        "extractive": "Algorithms much more efficient than trial division have been devised to test the primality of large numbers. [1] These include the Miller\u2013Rabin primality test, which is fast but has a small probability of error, and the AKS primality test, which always produces the correct answer in polynomial time but is too slow to be practical. [2]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 1.149
+      },
+      {
+        "question": "What does the Sieve of Euclid do?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "When was the Rhine fully within the Holy Roman Empire?",
+        "answerable": true,
+        "gold": [
+          "10th century",
+          "10th century",
+          "10th century"
+        ],
+        "draft": "The Rhine was fully within the Holy Roman Empire by the 10th century.",
+        "revised": "The Rhine was fully within the Holy Roman Empire by the 10th century. [1][2]",
+        "extractive": "In the 9th, it formed part of the border between Middle and Western Francia, but in the 10th century, it was fully within the Holy Roman Empire, flowing through Swabia, Franconia and Lower Lorraine. [1] The mouths of the Rhine, in the county of Holland, fell to the Burgundian Netherlands in the 15th century; Holland remained contentious territory throughout the European wars of religion and the eventual collapse of the Holy Roman Empire, when the length of the Rhine fell to the First French Empire and its client states. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.85
+      },
+      {
+        "question": "What is the Rhine Gorge listed as?",
+        "answerable": true,
+        "gold": [
+          "UNESCO World Heritage Site.",
+          "UNESCO World Heritage Site",
+          "World Heritage Site"
+        ],
+        "draft": "The Rhine Gorge is listed as a UNESCO World Heritage Site.",
+        "revised": "The Rhine Gorge is listed as a UNESCO World Heritage Site. [1]",
+        "extractive": "Between Bingen and Bonn, the Middle Rhine flows through the Rhine Gorge, a formation which was created by erosion. [1] The Rhine Gorge between R\u00fcdesheim am Rhein and Koblenz is listed as a UNESCO World Heritage Site. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.739
+      },
+      {
+        "question": "Where does the Rhine begin? ",
+        "answerable": true,
+        "gold": [
+          "Old Rhine Bridge at Constance",
+          "Old Rhine Bridge at Constance",
+          "the Old Rhine Bridge at Constance",
+          "Old Rhine Bridge at Constance",
+          "Old Rhine Bridge"
+        ],
+        "draft": "The Rhine begins in the Swiss canton of Graub\u00fcnden.",
+        "revised": "The Rhine begins in the Swiss canton of Graub\u00fcnden. [1]",
+        "extractive": "The Rhine (Romansh: Rein, German: Rhein, French: le Rhin, Dutch: Rijn) is a European river that begins in the Swiss canton of Graub\u00fcnden in the southeastern Swiss Alps, forms part of the Swiss-Austrian, Swiss-Liechtenstein border, Swiss-German and then the Franco-German border, then flows through the Rhineland and eventually empties into the North Sea in the Netherlands. [1] The Alpine Rhine begins in the most western part of the Swiss canton of Graub\u00fcnden, and later forms the border between Switzerland to the West and Liechtenstein and later Austria to the East. [2] At the begin of the Holocene (~11,700 years ago), the Rhine occupied its Late-Glacial valley. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "wrong",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.696
+      },
+      {
+        "question": "How did the Rhine extend watershed southward? ",
+        "answerable": true,
+        "gold": [
+          "stream capture",
+          "stream capture",
+          "stream capture"
+        ],
+        "draft": "The Rhine extended its watershed southward through stream capture.",
+        "revised": "The Rhine extended its watershed southward through stream capture. [1]",
+        "extractive": "Through stream capture, the Rhine extended its watershed southward. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.584
+      },
+      {
+        "question": "When was the Zuider Zee brackish lagoon discovered?",
+        "answerable": false,
+        "gold": [],
+        "draft": "Since 1932",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "The river IJssel branch flows to the north and enters the IJsselmeer, formerly the Zuider Zee brackish lagoon; however, since 1932, a freshwater lake. [1] The error was discovered in 2010, and the Dutch Rijkswaterstaat confirms the length at 1,232 kilometres (766 miles).[note 1] [2]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [],
+        "generation_latency_s": 0.301
+      },
+      {
+        "question": "How much water does the Rhine discharge at the French border?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "Where does the IJssel and Nederrijn redistribute into?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "In what year was \"the Romantic Rhine\" site built?",
+        "answerable": false,
+        "gold": [],
+        "draft": "2002",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "It is a UNESCO World Heritage Site (2002) and known as \"the Romantic Rhine\", with more than 40 castles and fortresses from the Middle Ages and many quaint and lovely country villages. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [],
+        "generation_latency_s": 0.223
+      },
+      {
+        "question": "What type of amendments might members opposed to a bill put on the table?",
+        "answerable": true,
+        "gold": [
+          "wrecking",
+          "wrecking",
+          "\"wrecking amendments\""
+        ],
+        "draft": "Wrecking amendments.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "Opposition members can table \"wrecking amendments\" to the bill, designed to thwart further progress and take up parliamentary time, to cause the bill to fall without a final vote being taken. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.272
+      },
+      {
+        "question": "What does the Scotland Act of 2012 extend?",
+        "answerable": true,
+        "gold": [
+          "devolved competencies",
+          "devolved competencies",
+          "the devolved competencies"
+        ],
+        "draft": "The Scotland Act of 2012 extends the devolved competencies.",
+        "revised": "The Scotland Act of 2012 extends the devolved competencies. [1]",
+        "extractive": "The Scotland Act 2012 extends the devolved competencies. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.736
+      },
+      {
+        "question": "What is also decided by the Presiding Officer?",
+        "answerable": true,
+        "gold": [
+          "amount of time for which they are allowed to speak",
+          "amount of time for which they are allowed to speak",
+          "the amount of time for which they are allowed to speak"
+        ],
+        "draft": "The Presiding Officer decides who speaks in chamber debates and the amount of time they are allowed to speak.",
+        "revised": "The Presiding Officer decides who speaks in chamber debates and the amount of time they are allowed to speak. [1]",
+        "extractive": "Principally, the role of the Presiding Officer is to chair chamber proceedings and the Scottish Parliamentary Corporate Body. [1] During debates, the Presiding Officer (or the deputy) is assisted by the parliamentary clerks, who give advice on how to interpret the standing orders that govern the proceedings of meetings. [2] The Presiding Officer (or Deputy Presiding Officer) decides who speaks in chamber debates and the amount of time for which they are allowed to speak. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.941
+      },
+      {
+        "question": "What does being an MSP share with the House of Commons?",
+        "answerable": true,
+        "gold": [
+          "a number of qualifications",
+          "a number of qualifications",
+          "qualifications"
+        ],
+        "draft": "Being an MSP shares similarities with the House of Commons, particularly in terms of formal style and the role of prayers as the first item of business.",
+        "revised": "Correction: the claim \"Being an MSP shares similarities with the House of Commons, particularly in terms of formal style and the role of prayers as the first item of business.\" conflicts with the sources, which state: This contrasts with the formal style of \"Prayers\", which is the first item of business in meetings of the House of Commons. [1]",
+        "extractive": "As in the House of Commons, a number of qualifications apply to being an MSP. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 1.229
+      },
+      {
+        "question": "A member of what parliament can introduce a bill as a public member?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.048
+      },
+      {
+        "question": "Following the Liberal victory in 2015, standing orders were changed to do what?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What is submitted to only part of Parliament for a full debate?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What was not considered an important element in Scottish national identity?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What percentage of seats did political parties identifying as Islamist win in the Egyptian parliamentary election of 2011-2012?",
+        "answerable": true,
+        "gold": [
+          "75% of the total seats",
+          "75%",
+          "75%"
+        ],
+        "draft": "The political parties identifying as Islamist won 75% of the total seats in the Egyptian parliamentary election of 2011-2012.",
+        "revised": "The political parties identifying as Islamist won 75% of the total seats in the Egyptian parliamentary election of 2011-2012. [1]",
+        "extractive": "In the Egyptian parliamentary election, 2011\u20132012, the political parties identified as \"Islamist\" (the Brotherhood's Freedom and Justice Party, Salafi Al-Nour Party and liberal Islamist Al-Wasat Party) won 75% of the total seats. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.348
+      },
+      {
+        "question": "When did the Iranian government enjoy something of a resurgence?",
+        "answerable": true,
+        "gold": [
+          "During the 2006 Israel-Lebanon conflict",
+          "the 2006 Israel-Lebanon conflict",
+          "2006"
+        ],
+        "draft": "The Iranian government enjoyed something of a resurgence during the 2006 Israel-Lebanon conflict.",
+        "revised": "The Iranian government enjoyed something of a resurgence during the 2006 Israel-Lebanon conflict. [1]",
+        "extractive": "During the 2006 Israel-Lebanon conflict, the Iranian government enjoyed something of a resurgence in popularity amongst the predominantly Sunni \"Arab street,\" due to its support for Hezbollah and to President Mahmoud Ahmadinejad's vehement opposition to the United States and his call that Israel shall vanish. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.948
+      },
+      {
+        "question": "Where does HAMAS want to establish an Islamic state?",
+        "answerable": true,
+        "gold": [
+          "Palestine",
+          "Palestine",
+          "Palestine"
+        ],
+        "draft": "Hamas wants to establish an Islamic state in Palestine.",
+        "revised": "Hamas wants to establish an Islamic state in Palestine. [1]",
+        "extractive": "Rather than being more moderate than the PLO, the 1988 Hamas charter took a more uncompromising stand, calling for the destruction of Israel and the establishment of an Islamic state in Palestine. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.636
+      },
+      {
+        "question": "What was apolitical Islam?",
+        "answerable": true,
+        "gold": [
+          "a historical fluke",
+          "political Islam",
+          "historical fluke"
+        ],
+        "draft": "Apolitical Islam refers to non-political forms of Islam, which are not aligned with the political role of Islam as presented by Islamists.",
+        "revised": "Apolitical Islam refers to non-political forms of Islam, which are not aligned with the political role of Islam as presented by Islamists. [1]",
+        "extractive": "Islamism is a controversial concept not just because it posits a political role for Islam but also because its supporters believe their views merely reflect Islam, while the contrary idea that Islam is, or can be, apolitical is an error. [1] Similarly, a writer for the International Crisis Group maintains that \"the conception of 'political Islam'\" is a creation of Americans to explain the Iranian Islamic Revolution and apolitical Islam was a historical fluke of the \"short-lived era of the heyday of secular Arab nationalism between 1945 and 1970\", and it is quietist/non-political Islam, not Islamism, that requires explanation. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.267
+      },
+      {
+        "question": "Who did the attacks resonate least with?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "The Brotherhood was the only opposition group outside of Egypt able to do what during elections?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What process do moderate and reformist Islamists not work within the boundaries of?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": " Whose puppet did Islamists support the Saudi regime of being?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "Who did the geographic scholars work for? ",
+        "answerable": true,
+        "gold": [
+          "colonizing empires",
+          "colonizing empires",
+          "colonizing empires",
+          "colonizing empires",
+          "colonizing empires"
+        ],
+        "draft": "The geographic scholars worked for the colonizing empires.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"The geographic scholars worked for the colonizing empires.\".",
+        "extractive": "According to geographic scholars under colonizing empires, the world could be split into climatic zones. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 0.602
+      },
+      {
+        "question": "According to Ellen Churchill Semple what type of climate was necessary for humans to become fully human?",
+        "answerable": true,
+        "gold": [
+          "temperate",
+          "temperate zone",
+          "the temperate zone",
+          "temperate zone",
+          "temperate"
+        ],
+        "draft": "Temperate climate",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "For instance, American geographer Ellen Churchill Semple argued that even though human beings originated in the tropics they were only able to become fully human in the temperate zone. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.186
+      },
+      {
+        "question": "What was a similar view about the Asian continent called?",
+        "answerable": true,
+        "gold": [
+          "orientalism",
+          "orientalism",
+          "orientalism",
+          "orientalism",
+          "orientalism"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "Who suggested that imperialism was the \"highest\" form of capitalism?",
+        "answerable": true,
+        "gold": [
+          "Lenin",
+          "Lenin",
+          "Lenin"
+        ],
+        "draft": "Lenin suggested that imperialism was the \"highest\" form of capitalism.",
+        "revised": "Lenin suggested that imperialism was the \"highest\" form of capitalism. [1]",
+        "extractive": "The Russian leader Lenin suggested that \"imperialism was the highest form of capitalism, claiming that imperialism developed after colonialism, and was distinguished from colonialism by monopoly capitalism\". [1] Lenin wrote extensively on the matter and famously declared that Imperialism was the highest stage of capitalism. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.658
+      },
+      {
+        "question": "According to certain Geographical theories what type of human does a non-tropical climate produce?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "A forced trade agreement between two countries is not an example of what?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "European imperialism was never focused on what?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": " J. A. Hobson didn't want which races to develop the world?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What was there a significant minority of in Warsaw?",
+        "answerable": true,
+        "gold": [
+          "Jewish",
+          "Jewish",
+          "Jewish"
+        ],
+        "draft": "There was a significant Jewish minority in Warsaw.",
+        "revised": "There was a significant Jewish minority in Warsaw. [1]",
+        "extractive": "In addition to the Polish majority, there was a significant Jewish minority in Warsaw. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.47
+      },
+      {
+        "question": "When did building activity in the palaces and churches take place in the later decades of?",
+        "answerable": true,
+        "gold": [
+          "17th century",
+          "17th century",
+          "17th century."
+        ],
+        "draft": "The evidence states that building activity occurred in numerous noble palaces and churches during the late 17th century. Therefore, the question asks when building activity took place in the later decades of the 17th century.",
+        "revised": "Building activity occurred in numerous noble palaces and churches during the late 17th century. [1] [Unverified] Therefore, the question asks when building activity took place in the later decades of the 17th century.",
+        "extractive": "Building activity occurred in numerous noble palaces and churches during the later decades of the 17th century. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED",
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 1.975
+      },
+      {
+        "question": "How many lakes are there in Warsaw?",
+        "answerable": true,
+        "gold": [
+          "several",
+          "several",
+          "several"
+        ],
+        "draft": "There are 13 lakes in Warsaw.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"There are 13 lakes in Warsaw.\".",
+        "extractive": "There are 13 natural reserves in Warsaw \u2013 among others, Bielany Forest, Kabaty Woods, Czerniak\u00f3w Lake. [1] There are also several lakes in Warsaw \u2013 mainly the oxbow lakes, like Czerniak\u00f3w Lake, the lakes in the \u0141azienki or Wilan\u00f3w Parks, Kamionek Lake. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 0.532
+      },
+      {
+        "question": "When did Warsaw start to rebuild?",
+        "answerable": true,
+        "gold": [
+          "After liberation",
+          "After liberation",
+          "After liberation"
+        ],
+        "draft": "After liberation",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "After liberation, rebuilding began as in other cities of the communist-ruled PRL. [1] Like many cities in Central and Eastern Europe, infrastructure in Warsaw suffered considerably during its time as an Eastern Bloc economy \u2013 though it is worth mentioning that the initial Three-Year Plan to rebuild Poland (especially Warsaw) was a major success, but what followed was very much the opposite. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.148
+      },
+      {
+        "question": "How long was the Leon Theatre in operation?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "How much of Poland's national income does Srodmiescie produce?",
+        "answerable": false,
+        "gold": [],
+        "draft": "Warsaw produces 12% of Poland's national income, which in 2008 was 305.1% of the Polish average, per capita (or 160% of the European Union average).",
+        "revised": "Warsaw produces 12% of Poland's national income, which in 2008 was 305.1% of the Polish average, per capita (or 160% of the European Union average). [1]",
+        "extractive": "Warsaw produces 12% of Poland's national income, which in 2008 was 305.1% of the Polish average, per capita (or 160% of the European Union average). [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 2.008
+      },
+      {
+        "question": "What is Warsaw's Riding Museum one of?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The Museum of Hunting and Riding is one of Warsaw's riding museums.",
+        "revised": "Correction: the claim \"The Museum of Hunting and Riding is one of Warsaw's riding museums.\" conflicts with the sources, which state: From among Warsaw's 60 museums, the most prestigious ones are National Museum with a collection of works whose origin ranges in time from antiquity till the present epoch as well as one of the best collections of paintings in the country including some paintings from Adolf Hitler's private collection, and Museum of the Polish Army whose set portrays the history of arms. [1]",
+        "extractive": "As interesting examples of expositions the most notable are: the world's first Museum of Posters boasting one of the largest collections of art posters in the world, Museum of Hunting and Riding and the Railway Museum. [1] From among Warsaw's 60 museums, the most prestigious ones are National Museum with a collection of works whose origin ranges in time from antiquity till the present epoch as well as one of the best collections of paintings in the country including some paintings from Adolf Hitler's private collection, and Museum of the Polish Army whose set portrays the history of arms. [2]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 0.677
+      },
+      {
+        "question": "What was Leon's first literary cabaret?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What plans of the British did this attach on Oneida Carry set back?",
+        "answerable": true,
+        "gold": [
+          "hopes for campaigns on Lake Ontario, and endangered the Oswego garrison",
+          "campaigns on Lake Ontario, and endangered the Oswego garrison",
+          "campaigns on Lake Ontario",
+          "campaigns on Lake Ontario",
+          "hopes for campaigns on Lake Ontario"
+        ],
+        "draft": "The British plans attached on Oneida Carry set back their campaign on Lake Ontario.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Unverified statements: [Unverified] The British plans attached on Oneida Carry set back their campaign on Lake Ontario.",
+        "extractive": "Scouts had reported the weakness of the British supply chain, so he ordered an attack against the forts Shirley had erected at the Oneida Carry. [1] They set back any British hopes for campaigns on Lake Ontario, and endangered the Oswego garrison, already short on supplies. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 0.819
+      },
+      {
+        "question": "On what lake did troops attack fort willima henry in winter?",
+        "answerable": true,
+        "gold": [
+          "Lake George",
+          "Lake George",
+          "Lake George",
+          "Lake George",
+          "Lake George"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.031
+      },
+      {
+        "question": "How did Celeron feel about Native relations?",
+        "answerable": true,
+        "gold": [
+          "very badly disposed towards the French, and are entirely devoted to the English",
+          "very badly disposed towards the French",
+          "are very badly disposed towards the French, and are entirely devoted to the English",
+          "what way they could be brought back",
+          "very badly disposed towards the French"
+        ],
+        "draft": "Celeron felt strongly about Native relations, as evidenced by his extensive detailed report and subsequent interactions with Native American tribes.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"Celeron felt strongly about Native relations, as evidenced by his extensive detailed report and subsequent interactions with Native American tribes.\".",
+        "extractive": "In his extensively detailed report, C\u00e9loron wrote, \"All I can say is that the Natives of these localities are very badly disposed towards the French, and are entirely devoted to the English. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 1.098
+      },
+      {
+        "question": "How many Frenchman won Battle of Carillon?",
+        "answerable": true,
+        "gold": [
+          "3,600",
+          "3,60",
+          "3,600",
+          "3,600",
+          "3,600"
+        ],
+        "draft": "3,600",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "The third invasion was stopped with the improbable French victory in the Battle of Carillon, in which 3,600 Frenchmen famously and decisively defeated Abercrombie's force of 18,000 regulars, militia and Native American allies outside the fort the French called Carillon and the British called Ticonderoga. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.293
+      },
+      {
+        "question": "Where was Montcalm focusing the offense for New France?",
+        "answerable": false,
+        "gold": [],
+        "draft": "Montcalm focused his offensive efforts primarily at Carillon, Quebec.",
+        "revised": "Correction: the claim \"Montcalm focused his offensive efforts primarily at Carillon, Quebec.\" conflicts with the sources, which state: Montcalm focused his meager resources on the defense of the St. Lawrence, with primary defenses at Carillon, Quebec, and Louisbourg, while Vaudreuil argued unsuccessfully for a continuation of the raiding tactics that had worked quite effectively in previous years. [1]",
+        "extractive": "French regular army reinforcements arrived in New France in May 1756, led by Major General Louis-Joseph de Montcalm and seconded by the Chevalier de L\u00e9vis and Colonel Fran\u00e7ois-Charles de Bourlamaque, all experienced veterans from the War of the Austrian Succession. [1] Montcalm focused his meager resources on the defense of the St. Lawrence, with primary defenses at Carillon, Quebec, and Louisbourg, while Vaudreuil argued unsuccessfully for a continuation of the raiding tactics that had worked quite effectively in previous years. [2]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "false_answer",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 0.663
+      },
+      {
+        "question": "How many Englishmen won Battle of Carillon?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The evidence states that 3, 600 Frenchmen won the Battle of Carillon.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Unverified statements: [Unverified] 3, 600 Frenchmen won the Battle of Carillon.",
+        "extractive": "The third invasion was stopped with the improbable French victory in the Battle of Carillon, in which 3,600 Frenchmen famously and decisively defeated Abercrombie's force of 18,000 regulars, militia and Native American allies outside the fort the French called Carillon and the British called Ticonderoga. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "UNCERTAIN"
+        ],
+        "generation_latency_s": 0.965
+      },
+      {
+        "question": "How much gun powder was saved?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "When was the European portion of the Seven Years War incomplete?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What causes strain in structures?",
+        "answerable": true,
+        "gold": [
+          "stress tensor",
+          "stress tensor",
+          "deformations",
+          "The stress tensor"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What is more fundamental than force in quanton field theory?",
+        "answerable": true,
+        "gold": [
+          "conservation of momentum",
+          "conservation of momentum",
+          "conservation of momentum",
+          "the currently known fundamental forces"
+        ],
+        "draft": "The force is more fundamental than force in quanton field theory.",
+        "revised": "Correction: the claim \"The force is more fundamental than force in quanton field theory.\" conflicts with the sources, which state: With the development of quantum field theory and general relativity, it was realized that force is a redundant concept arising from conservation of momentum (4-momentum in relativity and momentum of virtual particles in quantum electrodynamics). The conservation of momentum can be directly derived from the homogeneity or symmetry of space and so is usually considered more fundamental than the concept of a force. [1][2]",
+        "extractive": "With the development of quantum field theory and general relativity, it was realized that force is a redundant concept arising from conservation of momentum (4-momentum in relativity and momentum of virtual particles in quantum electrodynamics). [1] The conservation of momentum can be directly derived from the homogeneity or symmetry of space and so is usually considered more fundamental than the concept of a force. [2] The development of fundamental theories for forces proceeded along the lines of unification of disparate ideas. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "generation_latency_s": 0.626
+      },
+      {
+        "question": "What is the force that causes rigid strength in structures?",
+        "answerable": true,
+        "gold": [
+          "normal",
+          "normal force",
+          "normal force",
+          "normal force"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What is the final effect of adding more and more idea strings to a load?",
+        "answerable": true,
+        "gold": [
+          "conservation of mechanical energy",
+          "conservation of mechanical energy",
+          "the tension force on a load can be multiplied",
+          "tension force on a load can be multiplied"
+        ],
+        "draft": "The final effect of adding more and more idea strings to a load is that the total tension force increases.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"The final effect of adding more and more idea strings to a load is that the total tension force increases.\".",
+        "extractive": "For every string that acts on a load, another factor of the tension force in the string acts on the load. [1] However, even though such machines allow for an increase in force, there is a corresponding increase in the length of string that must be displaced in order to move the load. [2] These tandem effects result ultimately in the conservation of mechanical energy since the work done on the load is the same no matter how complicated the machine. [3]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 0.988
+      },
+      {
+        "question": "What is associated with horizontal forces?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.028
+      },
+      {
+        "question": "What started with a zero velocity?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "Since electrons are minions, they cannot occupy the same what?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.029
+      },
+      {
+        "question": "What used to be described by the Schrodinger equation?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The Schr\u00f6dinger equation was used to describe the physics of the universe before quantum mechanics emerged.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"The Schr\u00f6dinger equation was used to describe the physics of the universe before quantum mechanics emerged.\".",
+        "extractive": "The notion \"force\" keeps its meaning in quantum mechanics, though one is now dealing with operators instead of classical variables and though the physics is now described by the Schr\u00f6dinger equation instead of Newtonian equations. [1]",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "false_answer",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 0.955
+      }
+    ]
+  },
+  "synthetic": {
+    "summary": {
+      "n": 23,
+      "n_answerable": 16,
+      "n_unanswerable": 7,
+      "draft": {
+        "answer_accuracy": 0.5625,
+        "over_abstention": 0.0625,
+        "false_answer_rate": 0.2857,
+        "overall_accuracy": 0.6087
+      },
+      "revised": {
+        "answer_accuracy": 0.5,
+        "over_abstention": 0.1875,
+        "false_answer_rate": 0.0,
+        "overall_accuracy": 0.6522
+      },
+      "extractive": {
+        "answer_accuracy": 0.875,
+        "over_abstention": 0.0625,
+        "false_answer_rate": 0.0,
+        "overall_accuracy": 0.913
+      },
+      "draft_claim_labels": {
+        "INSUFFICIENT_EVIDENCE": 5,
+        "SUPPORTED": 13
+      },
+      "mean_generation_latency_s": 0.6437
+    },
+    "rows": [
+      {
+        "question": "What sampling frequency did Trial One use?",
+        "answerable": true,
+        "gold": [
+          "1 Hz"
+        ],
+        "draft": "Trial One used a 1 Hz sampling frequency.",
+        "revised": "Trial One used a 1 Hz sampling frequency. [1]",
+        "extractive": "Trial One sampled the sensors at a frequency of 1 Hz. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.513
+      },
+      {
+        "question": "What battery capacity did the sensor nodes have?",
+        "answerable": true,
+        "gold": [
+          "3000 mAh"
+        ],
+        "draft": "The sensor nodes had a battery capacity of 25 days.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"The sensor nodes had a battery capacity of 25 days.\".",
+        "extractive": "The study compared two deployment configurations of a battery-powered environmental sensor node. [1] The battery in Trial Two was projected to last 25 days, compared with 71 days in Trial One. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "wrong",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 0.672
+      },
+      {
+        "question": "How was energy consumption measured?",
+        "answerable": true,
+        "gold": [
+          "inline power monitor"
+        ],
+        "draft": "Energy consumption was measured with an inline power monitor attached to each node.",
+        "revised": "Energy consumption was measured with an inline power monitor attached to each node. [1]",
+        "extractive": "Energy consumption was measured with an inline power monitor attached to each node. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.727
+      },
+      {
+        "question": "Why did Trial Two consume more energy than Trial One?",
+        "answerable": true,
+        "gold": [
+          "higher sampling frequency"
+        ],
+        "draft": "Trial Two consumed about 2.8 times as much energy as Trial One because it had a higher sampling frequency, keeping the microcontroller awake for longer periods.",
+        "revised": "Trial Two consumed about 2.8 times as much energy as Trial One because it had a higher sampling frequency, keeping the microcontroller awake for longer periods. [1][2]",
+        "extractive": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 1.358
+      },
+      {
+        "question": "What caused Node B to reboot?",
+        "answerable": true,
+        "gold": [
+          "loose power connector"
+        ],
+        "draft": "The reboots were caused by a loose power connector.",
+        "revised": "The reboots were caused by a loose power connector. [1]",
+        "extractive": "Node B in Trial Two rebooted twice during a thunderstorm on March 21. [1] The reboots were caused by a loose power connector rather than by the sampling configuration. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.582
+      },
+      {
+        "question": "Why was radio transmission energy similar in both trials?",
+        "answerable": true,
+        "gold": [
+          "transmission interval was the same"
+        ],
+        "draft": "The radio transmission energy was nearly identical due to the same transmission interval.",
+        "revised": "The radio transmission energy was nearly identical due to the same transmission interval. [1]",
+        "extractive": "Radio transmission energy was nearly identical in both trials because the transmission interval was the same. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.662
+      },
+      {
+        "question": "Why were humidity readings during rain excluded?",
+        "answerable": true,
+        "gold": [
+          "saturated"
+        ],
+        "draft": "Humidity readings during rain were excluded to avoid biasing the analysis by including data that was saturated with water vapor.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"Humidity readings during rain were excluded to avoid biasing the analysis by including data that was saturated with water vapor.\".",
+        "extractive": "Humidity readings during rain were excluded from the analysis because the humidity sensor saturated above 95 percent relative humidity. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 1.09
+      },
+      {
+        "question": "Why was the rooftop site chosen?",
+        "answerable": true,
+        "gold": [
+          "line of sight"
+        ],
+        "draft": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway.",
+        "revised": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. [1]",
+        "extractive": "The rooftop site was chosen because it had an unobstructed line of sight to the gateway. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.915
+      },
+      {
+        "question": "How did the battery life of Trial One compare with Trial Two?",
+        "answerable": true,
+        "gold": [
+          "71 days"
+        ],
+        "draft": "Trial Two consumed about 2.8 times as much energy as Trial One.",
+        "revised": "Trial Two consumed about 2.8 times as much energy as Trial One. [1]",
+        "extractive": "The battery in Trial Two was projected to last 25 days, compared with 71 days in Trial One. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.738
+      },
+      {
+        "question": "Which trial had a lower temperature error?",
+        "answerable": true,
+        "gold": [
+          "0.2 degrees"
+        ],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "over_abstain",
+        "revised_outcome": "over_abstain",
+        "extractive_outcome": "over_abstain",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "How many times more energy did Trial Two use than Trial One?",
+        "answerable": true,
+        "gold": [
+          "2.8 times"
+        ],
+        "draft": "Trial Two used approximately twice as much energy as Trial One.",
+        "revised": "Trial Two used approximately twice as much energy as Trial One. [1]",
+        "extractive": "Trial Two therefore consumed about 2.8 times as much energy as Trial One. [1] The higher energy consumption in Trial Two was caused by its higher sampling frequency, which kept the microcontroller awake for longer periods. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.58
+      },
+      {
+        "question": "How much energy did Trial Two consume per day?",
+        "answerable": true,
+        "gold": [
+          "118"
+        ],
+        "draft": "Trial Two consumed approximately 2.8 times as much energy as Trial One.",
+        "revised": "Trial Two consumed approximately 2.8 times as much energy as Trial One. [1]",
+        "extractive": "Trial Two consumed an average of 118 milliwatt-hours per day. [1] Trial Two therefore consumed about 2.8 times as much energy as Trial One. [2]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.739
+      },
+      {
+        "question": "How many short pollution spikes did Trial Two record?",
+        "answerable": true,
+        "gold": [
+          "12 short pollution spikes"
+        ],
+        "draft": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds.",
+        "revised": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds. [1]",
+        "extractive": "Trial Two recorded 12 short pollution spikes lasting less than 5 seconds, whereas Trial One recorded none. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.736
+      },
+      {
+        "question": "How long did each trial run?",
+        "answerable": true,
+        "gold": [
+          "14 days",
+          "March 3 to March 16"
+        ],
+        "draft": "Each trial ran for 14 days.",
+        "revised": "Each trial ran for 14 days. [1]",
+        "extractive": "Each trial ran for 14 days at the same rooftop site. [1] Trial One ran from March 3 to March 16, and Trial Two ran from March 17 to March 30. [2]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.529
+      },
+      {
+        "question": "How often was data transmitted?",
+        "answerable": true,
+        "gold": [
+          "every 5 minutes"
+        ],
+        "draft": "Data was transmitted every 5 minutes in both trials.",
+        "revised": "Data was transmitted every 5 minutes in both trials. [1]",
+        "extractive": "Data were transmitted over LoRaWAN every 5 minutes in both trials. [1]",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "generation_latency_s": 0.567
+      },
+      {
+        "question": "What are the limitations of the study?",
+        "answerable": true,
+        "gold": [
+          "one site",
+          "Ambient temperature differed"
+        ],
+        "draft": "The study's findings may not be generalizable due to the use of a single site and two nodes per trial, which could limit its applicability to other environments. Additionally, the lack of recording of purchase costs for the sensor nodes might affect the accuracy of the data collected.",
+        "revised": "The study's findings may not be generalizable due to the use of a single site and two nodes per trial, which could limit its applicability to other environments. [1] Removed because the sources do not support them: \"Additionally, the lack of recording of purchase costs for the sensor nodes might affect the accuracy of the data collected.\".",
+        "extractive": "The study used only one site and two nodes per trial, so the results may not generalize to other environments. [1]",
+        "draft_outcome": "wrong",
+        "revised_outcome": "wrong",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "SUPPORTED",
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 2.323
+      },
+      {
+        "question": "What wireless technology did the gateway use to connect to the internet?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.027
+      },
+      {
+        "question": "How much did each sensor node cost?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.025
+      },
+      {
+        "question": "What was the average wind speed at the rooftop site?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.025
+      },
+      {
+        "question": "Which company manufactured the microcontroller?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.025
+      },
+      {
+        "question": "How much energy did Trial Three consume per day?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "correct",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [],
+        "generation_latency_s": 0.026
+      },
+      {
+        "question": "Why did it happen?",
+        "answerable": false,
+        "gold": [],
+        "draft": "I'm sorry, but I cannot provide a response without additional context or evidence. Could you please provide more information about what happened and why it occurred?",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"I'm sorry, but I cannot provide a response without additional context or evidence.\".",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 1.319
+      },
+      {
+        "question": "What caused it?",
+        "answerable": false,
+        "gold": [],
+        "draft": "The evidence does not provide information about what caused it.",
+        "revised": "I could not find sufficient evidence in the provided sources to answer this question reliably. Removed because the sources do not support them: \"The evidence does not provide information about what caused it.\".",
+        "extractive": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+        "draft_outcome": "false_answer",
+        "revised_outcome": "correct",
+        "extractive_outcome": "correct",
+        "claim_statuses": [
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "generation_latency_s": 0.601
+      }
+    ]
+  }
+}

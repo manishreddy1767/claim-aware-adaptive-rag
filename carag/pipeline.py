@@ -22,6 +22,30 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class GeneratedAnswer:
+    """A local LLM draft and its verified, revised version."""
+
+    question: str
+    draft: str
+    draft_declined: bool          # the LLM itself said the evidence has no answer
+    check: "AnswerCheck | None"   # None when the draft declined to answer
+    retrieval: RetrievalResult
+
+    @property
+    def final_text(self) -> str:
+        return self.check.revised.text if self.check else self.draft
+
+    @property
+    def abstained(self) -> bool:
+        return self.draft_declined or (self.check is not None and self.check.revised.abstained)
+
+    def to_dict(self) -> dict:
+        return {"question": self.question, "draft": self.draft, "draft_declined": self.draft_declined,
+                "final": self.final_text, "abstained": self.abstained,
+                "check": self.check.to_dict() if self.check else None}
+
+
+@dataclass
 class AnswerCheck:
     """Claim-level verification and revision of an externally produced answer."""
 
@@ -49,6 +73,7 @@ class ClaimAwareRAG:
         self._verifier: ClaimVerifier | None = None
         self._budgeted: BudgetedVerifier | None = None
         self._answerer: GroundedAnswerer | None = None
+        self._generator = None
 
     # -- components ----------------------------------------------------------------
     @property
@@ -116,6 +141,24 @@ class ClaimAwareRAG:
         if not question or not question.strip():
             raise ValueError("Please enter a question.")
         return self.answerer.answer(question.strip(), verify=verify, adaptive=adaptive)
+
+    def generate_answer(self, question: str, model_name: str = "Qwen/Qwen2.5-0.5B-Instruct",
+                        gate: bool = True) -> GeneratedAnswer:
+        """Draft an answer with a local LLM, then verify and revise it (hallucination filter)."""
+        from .generation import LocalGenerator, is_no_answer
+        if self._generator is None:
+            self._generator = LocalGenerator(model_name, self.config.models.device)
+        retrieval = self.retriever.retrieve(question)
+        # Same answerability gate as the extractive path: do not generate an answer
+        # when the QA model finds no answer in the evidence.
+        if gate and self.answerer.span_qa is not None:
+            span, holder = self.answerer._locate_answer(question, retrieval)
+            if span.margin < self.config.answer.answerability_margin or holder is None:
+                return GeneratedAnswer(question, self.config.answer.abstain_message, True, None, retrieval)
+        draft = self._generator.generate(question, retrieval.evidence)
+        if is_no_answer(draft):
+            return GeneratedAnswer(question, draft, True, None, retrieval)
+        return GeneratedAnswer(question, draft, False, self.check_answer(draft), retrieval)
 
     def verify_claim(self, claim: str) -> ClaimVerification:
         return self.verifier.verify(claim)

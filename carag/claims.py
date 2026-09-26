@@ -18,6 +18,12 @@ _PRONOUN_START = re.compile(r"^(it|they|this|that|these|those|he|she|which|who)\
 _META_PATTERNS = re.compile(
     r"^(i could not find|i cannot|i can't|i don't know|the (provided )?sources? (do|does) not|"
     r"note:|caveat:|in summary|sure[,!]|here is|here's)", re.I)
+# Attribution wrappers that are not part of the factual content.
+_ATTRIBUTION = re.compile(
+    r"^(?:(?:the|this) (?:evidence|sources?|documents?|text|passage|report|study|article)s? "
+    r"(?:states?|says|shows|indicates|mentions|notes|reports|explains|suggests)(?: that)?,?\s+|"
+    r"according to (?:the )?(?:evidence|sources?|documents?|text|passage|report)\s*,?\s+|"
+    r"based on (?:the )?(?:evidence|sources?|documents?)\s*,?\s+)", re.I)
 _CLAUSE_SPLIT = re.compile(r";\s+|,\s+(?:whereas|while|but)\s+|,\s+and\s+(?=(?:the|a|an|[A-Z])\w*\s)")
 _CAUSAL_SPLIT = re.compile(r"\s*,?\s+\b(because|since|as a result of|due to|owing to|caused by)\b\s+", re.I)
 
@@ -53,6 +59,9 @@ def extract_claims(text: str) -> list[str]:
     """Split text into atomic factual claims (conservatively)."""
     claims: list[str] = []
     for sentence in split_sentences(_strip_citations(text)):
+        sentence = _ATTRIBUTION.sub("", sentence).strip()
+        if sentence:
+            sentence = sentence[0].upper() + sentence[1:]
         if not _is_factual(sentence):
             continue
         pieces = [p for p in _CLAUSE_SPLIT.split(sentence) if p]
@@ -79,7 +88,11 @@ def decompose_causal(claim: str) -> CausalParts | None:
     cause: str | None = None
     if connective in ("because", "since"):
         tokens = effect.rstrip(".").split()
-        subject = " ".join(tokens[: max(1, _subject_end(tokens, expect_verb=True))])
+        subject_tokens = tokens[: max(1, _subject_end(tokens, expect_verb=True))]
+        subject = " ".join(subject_tokens)
+        if re.match(r"^(it|they|he|she|its|their|his|her)\b", remainder, re.I) and all(
+                t.lower() in ("the", "a", "an", "this", "that", "these", "those") for t in subject_tokens):
+            return CausalParts(effect=effect, cause=None, connective=connective)   # cannot resolve pronoun
         # Resolve a leading pronoun to the effect clause's subject.
         remainder = re.sub(r"^(it|they|he|she)\b", subject, remainder, flags=re.I)
         remainder = re.sub(r"^(its|their|his|her)\b", subject + "'s", remainder, flags=re.I)
