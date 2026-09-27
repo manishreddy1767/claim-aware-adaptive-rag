@@ -159,6 +159,47 @@ def budget(data: dict) -> dict:
     return out
 
 
+def ablations() -> dict:
+    """RAGTruth ablations: each variant vs. the full fine-tuned verifier on the same responses."""
+    files = sorted(RESULTS.glob("ragtruth_ablation_*.json"))
+    if not files:
+        return {}
+    variants = {f.stem.removeprefix("ragtruth_ablation_"): json.loads(f.read_text(encoding="utf-8"))["rows"]
+                for f in files}
+    if "full" not in variants:
+        return {}
+
+    def clusters(rows):
+        out: dict[str, list] = {}
+        for r in rows:
+            out.setdefault(r["response_id"], []).append(r)
+        return list(out.values())
+
+    def sent_f1(system, idx):
+        return lambda us: f1_from_pairs([(r["gold"] is not None, r[system] not in (None, "SUPPORTED"))
+                                         for u in us for r in u[idx]])
+
+    def resp_f1(system, idx):
+        return lambda us: f1_from_pairs([(any(r["gold"] for r in u[idx]),
+                                          any(r[system] not in (None, "SUPPORTED") for r in u[idx])) for u in us])
+
+    full = clusters(variants["full"])
+    out = {}
+    for name, rows in variants.items():
+        units = list(zip(full, clusters(rows)))
+        assert all(a[0]["response_id"] == b[0]["response_id"] for a, b in units)
+        entry = {}
+        for system in ("claim_aware", "claim_aware_budgeted"):
+            entry[system] = {
+                "sentence_f1": _ci(units, sent_f1(system, 1)),
+                "response_f1": _ci(units, resp_f1(system, 1)),
+            }
+            if name != "full":
+                entry[system]["vs_full_sentence_f1"] = _paired(units, sent_f1(system, 1), sent_f1(system, 0))
+        out[name] = entry
+    return out
+
+
 def _c(label: str) -> str:
     return label if label in ("SUPPORTED", "CONTRADICTED") else "NOT_ESTABLISHED"
 
@@ -173,6 +214,12 @@ def main() -> dict:
         if data is not None:
             print(f"analyzing {file} ...", flush=True)
             analysis[name] = fn(data)
+    abl = ablations()
+    if abl:
+        analysis["ragtruth_ablations"] = abl
+    ft = _load("scifact_results_ft.json")
+    if ft is not None and ft["verification"].get("items"):
+        analysis["scifact_finetuned_verifier"] = scifact(ft)
     (RESULTS / "analysis.json").write_text(json.dumps(analysis, indent=2), encoding="utf-8")
     for name, section in analysis.items():
         print(f"\n== {name} ==")

@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lccc}
+\toprule
+Detector & QA & Summary & Data2txt \\
+\midrule
+Cosine similarity $\geq$ 0.5 & 0.17 & 0.11 & 0.29 \\
+NLI on top-1 passage & 0.19 & 0.11 & 0.24 \\
+MiniCheck-DeBERTa-L & 0.36 & 0.23 & 0.39 \\
+HHEM-2.1-Open & 0.42 & 0.25 & 0.30 \\
+Ours, zero-shot NLI & 0.25 & 0.15 & 0.26 \\
+Ours, zero-shot, budgeted & 0.26 & 0.14 & 0.26 \\
+\bottomrule
+\end{tabular}
+\caption{Sentence-level F1 on RAGTruth test by task.}
+\label{tab:ragtruth-tasks}
+\end{table}

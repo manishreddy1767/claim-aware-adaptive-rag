@@ -85,6 +85,8 @@ class VerificationConfig:
     uncertain_threshold: float = 0.40
     # Also test adjacent-sentence windows as premises.
     use_windows: bool = True
+    # Split "A because B" claims into components when the full claim is not settled.
+    decompose_causal: bool = True
     # Also test the top-k most relevant sentences together as one supporting premise.
     use_multi_sentence: bool = True
     multi_sentence_k: int = 3
@@ -143,3 +145,15 @@ class RAGConfig:
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+    def override(self, assignment: str) -> None:
+        """Apply 'section.field=value' (e.g. 'verification.use_windows=false')."""
+        path, _, raw = assignment.partition("=")
+        section, _, name = path.strip().partition(".")
+        target = getattr(self, section)
+        current = getattr(target, name)
+        if isinstance(current, bool):
+            value = raw.strip().lower() in ("1", "true", "yes", "on")
+        else:
+            value = type(current)(raw.strip())
+        setattr(target, name, value)

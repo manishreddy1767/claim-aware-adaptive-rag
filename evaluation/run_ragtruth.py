@@ -227,6 +227,8 @@ def main(argv: list[str] | None = None) -> dict:
     parser.add_argument("--output", default=str(RESULTS / "ragtruth_results.json"))
     parser.add_argument("--nli-model", default=None, help="Verifier NLI model (e.g. the RAGTruth-fine-tuned one)")
     parser.add_argument("--multi-k", type=int, default=None, help="Top-k sentences in the multi-sentence premise")
+    parser.add_argument("--set", action="append", default=[], metavar="SECTION.FIELD=VALUE",
+                        help="Config override, e.g. verification.use_windows=false (repeatable)")
     parser.add_argument("--suffix", default="",
                         help="Store claim-aware systems under '<name><suffix>' (use with --merge)")
     parser.add_argument("--merge", action="store_true",
@@ -251,6 +253,8 @@ def main(argv: list[str] | None = None) -> dict:
         config.models.nli_model = args.nli_model
     if args.multi_k:
         config.verification.multi_sentence_k = args.multi_k
+    for assignment in args.set:
+        config.override(assignment)
     rags: dict[str, ClaimAwareRAG] = {}
     rows = []
     checks = {s: 0 for s in SYSTEMS}
@@ -328,6 +332,7 @@ def main(argv: list[str] | None = None) -> dict:
 
     RESULTS.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(json.dumps({"dataset": f"RAGTruth {args.split} split (sampled)", "per_task": args.per_task,
+                                             "config": config.to_dict(), "overrides": args.set,
                                              "summary": summary, "rows": rows}, indent=2), encoding="utf-8")
     for level in ("sentence_level", "response_level"):
         print(f"\n== RAGTruth {level.replace('_', ' ')}: hallucination detection (P / R / F1) ==")

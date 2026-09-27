@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccc}
+\toprule
+Retriever & P@1 & R@10 & MRR & nDCG@10 & Set P & $k$ \\
+\midrule
+BM25 top-10 & 0.649 & 0.914 & 0.744 & 0.784 & 0.099 & 10.0 \\
+MiniLM top-10 & 0.617 & 0.912 & 0.727 & 0.771 & 0.100 & 10.0 \\
+Hybrid top-10 & 0.697 & 0.952 & 0.800 & 0.835 & 0.104 & 10.0 \\
+Adaptive hybrid & 0.702 & 0.906 & 0.797 & 0.818 & 0.300 & 4.2 \\
+\bottomrule
+\end{tabular}
+\caption{Abstract retrieval on SciFact dev (188 claims with evidence, 5183 abstracts).}
+\label{tab:retrieval}
+\end{table}

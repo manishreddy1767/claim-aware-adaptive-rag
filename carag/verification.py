@@ -186,7 +186,8 @@ class ClaimVerifier:
                                   "do not all appear in it.")
             return result
 
-        parts = decompose_causal(claim) if decompose and part_premises != 0 else None
+        parts = (decompose_causal(claim)
+                 if decompose and cfg.decompose_causal and part_premises != 0 else None)
         if parts is not None:
             sub_claims = [parts.effect] + ([parts.cause] if parts.cause else [])
             result.parts = [self.verify(c, pool, decompose=False, max_premises=part_premises)

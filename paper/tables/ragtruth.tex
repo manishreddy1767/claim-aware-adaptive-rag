@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering\small
+\begin{tabular}{lccccc}
+\toprule
+ & \multicolumn{3}{c}{Sentence level} & Response level & NLI calls \\
+Detector & P & R & F1 [95\% CI] & F1 [95\% CI] & per claim \\
+\midrule
+Cosine similarity $\geq$ 0.5 & 0.20 & 0.33 & 0.25 {\scriptsize[0.22, 0.29]} & 0.60 {\scriptsize[0.56, 0.64]} & -- \\
+NLI on top-1 passage & 0.11 & 0.91 & 0.20 {\scriptsize[0.18, 0.22]} & 0.54 {\scriptsize[0.51, 0.57]} & 1.0 \\
+MiniCheck-DeBERTa-L & 0.23 & 0.79 & 0.36 {\scriptsize[0.33, 0.38]} & 0.64 {\scriptsize[0.61, 0.68]} & -- \\
+HHEM-2.1-Open & 0.20 & 0.66 & 0.31 {\scriptsize[0.28, 0.34]} & 0.68 {\scriptsize[0.64, 0.71]} & -- \\
+\midrule
+Ours, zero-shot NLI & 0.14 & 0.83 & 0.24 {\scriptsize[0.22, 0.26]} & 0.57 {\scriptsize[0.53, 0.60]} & 12.3 \\
+Ours, zero-shot, budgeted & 0.14 & 0.83 & 0.24 {\scriptsize[0.22, 0.26]} & 0.57 {\scriptsize[0.53, 0.60]} & 3.8 \\
+\bottomrule
+\end{tabular}
+\caption{Hallucination detection on RAGTruth test (900 responses, 300 per task; 6171 sentences).
+A sentence is flagged if any of its claims is not \textsc{Supported}; a response if any sentence is flagged.
+Confidence intervals: bootstrap over responses. All detectors score the same extracted claims.}
+\label{tab:ragtruth}
+\end{table*}

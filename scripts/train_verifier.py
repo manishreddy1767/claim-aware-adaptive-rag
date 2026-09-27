@@ -113,7 +113,7 @@ def evaluate(model, tokenizer, rows, label2id, device, max_len, batch_size=32) -
     with torch.no_grad():
         for i in range(0, len(rows), batch_size):
             batch = rows[i:i + batch_size]
-            enc = tokenizer([r["premise"] for r in batch], [r["hypothesis"] for r in batch], truncation="only_first",
+            enc = tokenizer([r["premise"] for r in batch], [r["hypothesis"] for r in batch], truncation="longest_first",
                             max_length=max_len, padding=True, return_tensors="pt").to(device)
             with torch.autocast("cuda", dtype=torch.float16, enabled=device == "cuda"):
                 logits = model(**enc).logits
@@ -151,6 +151,7 @@ def train(epochs: float, batch_size: int, accum: int, lr: float, max_len: int, s
     trainable = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(trainable, lr=lr, weight_decay=0.01)
     steps = int(len(rows) * epochs / (batch_size * accum))
+    steps_per_epoch = max(1, len(rows) // (batch_size * accum))
     scheduler = get_linear_schedule_with_warmup(optimizer, int(0.06 * steps), steps)
     scaler = torch.amp.GradScaler(enabled=device == "cuda")
 
@@ -166,7 +167,7 @@ def train(epochs: float, batch_size: int, accum: int, lr: float, max_len: int, s
             random.shuffle(order)
         idx = [order.pop() for _ in range(min(batch_size, len(order)))]
         batch = [rows[i] for i in idx]
-        enc = tokenizer([r["premise"] for r in batch], [r["hypothesis"] for r in batch], truncation="only_first",
+        enc = tokenizer([r["premise"] for r in batch], [r["hypothesis"] for r in batch], truncation="longest_first",
                         max_length=max_len, padding=True, return_tensors="pt").to(device)
         labels = torch.tensor([label2id[r["label"]] for r in batch], device=device)
         with torch.autocast("cuda", dtype=torch.float16, enabled=device == "cuda"):
@@ -181,6 +182,12 @@ def train(epochs: float, batch_size: int, accum: int, lr: float, max_len: int, s
             optimizer.zero_grad(set_to_none=True)
             scheduler.step()
             step += 1
+            if step % steps_per_epoch == 0 and step < steps:
+                epoch_metrics = evaluate(model, tokenizer, val, label2id, device, max_len)
+                print(f"  epoch checkpoint at step {step}: {epoch_metrics}", flush=True)
+                OUT.mkdir(parents=True, exist_ok=True)
+                model.save_pretrained(OUT)
+                tokenizer.save_pretrained(OUT)
             if step % 100 == 0:
                 print(f"  step {step}/{steps} loss {loss.item() * accum:.3f} "
                       f"({time.perf_counter() - t0:.0f}s, peak VRAM {torch.cuda.max_memory_allocated() / 2**30:.2f} GB)",
