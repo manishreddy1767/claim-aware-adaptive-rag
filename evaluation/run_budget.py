@@ -78,6 +78,7 @@ def run_strategy(rag: ClaimAwareRAG, groups: list[list[dict]], strategy: str,
         "accuracy_3way": report3["accuracy"], "macro_f1_3way": report3["macro_f1"],
         "accuracy_raw": round(sum(g == p for g, p in zip(gold, predicted)) / n, 4),
         "uncertain_labels": sum(p == "UNCERTAIN" for p in predicted),
+        "items": [{"gold": g, "predicted": p} for g, p in zip(gold, predicted)],
     }
 
 

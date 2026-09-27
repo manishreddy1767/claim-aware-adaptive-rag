@@ -45,7 +45,17 @@ DATA = ROOT / "data" / "ragtruth"
 BASE_URL = "https://raw.githubusercontent.com/ParticleMedia/RAGTruth/main/dataset/"
 RESULTS = Path(__file__).resolve().parent / "results"
 TASKS = ("QA", "Summary", "Data2txt")
-SYSTEMS = ("similarity_threshold", "nli_top1", "claim_aware", "claim_aware_strict", "claim_aware_budgeted")
+SYSTEMS = ("similarity_threshold", "nli_top1", "claim_aware", "claim_aware_strict", "claim_aware_budgeted",
+           "minicheck", "hhem")
+_DETECTORS: dict = {}
+
+
+def external_detector(name: str):
+    """External baselines (evaluation/detectors.py), loaded once."""
+    if name not in _DETECTORS:
+        from .detectors import HHEM, MiniCheck
+        _DETECTORS[name] = MiniCheck() if name == "minicheck" else HHEM()
+    return _DETECTORS[name]
 
 
 def ensure_data() -> Path:
@@ -133,7 +143,8 @@ NOT_SUPPORTED = {s.value for s in ClaimStatus} - {"SUPPORTED"}
 STRICT = {"CONTRADICTED", "INSUFFICIENT_EVIDENCE"}
 
 
-def predict(rag: ClaimAwareRAG, claims_by_sentence: list[list[str]], systems=SYSTEMS) -> dict[str, list]:
+def predict(rag: ClaimAwareRAG, claims_by_sentence: list[list[str]], systems=SYSTEMS,
+            document: str = "") -> dict[str, list]:
     """Per system: one prediction per sentence (label string or None if no claim)."""
     flat = [c for cs in claims_by_sentence for c in cs]
     verifier = rag.verifier
@@ -175,6 +186,9 @@ def predict(rag: ClaimAwareRAG, claims_by_sentence: list[list[str]], systems=SYS
     run("nli_top1", nli1)
     run("claim_aware", lambda: [verifier.verify(c).status.value for c in flat])
     run("claim_aware_budgeted", lambda: [v.status.value for v in rag.budgeted.verify_claims(flat)[0]])
+    for ext in ("minicheck", "hhem"):
+        run(ext, lambda ext=ext: ["SUPPORTED" if p >= 0.5 else "INSUFFICIENT_EVIDENCE"
+                                  for p in (external_detector(ext).score(document, flat) if flat else [])])
 
     results: dict[str, list] = {"_checks": counts}
     for name, labels in list(per_claim.items()) + [("claim_aware_strict", per_claim["claim_aware"])]:
@@ -211,6 +225,12 @@ def main(argv: list[str] | None = None) -> dict:
                         help="train = development split (used for design decisions); test = reported")
     parser.add_argument("--systems", nargs="+", default=list(SYSTEMS), choices=list(SYSTEMS))
     parser.add_argument("--output", default=str(RESULTS / "ragtruth_results.json"))
+    parser.add_argument("--nli-model", default=None, help="Verifier NLI model (e.g. the RAGTruth-fine-tuned one)")
+    parser.add_argument("--multi-k", type=int, default=None, help="Top-k sentences in the multi-sentence premise")
+    parser.add_argument("--suffix", default="",
+                        help="Store claim-aware systems under '<name><suffix>' (use with --merge)")
+    parser.add_argument("--merge", action="store_true",
+                        help="Add the given --systems to the rows already in --output (same sample)")
     args = parser.parse_args(argv)
 
     data = ensure_data()
@@ -227,6 +247,10 @@ def main(argv: list[str] | None = None) -> dict:
 
     config = RAGConfig()
     config.answer.relevance_check = False   # only the verifier is evaluated here
+    if args.nli_model:
+        config.models.nli_model = args.nli_model
+    if args.multi_k:
+        config.verification.multi_sentence_k = args.multi_k
     rags: dict[str, ClaimAwareRAG] = {}
     rows = []
     checks = {s: 0 for s in SYSTEMS}
@@ -240,9 +264,10 @@ def main(argv: list[str] | None = None) -> dict:
                                         f"source-{r['source_id']}.txt"))
             rags = {r["source_id"]: rag}   # keep one index alive (responses are grouped loosely)
         rag = rags[r["source_id"]]
+        document = source_text(task, src["source_info"])
         spans = sentence_spans(r["response"])
         claims = [extract_claims(s) for s, _, _ in spans]
-        preds = predict(rag, claims, args.systems)
+        preds = predict(rag, claims, args.systems, document)
         for name, c in preds.pop("_checks").items():
             checks[name] += c
         for i, (sentence, start, end) in enumerate(spans):
@@ -259,23 +284,40 @@ def main(argv: list[str] | None = None) -> dict:
         if n % 100 == 0:
             print(f"  {n}/{len(sample)} responses ({time.perf_counter() - t0:.0f}s)")
 
+    if args.merge:
+        previous = json.loads(Path(args.output).read_text(encoding="utf-8"))
+        old_rows = previous["rows"]
+        same_sample = len(old_rows) == len(rows) and all(
+            a["response_id"] == b["response_id"] and a["sentence"] == b["sentence"] for a, b in zip(old_rows, rows))
+        assert same_sample, "sample mismatch: cannot merge"
+        for old, new in zip(old_rows, rows):
+            for name in args.systems:
+                old[name + args.suffix] = new[name]
+        rows = old_rows
+        total_claims = max(1, sum(r["n_claims"] for r in rows))
+        new_checks = {name + args.suffix: checks[name] for name in args.systems}
+        checks = {name: round(value * total_claims)
+                  for name, value in previous["summary"]["nli_checks_per_claim"].items()}
+        checks.update(new_checks)
+    systems_present = [s for s in dict.fromkeys(k for k in rows[0] if k not in (
+        "response_id", "task", "model", "sentence", "gold", "n_claims")) if all(s in r for r in rows)]
     summary = {"n_responses": len(sample), "n_sentences": len(rows),
-               "nli_checks_per_claim": {s: round(checks[s] / max(1, sum(r['n_claims'] for r in rows)), 2)
-                                        for s in SYSTEMS if s != "claim_aware_strict"},
+               "nli_checks_per_claim": {s: round(checks.get(s, 0) / max(1, sum(r['n_claims'] for r in rows)), 2)
+                                        for s in systems_present if s != "claim_aware_strict"},
                "sentence_level": {}, "response_level": {}, "type_discrimination": {}}
     for task in TASKS + ("all",):
         sel = [r for r in rows if task == "all" or r["task"] == task]
         gold = [r["gold"] is not None for r in sel]
         summary["sentence_level"][task] = {s: prf(gold, [r[s] not in (None, "SUPPORTED") for r in sel])
-                                           for s in SYSTEMS}
+                                           for s in systems_present}
         by_resp: dict[str, dict] = {}
         for r in sel:
-            entry = by_resp.setdefault(r["response_id"], {"gold": False, **{s: False for s in SYSTEMS}})
+            entry = by_resp.setdefault(r["response_id"], {"gold": False, **{s: False for s in systems_present}})
             entry["gold"] |= r["gold"] is not None
-            for s in SYSTEMS:
+            for s in systems_present:
                 entry[s] |= r[s] not in (None, "SUPPORTED")
         summary["response_level"][task] = {
-            s: prf([e["gold"] for e in by_resp.values()], [e[s] for e in by_resp.values()]) for s in SYSTEMS}
+            s: prf([e["gold"] for e in by_resp.values()], [e[s] for e in by_resp.values()]) for s in systems_present}
     # Among correctly flagged hallucinated sentences: does CONTRADICTED match gold 'conflict'?
     for s in ("nli_top1", "claim_aware"):
         flagged = [r for r in rows if r["gold"] and r[s] not in (None, "SUPPORTED")]
@@ -292,7 +334,7 @@ def main(argv: list[str] | None = None) -> dict:
         for task in TASKS + ("all",):
             m = summary[level][task]
             print(f"  {task:8s} (pos {m['claim_aware']['positives']}/{m['claim_aware']['n']})  " + "  ".join(
-                f"{s}={m[s]['precision']:.2f}/{m[s]['recall']:.2f}/{m[s]['f1']:.2f}" for s in SYSTEMS))
+                f"{s}={m[s]['precision']:.2f}/{m[s]['recall']:.2f}/{m[s]['f1']:.2f}" for s in systems_present))
     print("\nNLI checks per claim:", summary["nli_checks_per_claim"])
     for s, rep in summary["type_discrimination"].items():
         print(f"conflict vs baseless among flagged ({s}): acc={rep['accuracy']:.3f} "

@@ -1,0 +1,278 @@
+{
+  "ragtruth": {
+    "n_responses": 900,
+    "sentence_f1": {
+      "similarity_threshold": {
+        "value": 0.2498,
+        "ci": [
+          0.2174,
+          0.2851
+        ]
+      },
+      "nli_top1": {
+        "value": 0.196,
+        "ci": [
+          0.1784,
+          0.2163
+        ]
+      },
+      "claim_aware": {
+        "value": 0.2374,
+        "ci": [
+          0.2174,
+          0.2601
+        ]
+      },
+      "claim_aware_strict": {
+        "value": 0.2098,
+        "ci": [
+          0.1888,
+          0.2338
+        ]
+      },
+      "claim_aware_budgeted": {
+        "value": 0.237,
+        "ci": [
+          0.2169,
+          0.2598
+        ]
+      }
+    },
+    "response_f1": {
+      "similarity_threshold": {
+        "value": 0.6006,
+        "ci": [
+          0.5603,
+          0.641
+        ]
+      },
+      "nli_top1": {
+        "value": 0.5401,
+        "ci": [
+          0.5065,
+          0.575
+        ]
+      },
+      "claim_aware": {
+        "value": 0.5686,
+        "ci": [
+          0.5328,
+          0.6034
+        ]
+      },
+      "claim_aware_strict": {
+        "value": 0.5777,
+        "ci": [
+          0.5425,
+          0.6151
+        ]
+      },
+      "claim_aware_budgeted": {
+        "value": 0.5678,
+        "ci": [
+          0.5332,
+          0.6034
+        ]
+      }
+    },
+    "paired": {
+      "claim_aware vs similarity_threshold": {
+        "sentence_f1": {
+          "diff": -0.0125,
+          "ci_low": -0.0433,
+          "ci_high": 0.016,
+          "p_value": 0.429
+        },
+        "response_f1": {
+          "diff": -0.032,
+          "ci_low": -0.0696,
+          "ci_high": 0.0047,
+          "p_value": 0.095
+        }
+      },
+      "claim_aware vs nli_top1": {
+        "sentence_f1": {
+          "diff": 0.0413,
+          "ci_low": 0.0338,
+          "ci_high": 0.0488,
+          "p_value": 0.0
+        },
+        "response_f1": {
+          "diff": 0.0285,
+          "ci_low": 0.0177,
+          "ci_high": 0.0392,
+          "p_value": 0.0
+        }
+      },
+      "claim_aware_strict vs similarity_threshold": {
+        "sentence_f1": {
+          "diff": -0.04,
+          "ci_low": -0.0723,
+          "ci_high": -0.0098,
+          "p_value": 0.004
+        },
+        "response_f1": {
+          "diff": -0.0229,
+          "ci_low": -0.0578,
+          "ci_high": 0.0133,
+          "p_value": 0.233
+        }
+      },
+      "claim_aware_strict vs nli_top1": {
+        "sentence_f1": {
+          "diff": 0.0138,
+          "ci_low": 0.0003,
+          "ci_high": 0.0271,
+          "p_value": 0.044
+        },
+        "response_f1": {
+          "diff": 0.0376,
+          "ci_low": 0.0217,
+          "ci_high": 0.0529,
+          "p_value": 0.0
+        }
+      },
+      "claim_aware_strict vs claim_aware": {
+        "sentence_f1": {
+          "diff": -0.0276,
+          "ci_low": -0.0398,
+          "ci_high": -0.0152,
+          "p_value": 0.0
+        },
+        "response_f1": {
+          "diff": 0.0091,
+          "ci_low": -0.0021,
+          "ci_high": 0.0196,
+          "p_value": 0.104
+        }
+      },
+      "claim_aware_budgeted vs similarity_threshold": {
+        "sentence_f1": {
+          "diff": -0.0128,
+          "ci_low": -0.0427,
+          "ci_high": 0.0154,
+          "p_value": 0.398
+        },
+        "response_f1": {
+          "diff": -0.0328,
+          "ci_low": -0.0697,
+          "ci_high": 0.0038,
+          "p_value": 0.088
+        }
+      },
+      "claim_aware_budgeted vs nli_top1": {
+        "sentence_f1": {
+          "diff": 0.041,
+          "ci_low": 0.0331,
+          "ci_high": 0.0487,
+          "p_value": 0.0
+        },
+        "response_f1": {
+          "diff": 0.0277,
+          "ci_low": 0.0157,
+          "ci_high": 0.0394,
+          "p_value": 0.0
+        }
+      },
+      "claim_aware_budgeted vs claim_aware": {
+        "sentence_f1": {
+          "diff": -0.0003,
+          "ci_low": -0.0039,
+          "ci_high": 0.0033,
+          "p_value": 0.868
+        },
+        "response_f1": {
+          "diff": -0.0008,
+          "ci_low": -0.0064,
+          "ci_high": 0.0042,
+          "p_value": 0.818
+        }
+      }
+    }
+  },
+  "scifact": {},
+  "squad": {
+    "n_questions": 216,
+    "overall_accuracy": {
+      "fixed_top3_no_verification": {
+        "value": 0.4398,
+        "ci": [
+          0.375,
+          0.5
+        ]
+      },
+      "adaptive_no_verification": {
+        "value": 0.5509,
+        "ci": [
+          0.4861,
+          0.6157
+        ]
+      },
+      "adaptive_with_claim_verification": {
+        "value": 0.5556,
+        "ci": [
+          0.4907,
+          0.6204
+        ]
+      },
+      "full_system_with_qa_answerability": {
+        "value": 0.8194,
+        "ci": [
+          0.7685,
+          0.8704
+        ]
+      }
+    },
+    "false_answer_rate": {
+      "fixed_top3_no_verification": {
+        "value": 1.0,
+        "ci": [
+          1.0,
+          1.0
+        ]
+      },
+      "adaptive_no_verification": {
+        "value": 0.6574,
+        "ci": [
+          0.5688,
+          0.7477
+        ]
+      },
+      "adaptive_with_claim_verification": {
+        "value": 0.6481,
+        "ci": [
+          0.5596,
+          0.7407
+        ]
+      },
+      "full_system_with_qa_answerability": {
+        "value": 0.213,
+        "ci": [
+          0.1389,
+          0.2936
+        ]
+      }
+    },
+    "paired": {
+      "full_system_with_qa_answerability vs fixed_top3_no_verification (overall accuracy)": {
+        "diff": 0.3796,
+        "ci_low": 0.3009,
+        "ci_high": 0.4583,
+        "p_value": 0.0
+      },
+      "full_system_with_qa_answerability vs adaptive_no_verification (overall accuracy)": {
+        "diff": 0.2685,
+        "ci_low": 0.1852,
+        "ci_high": 0.3472,
+        "p_value": 0.0
+      },
+      "full_system_with_qa_answerability vs adaptive_with_claim_verification (overall accuracy)": {
+        "diff": 0.2639,
+        "ci_low": 0.1852,
+        "ci_high": 0.3426,
+        "p_value": 0.0
+      }
+    }
+  },
+  "budget": {}
+}

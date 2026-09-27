@@ -19,3 +19,19 @@ def test_classification_report():
     assert report["accuracy"] == 0.75
     assert report["per_class"]["S"] == {"precision": 1.0, "recall": 0.5, "f1": 0.6667, "support": 2}
     assert report["confusion"]["S"]["C"] == 1
+
+
+def test_bootstrap_and_paired_test():
+    from evaluation.stats import bootstrap_ci, f1_from_pairs, paired_bootstrap
+    units = [(True, True)] * 40 + [(False, False)] * 40 + [(True, False)] * 10 + [(False, True)] * 10
+    point, lo, hi = bootstrap_ci(units, f1_from_pairs, n_boot=500)
+    assert lo <= point <= hi and 0.7 < point < 0.9
+    # Identical systems: difference 0, not significant.
+    same = paired_bootstrap([(u, u) for u in units], lambda s: f1_from_pairs([a for a, _ in s]),
+                            lambda s: f1_from_pairs([b for _, b in s]), n_boot=300)
+    assert same["diff"] == 0 and same["p_value"] == 1.0
+    # A perfect system vs a bad one: clearly significant.
+    better = paired_bootstrap([(g, g, not g) for g, _ in units],
+                              lambda s: f1_from_pairs([(g, a) for g, a, _ in s]),
+                              lambda s: f1_from_pairs([(g, b) for g, _, b in s]), n_boot=300)
+    assert better["diff"] > 0.9 and better["p_value"] < 0.01

@@ -220,3 +220,6 @@ __marimo__/
 # Project: downloaded evaluation datasets and model caches
 data/
 .hf_cache/
+
+# Fine-tuned model checkpoints
+models/

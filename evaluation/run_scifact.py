@@ -104,9 +104,16 @@ def evaluate_retrieval(claims: list[dict], corpus: list[dict], k: int = 10) -> d
     return report
 
 
-def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict], nli_model: str | None = None) -> dict:
+def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict], nli_model: str | None = None,
+                          external: bool = False) -> dict:
     gold, preds = [], {"similarity_threshold": [], "nli_top1": [], "claim_aware_verifier": []}
-    five_way = []
+    support_scores: dict[str, list[float]] = {}
+    detectors = []
+    if external:
+        from .detectors import HHEM, MiniCheck
+        detectors = [MiniCheck(), HHEM()]
+        support_scores = {d.name: [] for d in detectors}
+    five_way, items = [], []
     latency = {k: [] for k in preds}
     for c in claims:
         if c["evidence"]:
@@ -134,13 +141,29 @@ def evaluate_verification(claims: list[dict], corpus_by_id: dict[int, dict], nli
         latency["claim_aware_verifier"].append(time.perf_counter() - t0)
         five_way.append(status)
         preds["claim_aware_verifier"].append(collapse(status))
+        abstract = " ".join(s.strip() for s in doc["abstract"])
+        for d in detectors:
+            t0 = time.perf_counter()
+            support_scores[d.name].append(d.score(abstract, [c["claim"]])[0])
+            latency.setdefault(d.name, []).append(time.perf_counter() - t0)
+        items.append({"id": c["id"], "claim": c["claim"], "gold": label, "claim_aware_5way": status,
+                      **{name: p[-1] for name, p in preds.items()},
+                      **{name: round(v[-1], 4) for name, v in support_scores.items()}})
     labels = ["SUPPORTED", "CONTRADICTED", NOT_ESTABLISHED]
+    # Binary view (supported vs. not) so 2-class detectors can be compared.
+    binary_gold = [g == "SUPPORTED" for g in gold]
+    binary = {name: [x == "SUPPORTED" for x in p] for name, p in preds.items()}
+    binary.update({name: [v >= 0.5 for v in scores] for name, scores in support_scores.items()})
     return {
         "n_claims": len(gold),
         "gold_distribution": {l: gold.count(l) for l in labels},
         "three_way": {name: classification_report(gold, p, labels) for name, p in preds.items()},
         "claim_aware_raw_label_distribution": {s: five_way.count(s) for s in sorted(set(five_way))},
+        "binary_supported": {name: classification_report(
+            ["S" if g else "N" for g in binary_gold], ["S" if b else "N" for b in pred], ["S", "N"])
+            for name, pred in binary.items()},
         "latency_s": {k: mean(v) for k, v in latency.items()},
+        "items": items,
     }
 
 
@@ -150,6 +173,7 @@ def main(argv: list[str] | None = None) -> dict:
     parser.add_argument("--output", default=None)
     parser.add_argument("--nli-model", default=None, help="Override the NLI model (verification only)")
     parser.add_argument("--skip-retrieval", action="store_true")
+    parser.add_argument("--external", action="store_true", help="Also run MiniCheck and HHEM (binary task)")
     args = parser.parse_args(argv)
 
     data = ensure_data()
@@ -162,7 +186,7 @@ def main(argv: list[str] | None = None) -> dict:
         suffix = "" if args.nli_model is None else "_" + args.nli_model.split("/")[-1]
         args.output = str(RESULTS / f"scifact_results{suffix}.json")
     results = {"dataset": "SciFact dev (real, expert-annotated)", "source": URL, "nli_model": nli_name,
-               "verification": evaluate_verification(claims, corpus_by_id, args.nli_model)}
+               "verification": evaluate_verification(claims, corpus_by_id, args.nli_model, args.external)}
     if not args.skip_retrieval:
         results["retrieval"] = evaluate_retrieval(claims, corpus)
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
@@ -180,6 +204,10 @@ def main(argv: list[str] | None = None) -> dict:
         print(f"  {name:22s} acc={m['accuracy']:.3f} macroF1={m['macro_f1']:.3f} "
               f"F1[S]={pc['SUPPORTED']['f1']:.3f} F1[C]={pc['CONTRADICTED']['f1']:.3f} "
               f"F1[NE]={pc[NOT_ESTABLISHED]['f1']:.3f}")
+    print("  binary (supported vs. not):")
+    for name, m in results["verification"]["binary_supported"].items():
+        print(f"    {name:26s} acc={m['accuracy']:.3f} macroF1={m['macro_f1']:.3f} "
+              f"F1[supported]={m['per_class']['S']['f1']:.3f}")
     print(f"\nFull results: {args.output}")
     return results
 
