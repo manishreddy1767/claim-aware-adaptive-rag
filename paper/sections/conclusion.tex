@@ -1,0 +1,17 @@
+\section{Conclusion}
+\label{sec:conclusion}
+Claim-level verification for RAG does not have to be expensive.
+Sharing a verifier-call budget across the claims of an answer, ordering premises by relevance and stopping as soon as a claim is settled preserves the accuracy of exhaustive verification with roughly a quarter of the calls.
+The accuracy of the verifier itself matters more than how the budget is scheduled: fine-tuning a small NLI cross-encoder on RAGTruth with retrieval-selected, multi-sentence premises nearly doubles sentence-level hallucination-detection F1, and it remains a drop-in component of the budgeted pipeline.
+The priority scheduling we initially proposed brought no measurable benefit over round-robin; we report it so that others need not repeat it.
+
+\section*{Limitations}
+Our verifier is fine-tuned on RAGTruth train and evaluated on its test split, whereas MiniCheck and HHEM are applied without RAGTruth training; the comparison therefore measures the value of in-domain supervision as much as architecture. The fine-tuned verifier transfers less well to scientific claims (SciFact, \S\ref{sec:results-scifact}).
+The answerability reader was trained on SQuAD~2.0 train, so its gains on SQuAD~2.0 are in-distribution.
+Claim extraction, premise extraction for questions and the retriever's sufficiency test are rule-based and English-only.
+Answers produced by our system are extractive; with a small generative model (Qwen2.5-0.5B), verification and revision reduced unsupported answers but also removed correct paraphrased ones (Appendix~\ref{app:generation}).
+Labels in RAGTruth are span-level; our sentence-level evaluation counts a sentence as hallucinated if it overlaps any annotated span, which differs from span-level F1 reported elsewhere.
+All thresholds except those studied in the ablations were set on development data and not calibrated.
+
+\section*{Ethics Statement}
+The system is designed to reduce unsupported statements, but it measures agreement with the provided sources, not truth: incorrect sources yield ``supported'' incorrect claims, and false negatives of the verifier leave hallucinations in place. It should not be used as the sole safeguard in high-stakes settings. All datasets used are publicly available research datasets.

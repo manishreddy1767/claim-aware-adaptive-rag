@@ -57,7 +57,8 @@ def ragtruth(data: dict) -> dict:
         out["sentence_f1"][s] = _ci(units, sent_f1(s))
         out["response_f1"][s] = _ci(units, resp_f1(s))
     comparisons = [(a, b) for a in systems if a.startswith("claim_aware")
-                   for b in ("similarity_threshold", "nli_top1", "minicheck", "hhem", "claim_aware") if b in systems and a != b]
+                   for b in ("similarity_threshold", "nli_top1", "minicheck", "hhem", "claim_aware", "claim_aware_ft")
+                   if b in systems and a != b]
     for a, b in comparisons:
         out["paired"][f"{a} vs {b}"] = {"sentence_f1": _paired(units, sent_f1(a), sent_f1(b)),
                                         "response_f1": _paired(units, resp_f1(a), resp_f1(b))}

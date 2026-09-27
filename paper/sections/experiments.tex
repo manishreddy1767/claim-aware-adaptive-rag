@@ -1,0 +1,23 @@
+\section{Experimental Setup}
+\label{sec:setup}
+
+\paragraph{Datasets.}
+We evaluate on three public datasets and never tune on their test portions.
+\textbf{RAGTruth} \citep{niu2024ragtruth}: responses of six LLMs to QA, news summarisation and data-to-text prompts with human span annotations of hallucinations (\emph{conflict} or \emph{baseless}); we sample 300 test responses per task with a fixed seed (900 responses, 6{,}171 sentences, 525 hallucinated). Design decisions (claim extraction rules, multi-sentence premise) were made on a sample of the \emph{train} split; the verifier is fine-tuned on train with 10\% of train sources held out for validation.
+\textbf{SciFact} \citep{wadden2020scifact}: 300 dev claims with expert labels (\textsc{Support}, \textsc{Contradict}, no evidence) and 5{,}183 abstracts, used for retrieval (claims as queries), for claim verification against the gold abstract, and for the budget study against a pooled index of the cited abstracts.
+\textbf{SQuAD~2.0} \citep{rajpurkar2018squad2}: we ingest each of the 35 dev articles as one document and sample answerable and unanswerable questions per article; articles 0--16 form a development split and articles 17--34 the reported test split.
+
+\paragraph{Systems.}
+\emph{Detectors} (RAGTruth, SciFact): a cosine-similarity threshold and NLI on the top-1 passage (the logic of our original prototype), MiniCheck-DeBERTa-v3-Large \citep{tang2024minicheck} and HHEM-2.1-Open \citep{vectara2024hhem} applied off the shelf with document chunking and max-over-chunks aggregation, and our verifier with the zero-shot \texttt{nli-deberta-v3-base} cross-encoder or the RAGTruth-fine-tuned model, exhaustively or under a budget of 4 NLI calls per claim.
+All detectors score the same extracted claims, so differences reflect verification rather than claim extraction.
+\emph{Answering} (SQuAD): fixed top-3 semantic retrieval that always answers; adaptive retrieval with sufficiency-based abstention; plus claim and premise verification; plus the answerability gate (full system).
+
+\paragraph{Metrics and statistics.}
+RAGTruth: precision, recall and F1 of the ``hallucinated'' class at sentence level (a sentence is flagged if any of its claims is not \textsc{Supported}) and response level (flagged if any sentence is).
+SciFact: macro-F1 over three labels (\textsc{Supported}, \textsc{Contradicted}, not established) and over two labels (supported vs.\ not) for comparison with two-class detectors.
+SQuAD: overall accuracy (answerable questions answered with a gold span, unanswerable questions abstained), answer accuracy, over-abstention and false-answer rate.
+Budget: NLI calls actually executed per claim.
+We report 95\% bootstrap confidence intervals (2{,}000 resamples; clustered by response for RAGTruth) and paired bootstrap $p$-values \citep{bergkirkpatrick2012significance}.
+
+\paragraph{Hardware.}
+All experiments run on a laptop RTX~3050 (4\,GB) with 16\,GB RAM. With the default configuration the application answers a question in about 0.15\,s using 1.0\,GB of GPU memory.
