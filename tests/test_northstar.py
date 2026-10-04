@@ -119,3 +119,8 @@ def test_answer_budget_is_a_hard_total(handbook):
 def test_comparison_budget_is_shared_between_sides(handbook):
     groups = handbook.ask(COMPARE).budget.groups
     assert set(groups) == {"0", "1"} and all(n > 0 for n in groups.values())
+
+
+def test_different_frequency_is_not_a_yes(handbook):
+    result = handbook.ask("Does the company give every employee a new laptop every year?")
+    assert result.answer.startswith("No.") and "every 3 years" in result.answer

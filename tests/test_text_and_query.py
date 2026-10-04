@@ -97,3 +97,13 @@ def test_multi_part_questions():
     assert analyze_question("What is the procedure for requesting leave?").multi_part
     assert analyze_question("What benefits are available, and what are the limits?").multi_part
     assert not analyze_question("How many paid leave days does a full-time employee receive?").multi_part
+
+
+def test_quantity_conflicts():
+    from carag.text_utils import extract_quantities, quantity_conflict
+    assert extract_quantities("Laptops are replaced every 3 years.") == {"year": {"3"}}
+    assert extract_quantities("a 12-day leave, paid annually") == {"day": {"12"}, "year": {"1"}}
+    assert quantity_conflict("A new laptop every year.", "Laptops are replaced every 3 years.")
+    assert quantity_conflict("Work remotely 4 days per week.", "Work remotely up to 2 days per week.")
+    assert not quantity_conflict("24 days per calendar year.", "Employees receive 24 days per calendar year.")
+    assert not quantity_conflict("The company provides annual leave.", "Laptops are replaced every 3 years.")

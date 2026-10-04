@@ -35,7 +35,7 @@ from .index import EvidenceIndex
 from .models import NLIModel
 from .retrieval import AdaptiveRetriever
 from .schema import ClaimStatus, ClaimVerification, EvidenceJudgement, ScoredEvidence
-from .text_utils import extract_numbers
+from .text_utils import extract_numbers, quantity_conflict
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,11 @@ class ClaimVerifier:
 
         entailing = sorted([j for j in relevant if j.entailment >= cfg.support_threshold],
                            key=lambda j: (-j.entailment, len(j.evidence_ids)))
-        supporting = [j for j in entailing if numbers_ok(j)]
+        # NLI entails 'a new laptop every year' from 'replaced every 3 years'; evidence that
+        # states a different quantity for the same time unit contradicts rather than supports.
+        quantity_conflicts = [j for j in entailing if quantity_conflict(claim, j.premise)
+                              and j.relevance >= cfg.contradiction_relevance_threshold]
+        supporting = [j for j in entailing if numbers_ok(j) and not quantity_conflict(claim, j.premise)]
         # The small NLI model produces spurious contradictions on two-sentence windows
         # that mention several entities, so a window may contradict only when it is
         # more relevant to the claim than every single sentence.
@@ -153,6 +157,7 @@ class ClaimVerifier:
                                 and j.relevance >= cfg.contradiction_relevance_threshold
                                 and j.contradiction >= cfg.contradiction_threshold],
                                key=lambda j: (-j.contradiction, len(j.evidence_ids)))
+        contradicting += [j for j in quantity_conflicts if j not in contradicting]
         # Report single-sentence evidence in preference to windows that contain it.
         supporting = _prefer_single(supporting)
         contradicting = _prefer_single(contradicting)
@@ -192,8 +197,11 @@ class ClaimVerifier:
                                       "in the sources, which does not mean it is false.")
                 return result
             result.status = ClaimStatus.CONTRADICTED
-            result.explanation = (f"Relevant evidence contradicts the claim "
-                                  f"(P(contradiction)={contradicting[0].contradiction:.2f}).")
+            if contradicting[0] in quantity_conflicts:
+                result.explanation = "Relevant evidence states a different quantity than the claim."
+            else:
+                result.explanation = (f"Relevant evidence contradicts the claim "
+                                      f"(P(contradiction)={contradicting[0].contradiction:.2f}).")
             return result
         if entailing:
             result.status = ClaimStatus.UNCERTAIN

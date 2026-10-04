@@ -148,6 +148,33 @@ def extract_numbers(text: str) -> set[str]:
     return numbers
 
 
+_QUANTITY_RE = re.compile(
+    r"(?:\b(\d+(?:\.\d+)?)[\s-]+|\b(?:every|per|a|an|each|one)\s+(?:calendar\s+)?)"
+    r"(minute|hour|day|week|month|year)s?\b", re.I)
+_PER_UNIT_WORDS = {"hourly": "hour", "daily": "day", "weekly": "week", "monthly": "month",
+                   "annually": "year", "yearly": "year"}
+
+
+def extract_quantities(text: str) -> dict[str, set[str]]:
+    """Time quantities by unit: 'every 3 years' -> {'year': {'3'}}, 'every year' or
+    'annually' -> {'year': {'1'}}, 'a 12-day leave' -> {'day': {'12'}}."""
+    quantities: dict[str, set[str]] = {}
+    for number, unit in _QUANTITY_RE.findall(text):
+        quantities.setdefault(unit.lower(), set()).add(number or "1")
+    for word in re.findall(r"[a-z]+", text.lower()):
+        if word in _PER_UNIT_WORDS:
+            quantities.setdefault(_PER_UNIT_WORDS[word], set()).add("1")
+    return quantities
+
+
+def quantity_conflict(claim: str, evidence: str) -> bool:
+    """True when claim and evidence state different quantities for the same time unit
+    ('a new laptop every year' vs 'replaced every 3 years')."""
+    evidence_q = extract_quantities(evidence)
+    return any(unit in evidence_q and not (values & evidence_q[unit])
+               for unit, values in extract_quantities(claim).items())
+
+
 def contains_marker(text: str, markers: tuple[str, ...]) -> bool:
     low = f" {text.lower()} "
     return any(re.search(rf"(?<![a-z]){re.escape(m)}(?![a-z])", low) for m in markers)
