@@ -84,8 +84,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.091,
-        "verification_s": 0.315
+        "retrieval_s": 0.08,
+        "verification_s": 0.303
       },
       "trace": {
         "key_terms": [
@@ -106,18 +106,18 @@
         "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.8031,
+            "score": 0.8717,
             "semantic": 0.8643,
-            "lexical": 0.4935,
-            "coverage": 0.8571,
+            "lexical": 0.657,
+            "coverage": 1.0,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.4661,
+            "score": 0.5018,
             "semantic": 0.6192,
-            "lexical": 0.1816,
-            "coverage": 0.4286,
+            "lexical": 0.2838,
+            "coverage": 0.5714,
             "source": "01_leave_policy.txt",
             "text": "Part-time employees receive leave in proportion to their contracted hours."
           }
@@ -145,8 +145,8 @@
       ],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Approval is not automatic. [2] Requests for more than 2 remote days per week require written approval from the department head and HR. [3]",
       "timings": {
-        "retrieval_s": 0.017,
-        "verification_s": 1.125
+        "retrieval_s": 0.022,
+        "verification_s": 1.127
       },
       "trace": {
         "key_terms": [
@@ -269,8 +269,8 @@
       ],
       "answer": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [1]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 0.138
+        "retrieval_s": 0.018,
+        "verification_s": 0.215
       },
       "trace": {
         "key_terms": [
@@ -286,17 +286,24 @@
         "retrieval_sufficient": false,
         "retrieval_expanded": true,
         "retrieval_reasons": [
-          "Only 33% of key terms found (missing: employe, availabl, reimbursement, limit).",
-          "Best evidence score 0.37 is below 0.45."
+          "Best evidence score 0.39 is below 0.45."
         ],
         "evidence": [
           {
-            "score": 0.3716,
+            "score": 0.3888,
             "semantic": 0.5247,
-            "lexical": 0.0872,
-            "coverage": 0.1667,
+            "lexical": 0.1364,
+            "coverage": 0.3333,
             "source": "03_employee_benefits.txt",
             "text": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services."
+          },
+          {
+            "score": 0.3297,
+            "semantic": 0.4843,
+            "lexical": 0.0427,
+            "coverage": 0.3333,
+            "source": "01_leave_policy.txt",
+            "text": "Employees joining during the year receive a prorated allowance based on their start date."
           },
           {
             "score": 0.3276,
@@ -307,43 +314,43 @@
             "text": "The company contributes to each employee's retirement fund as required by law."
           },
           {
-            "score": 0.3148,
-            "semantic": 0.4843,
-            "lexical": 0.0,
-            "coverage": 0.1667,
-            "source": "01_leave_policy.txt",
-            "text": "Employees joining during the year receive a prorated allowance based on their start date."
-          },
-          {
-            "score": 0.3051,
+            "score": 0.3193,
             "semantic": 0.4694,
-            "lexical": 0.0,
-            "coverage": 0.0,
+            "lexical": 0.0406,
+            "coverage": 0.1667,
             "source": "03_employee_benefits.txt",
             "text": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications."
           },
           {
-            "score": 0.298,
+            "score": 0.3122,
             "semantic": 0.4584,
-            "lexical": 0.0,
-            "coverage": 0.0,
+            "lexical": 0.0406,
+            "coverage": 0.1667,
             "source": "03_employee_benefits.txt",
             "text": "All full-time employees are covered by a group health insurance plan that includes their spouse and children."
           },
           {
-            "score": 0.2967,
+            "score": 0.3109,
             "semantic": 0.4565,
-            "lexical": 0.0,
-            "coverage": 0.1667,
+            "lexical": 0.0406,
+            "coverage": 0.3333,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.2545,
+            "semantic": 0.2857,
+            "lexical": 0.1966,
+            "coverage": 0.1667,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Parental leave for other parents is available under the same program."
           }
         ],
         "premise_status": null,
         "answerability": 3.599,
         "answer_span": "wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services",
         "notes": [
-          "Retrieval heuristics flagged: Only 33% of key terms found (missing: employe, availabl, reimbursement, limit). Best evidence score 0.37 is below 0.45."
+          "Retrieval heuristics flagged: Best evidence score 0.39 is below 0.45."
         ],
         "claim_statuses": [
           "SUPPORTED"
@@ -363,12 +370,12 @@
       ],
       "answer": "Up to 5 unused annual-leave days can be carried forward to the next calendar year. [1] Any carried-forward days not used by that date expire. [2] Personal leave cannot be carried forward. [3]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 0.51
+        "retrieval_s": 0.017,
+        "verification_s": 0.55
       },
       "trace": {
         "key_terms": [
-          "employ",
+          "employe",
           "carry",
           "forward",
           "unus",
@@ -440,8 +447,8 @@
       "missing_facts": [],
       "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Eligible employees receive maternity leave according to applicable law and the company's parental-leave program. [1]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.035
+        "retrieval_s": 0.014,
+        "verification_s": 0.031
       },
       "trace": {
         "key_terms": [
@@ -495,7 +502,7 @@
       "answer": "The sources do not establish this. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
         "retrieval_s": 0.013,
-        "verification_s": 0.157
+        "verification_s": 0.147
       },
       "trace": {
         "key_terms": [
@@ -613,7 +620,7 @@
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
         "retrieval_s": 0.014,
-        "verification_s": 0.033
+        "verification_s": 0.035
       },
       "trace": {
         "key_terms": [
@@ -740,8 +747,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1] Employees joining during the year receive a prorated allowance based on their start date. [2] Part-time employees receive leave in proportion to their contracted hours. [3]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.15
+        "retrieval_s": 0.014,
+        "verification_s": 0.154
       },
       "trace": {
         "key_terms": [
@@ -759,89 +766,87 @@
           "yes_no"
         ],
         "premise": "The company guarantees 30 days of paid annual leave to every employee.",
-        "retrieval_sufficient": false,
+        "retrieval_sufficient": true,
         "retrieval_expanded": true,
-        "retrieval_reasons": [
-          "Only 56% of key terms found (missing: guarante, 30, every, employe)."
-        ],
+        "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.4997,
+            "score": 0.5188,
             "semantic": 0.6735,
-            "lexical": 0.1769,
-            "coverage": 0.4444,
+            "lexical": 0.2314,
+            "coverage": 0.5556,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.3793,
+            "score": 0.3833,
             "semantic": 0.537,
-            "lexical": 0.0864,
+            "lexical": 0.0979,
             "coverage": 0.2222,
             "source": "01_leave_policy.txt",
             "text": "Leave of more than 10 consecutive days requires additional approval from HR."
           },
           {
-            "score": 0.366,
+            "score": 0.3678,
             "semantic": 0.543,
-            "lexical": 0.0373,
+            "lexical": 0.0423,
             "coverage": 0.1111,
             "source": "01_leave_policy.txt",
             "text": "Up to 5 unused annual-leave days can be carried forward to the next calendar year."
           },
           {
-            "score": 0.3517,
+            "score": 0.3668,
             "semantic": 0.5143,
-            "lexical": 0.0498,
-            "coverage": 0.2222,
+            "lexical": 0.0927,
+            "coverage": 0.3333,
             "source": "01_leave_policy.txt",
             "text": "Part-time employees receive leave in proportion to their contracted hours."
           },
           {
-            "score": 0.351,
+            "score": 0.3624,
             "semantic": 0.54,
-            "lexical": 0.0,
-            "coverage": 0.2222,
+            "lexical": 0.0325,
+            "coverage": 0.3333,
             "source": "01_leave_policy.txt",
             "text": "Employees joining during the year receive a prorated allowance based on their start date."
           },
           {
-            "score": 0.3078,
+            "score": 0.3132,
             "semantic": 0.4108,
-            "lexical": 0.1165,
+            "lexical": 0.132,
             "coverage": 0.1111,
             "source": "03_employee_benefits.txt",
             "text": "The company contributes to each employee's retirement fund as required by law."
           },
           {
-            "score": 0.2951,
+            "score": 0.3006,
+            "semantic": 0.4277,
+            "lexical": 0.0646,
+            "coverage": 0.2222,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
+          },
+          {
+            "score": 0.2987,
             "semantic": 0.4121,
-            "lexical": 0.0778,
+            "lexical": 0.0882,
             "coverage": 0.2222,
             "source": "01_leave_policy.txt",
             "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
           },
           {
-            "score": 0.2893,
-            "semantic": 0.4277,
-            "lexical": 0.0322,
-            "coverage": 0.1111,
-            "source": "02_work_from_home_policy.txt",
-            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
-          },
-          {
-            "score": 0.2843,
+            "score": 0.2971,
             "semantic": 0.4146,
-            "lexical": 0.0424,
-            "coverage": 0.1111,
+            "lexical": 0.0789,
+            "coverage": 0.2222,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
           },
           {
-            "score": 0.2817,
+            "score": 0.2944,
             "semantic": 0.4105,
-            "lexical": 0.0424,
-            "coverage": 0.1111,
+            "lexical": 0.0789,
+            "coverage": 0.2222,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
           }

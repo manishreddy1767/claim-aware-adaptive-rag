@@ -21,6 +21,10 @@ def test_tokenize_stems_and_drops_stopwords():
     assert tokenize("The trials consumed energy nodes node") == ["trial", "consum", "energy", "nod", "nod"]
 
 
+def test_tokenize_matches_ee_plurals():
+    assert tokenize("employee employees fee fees") == ["employe", "employe", "fee", "fee"]
+
+
 def test_question_intents():
     assert "causal" in analyze_question("Why did Trial Two consume more energy?").intents
     assert "numeric" in analyze_question("How many spikes were recorded?").intents

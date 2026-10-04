@@ -92,6 +92,8 @@ def _stem(token: str) -> str:
     """Very light suffix stripping so inflections match ('nodes'/'node', 'used'/'use')."""
     if token.isdigit():
         return token
+    if token.endswith("ees") and len(token) > 4:
+        token = token[:-1]   # 'employees' -> 'employee', not 'employ' (which 'employee' never becomes)
     for suffix in ("ations", "ation", "ingly", "ing", "edly", "ed", "ies", "es", "s", "ly"):
         if token.endswith(suffix) and len(token) - len(suffix) >= 3:
             token = token[: -len(suffix)] + ("y" if suffix == "ies" else "")
