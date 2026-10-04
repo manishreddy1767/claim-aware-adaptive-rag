@@ -70,7 +70,7 @@
       "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
     }
   },
-  "behavior_correct": 5,
+  "behavior_correct": 6,
   "mean_fact_recall": 0.515,
   "cases": [
     {
@@ -84,8 +84,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.095,
-        "verification_s": 0.306
+        "retrieval_s": 0.054,
+        "verification_s": 0.176
       },
       "trace": {
         "key_terms": [
@@ -145,8 +145,8 @@
       ],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Approval is not automatic. [2] Requests for more than 2 remote days per week require written approval from the department head and HR. [3]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 1.111
+        "retrieval_s": 0.009,
+        "verification_s": 0.63
       },
       "trace": {
         "key_terms": [
@@ -269,8 +269,8 @@
       ],
       "answer": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [1]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 0.214
+        "retrieval_s": 0.008,
+        "verification_s": 0.078
       },
       "trace": {
         "key_terms": [
@@ -363,8 +363,8 @@
       ],
       "answer": "Up to 5 unused annual-leave days can be carried forward to the next calendar year. [1] Any carried-forward days not used by that date expire. [2] Personal leave cannot be carried forward. [3]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 0.545
+        "retrieval_s": 0.009,
+        "verification_s": 0.279
       },
       "trace": {
         "key_terms": [
@@ -442,8 +442,8 @@
       ],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.026,
-        "verification_s": 0.049
+        "retrieval_s": 0.008,
+        "verification_s": 0.019
       },
       "trace": {
         "key_terms": [
@@ -490,14 +490,14 @@
       "category": "unsupported",
       "question": "Does the company provide paid leave for pet adoption?",
       "expected_behavior": "not_specified",
-      "observed_behavior": "reject_premise",
-      "behavior_ok": false,
+      "observed_behavior": "not_specified",
+      "behavior_ok": true,
       "fact_recall": 1.0,
       "missing_facts": [],
-      "answer": "No. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
+      "answer": "The sources do not establish this. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
-        "retrieval_s": 0.017,
-        "verification_s": 0.149
+        "retrieval_s": 0.008,
+        "verification_s": 0.092
       },
       "trace": {
         "key_terms": [
@@ -588,6 +588,7 @@
         "answerability": null,
         "answer_span": null,
         "notes": [
+          "The evidence states that this is not established or specified, which is not the same as the sources ruling it out.",
           "Premise contradicted: \"The company provides paid leave for pet adoption.\""
         ],
         "claim_statuses": [
@@ -613,8 +614,8 @@
       ],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.036
+        "retrieval_s": 0.009,
+        "verification_s": 0.019
       },
       "trace": {
         "key_terms": [
@@ -743,8 +744,8 @@
       ],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.142
+        "retrieval_s": 0.008,
+        "verification_s": 0.098
       },
       "trace": {
         "key_terms": [

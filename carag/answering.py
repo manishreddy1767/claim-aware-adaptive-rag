@@ -10,6 +10,7 @@ reported rather than answered.
 
 from __future__ import annotations
 
+import re
 import time
 from dataclasses import dataclass, field
 
@@ -24,6 +25,12 @@ from .verification import ClaimVerifier
 _CAVEAT_MARKERS = ("however", "limitation", "limitations", "caveat", "preliminary",
                    "should be interpreted", "small sample", "not statistically", "cannot be",
                    "unclear", "was not measured", "were not measured", "not controlled")
+
+# Evidence saying something is undocumented ("no pet-adoption benefit is established",
+# "the duration is not specified") rather than that it is false.
+_ABSENCE = re.compile(
+    r"\b(?:not|no)\b[^.;]{0,60}?\b(?:established|specified|stated|mentioned|covered|documented|defined)\b|"
+    r"\b(?:does|do|did) not (?:specify|state|mention|cover|establish|define)\b", re.I)
 
 _STATUS_QUALIFIER = {
     ClaimStatus.PARTIALLY_SUPPORTED: "only partly supported by the sources",
@@ -197,7 +204,16 @@ class GroundedAnswerer:
                 ids = premise.contradicting[0].evidence_ids
                 markers = [self._cite(self._unit_for(eid), result.citations) for eid in ids]
                 text = " ".join(self._unit_for(eid).text for eid in ids)
-                lead = "No." if analysis.is_yes_no else "The question's assumption is not supported by the sources."
+                if _ABSENCE.search(text):
+                    # "No X is established" means undocumented, not denied: NLI scores it as a
+                    # contradiction, but the answer must not claim the opposite is true.
+                    lead = "The sources do not establish this."
+                    result.notes.append("The evidence states that this is not established or specified, "
+                                        "which is not the same as the sources ruling it out.")
+                elif analysis.is_yes_no:
+                    lead = "No."
+                else:
+                    lead = "The question's assumption is not supported by the sources."
                 result.sentences.append(AnswerSentence(text, markers, [premise], kind="correction"))
                 result.answer = f"{lead} The sources state: {text} " + "".join(f"[{m}]" for m in markers)
                 result.notes.append(f"Premise contradicted: \"{analysis.premise}\"")
