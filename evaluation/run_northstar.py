@@ -48,6 +48,7 @@ def trace(result) -> dict:
         "premise_status": result.premise_check.status.value if result.premise_check else None,
         "answerability": result.answerability, "answer_span": result.answer_span,
         "notes": result.notes, "claim_statuses": [c.status.value for c in result.claims],
+        "self_supported": [c.self_supported for c in result.claims],
     }
 
 
@@ -99,11 +100,16 @@ def main() -> None:
               f"{'yes' if row['behavior_ok'] else 'NO':<5}{row['fact_recall']:.2f}")
     ok = sum(r["behavior_ok"] for r in rows)
     recall = sum(r["fact_recall"] for r in rows) / len(rows)
-    print(f"\nbehavior correct: {ok}/{len(rows)}   mean fact recall: {recall:.2f}")
+    supported = [f for r in rows for s, f in zip(r["trace"]["claim_statuses"], r["trace"]["self_supported"])
+                 if s == "SUPPORTED"]
+    self_only = sum(supported) / len(supported) if supported else 0.0
+    print(f"\nbehavior correct: {ok}/{len(rows)}   mean fact recall: {recall:.2f}   "
+          f"supported claims backed only by their own sentence: {self_only:.0%} of {len(supported)}")
 
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps({"dataset": "northstar (reconstructed)", "config": rag.config.to_dict(),
                                           "behavior_correct": ok, "mean_fact_recall": round(recall, 3),
+                                          "self_supported_rate": round(self_only, 3),
                                           "cases": rows}, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {args.out}")
 

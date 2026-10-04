@@ -93,6 +93,9 @@ def render_claim(v: ClaimVerification, key: str) -> None:
     st.markdown(f"{icon} :{color}[**{v.status.value.replace('_', ' ')}**] — {v.claim}")
     with st.expander("Why?", expanded=False):
         st.write(meaning + " " + v.explanation)
+        if v.self_supported:
+            st.caption("This sentence is quoted from the source, so it is supported by that sentence itself; "
+                       "no other passage corroborates it. Support does not mean it answers the question.")
         for title, items in (("Supporting evidence", v.supporting), ("Contradicting evidence", v.contradicting)):
             if items:
                 st.markdown(f"**{title}**")

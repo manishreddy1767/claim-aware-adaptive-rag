@@ -94,6 +94,9 @@ class ClaimVerification:
     best_relevance: float = 0.0
     checks_used: int = 0          # NLI evidence checks spent on this claim
     priority: float | None = None  # scheduling priority when verified under a budget
+    # Set for answer sentences copied from a source: True when the only supporting
+    # evidence is that same sentence (support, but no independent corroboration).
+    self_supported: bool = False
 
     def to_dict(self) -> dict:
         return {
@@ -108,4 +111,5 @@ class ClaimVerification:
             "best_relevance": self.best_relevance,
             "checks_used": self.checks_used,
             "priority": self.priority,
+            "self_supported": self.self_supported,
         }

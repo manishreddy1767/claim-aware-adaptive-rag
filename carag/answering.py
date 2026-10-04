@@ -389,6 +389,11 @@ class GroundedAnswerer:
         for (item, kind), claims in zip(drafts, draft_claims):
             verdicts = flat_verdicts[cursor: cursor + len(claims)] if verify else []
             cursor += len(claims)
+            for v in verdicts:
+                # The sentence trivially entails itself; record when nothing else supports it.
+                own = item.unit.evidence_id
+                if v.status == ClaimStatus.SUPPORTED and all(own in j.evidence_ids for j in v.supporting):
+                    v.self_supported = True
             bad = [v for v in verdicts if v.status in (ClaimStatus.CONTRADICTED, ClaimStatus.INSUFFICIENT_EVIDENCE)]
             result.removed_claims.extend(bad)
             if bad and len(bad) == len(verdicts):

@@ -75,6 +75,7 @@
   },
   "behavior_correct": 8,
   "mean_fact_recall": 0.979,
+  "self_supported_rate": 1.0,
   "cases": [
     {
       "id": "paid_leave_days",
@@ -87,8 +88,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.093,
-        "verification_s": 0.333
+        "retrieval_s": 0.095,
+        "verification_s": 0.325
       },
       "trace": {
         "key_terms": [
@@ -131,6 +132,9 @@
         "notes": [],
         "claim_statuses": [
           "SUPPORTED"
+        ],
+        "self_supported": [
+          true
         ]
       }
     },
@@ -145,8 +149,8 @@
       "missing_facts": [],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Each request must specify the date, the work location and a brief reason. [2] The reporting manager reviews and approves each request. [3] Approval is not automatic. [4] Requests for more than 2 remote days per week require written approval from the department head and HR. [5] Employees working remotely must remain reachable during core hours from 10:00 a.m. to 4:00 p.m. [6]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 1.479
+        "retrieval_s": 0.016,
+        "verification_s": 1.542
       },
       "trace": {
         "key_terms": [
@@ -190,6 +194,14 @@
           "SUPPORTED",
           "SUPPORTED",
           "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
         ]
       }
     },
@@ -205,7 +217,7 @@
       "answer": "All full-time employees are covered by a group health insurance plan that includes their spouse and children. [1] The company contributes to each employee's retirement fund as required by law. [2] Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [3] Prior manager approval is required before enrolling in a course that will be reimbursed. [4] Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [5]",
       "timings": {
         "retrieval_s": 0.014,
-        "verification_s": 0.609
+        "verification_s": 0.641
       },
       "trace": {
         "key_terms": [
@@ -284,6 +296,13 @@
           "SUPPORTED",
           "SUPPORTED",
           "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true
         ]
       }
     },
@@ -298,8 +317,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1] Leave of more than 10 consecutive days requires additional approval from HR. [2] Up to 5 unused annual-leave days can be carried forward to the next calendar year. [3] Carried-forward days must be used by March 31. [4] Any carried-forward days not used by that date expire. [5] Personal leave cannot be carried forward. [6]",
       "timings": {
-        "retrieval_s": 0.02,
-        "verification_s": 0.837
+        "retrieval_s": 0.014,
+        "verification_s": 0.911
       },
       "trace": {
         "key_terms": [
@@ -411,6 +430,14 @@
           "SUPPORTED",
           "SUPPORTED",
           "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
         ]
       }
     },
@@ -425,8 +452,8 @@
       "missing_facts": [],
       "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Eligible employees receive maternity leave according to applicable law and the company's parental-leave program. [1]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.031
+        "retrieval_s": 0.019,
+        "verification_s": 0.048
       },
       "trace": {
         "key_terms": [
@@ -473,7 +500,8 @@
         "notes": [
           "The retrieved evidence does not appear to contain an answer (QA answerability -2.0)."
         ],
-        "claim_statuses": []
+        "claim_statuses": [],
+        "self_supported": []
       }
     },
     {
@@ -487,8 +515,8 @@
       "missing_facts": [],
       "answer": "The sources do not establish this. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
-        "retrieval_s": 0.018,
-        "verification_s": 0.165
+        "retrieval_s": 0.02,
+        "verification_s": 0.166
       },
       "trace": {
         "key_terms": [
@@ -584,6 +612,9 @@
         ],
         "claim_statuses": [
           "CONTRADICTED"
+        ],
+        "self_supported": [
+          false
         ]
       }
     },
@@ -600,8 +631,8 @@
       ],
       "answer": "Company's annual leave policy: Full-time employees receive 24 days of paid leave per calendar year. [1] Part-time employees receive leave in proportion to their contracted hours. [2] Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [3] Requests are approved by the employee's reporting manager. [4] Leave of more than 10 consecutive days requires additional approval from HR. [5] Personal leave cannot be carried forward. [6] Work-from-home policy: Employees who have completed their probation period are eligible to work remotely. [7] Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [8] Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [9] Each request must specify the date, the work location and a brief reason. [10] The reporting manager reviews and approves each request. [11] Approval is not automatic. [12]",
       "timings": {
-        "retrieval_s": 0.025,
-        "verification_s": 1.444
+        "retrieval_s": 0.015,
+        "verification_s": 1.449
       },
       "trace": {
         "key_terms": [
@@ -722,6 +753,20 @@
           "SUPPORTED",
           "SUPPORTED",
           "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
         ]
       }
     },
@@ -736,8 +781,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1] Employees joining during the year receive a prorated allowance based on their start date. [2] Part-time employees receive leave in proportion to their contracted hours. [3]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 0.165
+        "retrieval_s": 0.016,
+        "verification_s": 0.16
       },
       "trace": {
         "key_terms": [
@@ -783,6 +828,9 @@
         ],
         "claim_statuses": [
           "CONTRADICTED"
+        ],
+        "self_supported": [
+          false
         ]
       }
     }

@@ -33,3 +33,10 @@ def test_absent_entity_abstains(book):
 def test_present_entity_is_answered(book):
     result = book.ask("What are Diana Vernon's main personality traits?")
     assert not result.abstained and "bold, witty" in result.answer
+
+
+def test_copied_sentence_support_is_flagged(book):
+    result = book.ask("What are Diana Vernon's main personality traits?")
+    claim = result.claims[0]
+    assert claim.status.value == "SUPPORTED" and claim.self_supported
+    assert claim.to_dict()["self_supported"] is True
