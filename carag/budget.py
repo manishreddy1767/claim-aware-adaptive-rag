@@ -139,7 +139,7 @@ class BudgetedVerifier:
             state.low_gain_streak = state.low_gain_streak + 1 if gain < cfg.low_gain_threshold else 0
             state.dynamic_priority = state.base_priority * (1.0 - new_decisiveness)
             interim = self.verifier.decide(state.claim, state.judgements, pool, decompose=False).status
-            state.resolved = interim in (ClaimStatus.SUPPORTED, ClaimStatus.CONTRADICTED)
+            state.resolved = interim in (ClaimStatus.SUPPORTED, ClaimStatus.CONTRADICTED, ClaimStatus.NOT_SPECIFIED)
             report.steps.append({"claim": state.index, "attempt": state.attempts, "checks": take,
                                  "gain": round(gain, 4), "decisiveness": round(new_decisiveness, 4),
                                  "interim_status": interim.value, "resolved": state.resolved})

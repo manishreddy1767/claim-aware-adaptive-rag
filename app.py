@@ -22,6 +22,7 @@ STATUS_STYLE = {
     ClaimStatus.PARTIALLY_SUPPORTED: ("🟡", "orange", "Only part of this claim is supported."),
     ClaimStatus.CONTRADICTED: ("❌", "red", "The sources contradict this claim."),
     ClaimStatus.INSUFFICIENT_EVIDENCE: ("⚪", "gray", "The sources do not establish this claim."),
+    ClaimStatus.NOT_SPECIFIED: ("➖", "gray", "The sources say this is not established or specified."),
     ClaimStatus.UNCERTAIN: ("❔", "violet", "Verification was inconclusive."),
 }
 

@@ -15,6 +15,8 @@ Labels (applied in this order):
   decision thresholds).
 * PARTIALLY_SUPPORTED - the full claim is not entailed, but a component is
   (e.g. the effect of "A because B" is supported while the causal link is not).
+* NOT_SPECIFIED - the contradicting evidence only says the claim's subject is not
+  established or specified ("no X is established by this document").
 * INSUFFICIENT_EVIDENCE - no relevant passage entails or contradicts the claim.
 
 "Relevant" means cosine similarity between claim and passage >= relevance_threshold.
@@ -25,6 +27,7 @@ sources*; they do not establish real-world truth.
 from __future__ import annotations
 
 import logging
+import re
 
 from .claims import decompose_causal, extract_claims
 from .config import VerificationConfig
@@ -35,6 +38,12 @@ from .schema import ClaimStatus, ClaimVerification, EvidenceJudgement, ScoredEvi
 from .text_utils import extract_numbers
 
 logger = logging.getLogger(__name__)
+
+# Evidence saying something is undocumented ("no pet-adoption benefit is established",
+# "the duration is not specified") rather than that it is false.
+ABSENCE = re.compile(
+    r"\b(?:not|no)\b[^.;]{0,60}?\b(?:established|specified|stated|mentioned|covered|documented|defined)\b|"
+    r"\b(?:does|do|did) not (?:specify|state|mention|cover|establish|define)\b", re.I)
 
 
 class ClaimVerifier:
@@ -175,6 +184,13 @@ class ClaimVerifier:
             result.explanation = f"Entailed by evidence (P(entailment)={supporting[0].entailment:.2f})."
             return result
         if contradicting:
+            if ABSENCE.search(contradicting[0].premise):
+                # NLI scores "no X is established" as contradicting "X exists", but the
+                # source only says X is undocumented.
+                result.status = ClaimStatus.NOT_SPECIFIED
+                result.explanation = ("The evidence states that this is not established or specified "
+                                      "in the sources, which does not mean it is false.")
+                return result
             result.status = ClaimStatus.CONTRADICTED
             result.explanation = (f"Relevant evidence contradicts the claim "
                                   f"(P(contradiction)={contradicting[0].contradiction:.2f}).")

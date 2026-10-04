@@ -10,7 +10,6 @@ reported rather than answered.
 
 from __future__ import annotations
 
-import re
 import time
 from dataclasses import dataclass, field
 
@@ -26,11 +25,8 @@ _CAVEAT_MARKERS = ("however", "limitation", "limitations", "caveat", "preliminar
                    "should be interpreted", "small sample", "not statistically", "cannot be",
                    "unclear", "was not measured", "were not measured", "not controlled")
 
-# Evidence saying something is undocumented ("no pet-adoption benefit is established",
-# "the duration is not specified") rather than that it is false.
-_ABSENCE = re.compile(
-    r"\b(?:not|no)\b[^.;]{0,60}?\b(?:established|specified|stated|mentioned|covered|documented|defined)\b|"
-    r"\b(?:does|do|did) not (?:specify|state|mention|cover|establish|define)\b", re.I)
+# Claim labels that remove an answer sentence.
+_NOT_ESTABLISHED = (ClaimStatus.CONTRADICTED, ClaimStatus.INSUFFICIENT_EVIDENCE, ClaimStatus.NOT_SPECIFIED)
 
 # Words in a compared subject ("the company's annual leave policy") that do not identify it.
 _GENERIC_SUBJECT_TERMS = {"company", "company'", "policy", "policie", "rul", "program"}
@@ -287,13 +283,12 @@ class GroundedAnswerer:
         if verify and cfg.check_question_premise and analysis.premise:
             premise = self.verifier.verify(analysis.premise, retrieval.evidence)
             result.premise_check = premise
-            if premise.status == ClaimStatus.CONTRADICTED and premise.contradicting:
+            if premise.status in (ClaimStatus.CONTRADICTED, ClaimStatus.NOT_SPECIFIED) and premise.contradicting:
                 ids = premise.contradicting[0].evidence_ids
                 markers = [self._cite(self._unit_for(eid), result.citations) for eid in ids]
                 text = " ".join(self._unit_for(eid).text for eid in ids)
-                if _ABSENCE.search(text):
-                    # "No X is established" means undocumented, not denied: NLI scores it as a
-                    # contradiction, but the answer must not claim the opposite is true.
+                if premise.status == ClaimStatus.NOT_SPECIFIED:
+                    # Undocumented, not denied: the answer must not claim the opposite is true.
                     lead = "The sources do not establish this."
                     result.notes.append("The evidence states that this is not established or specified, "
                                         "which is not the same as the sources ruling it out.")
@@ -394,7 +389,7 @@ class GroundedAnswerer:
                 own = item.unit.evidence_id
                 if v.status == ClaimStatus.SUPPORTED and all(own in j.evidence_ids for j in v.supporting):
                     v.self_supported = True
-            bad = [v for v in verdicts if v.status in (ClaimStatus.CONTRADICTED, ClaimStatus.INSUFFICIENT_EVIDENCE)]
+            bad = [v for v in verdicts if v.status in _NOT_ESTABLISHED]
             result.removed_claims.extend(bad)
             if bad and len(bad) == len(verdicts):
                 sentences.append(None)

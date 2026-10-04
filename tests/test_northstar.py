@@ -71,3 +71,18 @@ def test_comparison_reports_missing_side(handbook):
     result = handbook.ask("Compare the annual leave policy with the travel reimbursement policy.")
     assert "Travel reimbursement policy: the sources do not describe this." in result.answer
     assert handbook.ask("Compare the stock option plan with the company car policy.").abstained
+
+
+def test_verifier_labels_undocumented_claim_not_specified(handbook):
+    from carag.schema import ClaimStatus
+    verdict = handbook.verify_claim("The company provides paid leave for pet adoption.")
+    assert verdict.status == ClaimStatus.NOT_SPECIFIED
+    # A real contradiction stays CONTRADICTED.
+    assert handbook.verify_claim("Full-time employees receive 30 days of paid leave per calendar year.").status \
+        == ClaimStatus.CONTRADICTED
+
+
+def test_checked_answer_does_not_call_undocumented_claim_wrong(handbook):
+    check = handbook.check_answer("Employees get paid leave for pet adoption.")
+    assert "Not established" in check.revised.text and "Correction" not in check.revised.text
+

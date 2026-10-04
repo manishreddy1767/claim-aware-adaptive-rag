@@ -77,6 +77,11 @@ def revise_answer(verifications: list[ClaimVerification], index: EvidenceIndex,
             sentences.append(f"Correction: the claim \"{v.claim}\" conflicts with the sources, which state: "
                              f"{evidence.premise} {cite(evidence.evidence_ids)}")
             revised.corrected.append(v.claim)
+        elif v.status == ClaimStatus.NOT_SPECIFIED and v.contradicting:
+            evidence = v.contradicting[0]
+            sentences.append(f"Not established: the sources do not establish \"{v.claim}\"; they state: "
+                             f"{evidence.premise} {cite(evidence.evidence_ids)}")
+            revised.qualified.append(v.claim)
         else:
             revised.removed.append(v.claim)
 

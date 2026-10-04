@@ -47,6 +47,9 @@ class ClaimStatus(str, Enum):
     PARTIALLY_SUPPORTED = "PARTIALLY_SUPPORTED"
     CONTRADICTED = "CONTRADICTED"
     INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+    # The evidence says the claim's subject is not established/specified ("no pet-adoption
+    # benefit is established"): undocumented, which is not the same as contradicted.
+    NOT_SPECIFIED = "NOT_SPECIFIED"
     UNCERTAIN = "UNCERTAIN"
 
 

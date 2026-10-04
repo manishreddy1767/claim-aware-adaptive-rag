@@ -140,7 +140,7 @@ def gold_type(labels: list[dict], start: int, end: int) -> str | None:
 # ---------------------------------------------------------------------------
 
 NOT_SUPPORTED = {s.value for s in ClaimStatus} - {"SUPPORTED"}
-STRICT = {"CONTRADICTED", "INSUFFICIENT_EVIDENCE"}
+STRICT = {"CONTRADICTED", "INSUFFICIENT_EVIDENCE", "NOT_SPECIFIED"}
 
 
 def predict(rag: ClaimAwareRAG, claims_by_sentence: list[list[str]], systems=SYSTEMS,
