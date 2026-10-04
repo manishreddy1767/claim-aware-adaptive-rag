@@ -21,6 +21,14 @@ def test_tokenize_stems_and_drops_stopwords():
     assert tokenize("The trials consumed energy nodes node") == ["trial", "consum", "energy", "nod", "nod"]
 
 
+def test_framing_words_are_not_key_terms():
+    terms = analyze_question("What is the procedure for requesting work-from-home permission, including the "
+                             "deadline and approval requirements?").key_terms
+    assert not {"procedur", "includ", "requirement"} & set(terms)
+    assert {"work-from-hom", "deadlin", "approval"} <= set(terms)
+    assert "company" in analyze_question("What is the company's maternity leave duration?").key_terms
+
+
 def test_tokenize_matches_ee_plurals():
     assert tokenize("employee employees fee fees") == ["employe", "employe", "fee", "fee"]
 

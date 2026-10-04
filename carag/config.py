@@ -125,7 +125,7 @@ class AnswerConfig:
     # sentences from the anchor's document scoring >= multi_part_relative x the best
     # there, and the rest of their sections when a section has <= max_section_units.
     multi_part_sentences: int = 6
-    multi_part_relative: float = 0.8
+    multi_part_relative: float = 0.75
     max_section_units: int = 6
     # Answer relevance / answerability via an extractive QA model (carag/relevance.py).
     relevance_check: bool = True

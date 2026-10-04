@@ -15,7 +15,12 @@ from .text_utils import content_terms
 
 _QUESTION_NOISE = {"what", "which", "who", "whom", "whose", "when", "where", "why", "how",
                    "happen", "happened", "thing", "stuff", "someth", "anyth", "effect", "affect",
-                   "caus", "cause", "reason", "result", "way", "kind", "type", "lead", "led"}
+                   "caus", "cause", "reason", "result", "way", "kind", "type", "lead", "led",
+                   # Words that frame what is asked rather than name it ("the procedure for
+                   # X, including the requirements"); documents rarely repeat them, so they
+                   # made key-term coverage look low when the evidence was on topic.
+                   "includ", "procedur", "process", "step", "requirement", "rul", "detail",
+                   "describ", "list", "availabl", "compar", "policy", "polic", "every", "overview"}
 _PRONOUNS = {"it", "this", "that", "they", "them", "these", "those", "he", "she"}
 _DETERMINERS = {"the", "a", "an", "this", "that", "these", "those", "its", "their", "our", "his", "her"}
 _PREDICATE_STARTERS = {

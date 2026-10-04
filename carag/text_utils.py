@@ -121,7 +121,8 @@ _IRREGULAR = {
 
 
 def tokenize(text: str, remove_stopwords: bool = True) -> list[str]:
-    tokens = [_IRREGULAR.get(t, t) for t in (t.lower() for t in _WORD_RE.findall(text))]
+    # Possessives match the plain noun ("company's" -> "company").
+    tokens = [_IRREGULAR.get(t, t) for t in (re.sub(r"'s$", "", t.lower()) for t in _WORD_RE.findall(text))]
     if remove_stopwords:
         tokens = [t for t in tokens if t not in STOPWORDS]
     return [_stem(t) for t in tokens]
