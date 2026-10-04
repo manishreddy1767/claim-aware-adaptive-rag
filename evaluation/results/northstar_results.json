@@ -57,7 +57,9 @@
       "low_gain_threshold": 0.05,
       "attempt_penalty": 0.8,
       "low_gain_penalty": 0.75,
-      "strategy": "priority"
+      "strategy": "priority",
+      "retrieval_round_cost": 2,
+      "answer_budget": null
     },
     "answer": {
       "max_answer_sentences": 3,
@@ -73,9 +75,69 @@
       "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
     }
   },
-  "behavior_correct": 8,
-  "mean_fact_recall": 0.979,
-  "self_supported_rate": 1.0,
+  "behavior_correct": 38,
+  "n": 43,
+  "mean_fact_recall": 0.922,
+  "self_supported_rate": 0.934,
+  "mean_checks_used": 7.22,
+  "mean_retrieval_rounds": 0.13,
+  "by_category": {
+    "absent": {
+      "n": 3,
+      "behavior_correct": 3,
+      "mean_fact_recall": 1.0
+    },
+    "compare": {
+      "n": 4,
+      "behavior_correct": 4,
+      "mean_fact_recall": 0.958
+    },
+    "conflict": {
+      "n": 2,
+      "behavior_correct": 2,
+      "mean_fact_recall": 1.0
+    },
+    "factual": {
+      "n": 10,
+      "behavior_correct": 10,
+      "mean_fact_recall": 1.0
+    },
+    "false_premise": {
+      "n": 6,
+      "behavior_correct": 5,
+      "mean_fact_recall": 1.0
+    },
+    "multi_fact": {
+      "n": 4,
+      "behavior_correct": 4,
+      "mean_fact_recall": 0.95
+    },
+    "multi_hop": {
+      "n": 3,
+      "behavior_correct": 1,
+      "mean_fact_recall": 0.667
+    },
+    "procedure": {
+      "n": 2,
+      "behavior_correct": 2,
+      "mean_fact_recall": 1.0
+    },
+    "unsupported": {
+      "n": 5,
+      "behavior_correct": 3,
+      "mean_fact_recall": 0.6
+    },
+    "vague": {
+      "n": 1,
+      "behavior_correct": 1,
+      "mean_fact_recall": 1.0
+    },
+    "yes": {
+      "n": 3,
+      "behavior_correct": 3,
+      "mean_fact_recall": 1.0
+    }
+  },
   "cases": [
     {
       "id": "paid_leave_days",
@@ -88,8 +150,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.084,
-        "verification_s": 0.321
+        "retrieval_s": 0.092,
+        "verification_s": 0.305
       },
       "trace": {
         "key_terms": [
@@ -110,24 +172,24 @@
         "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.8709,
+            "score": 0.8711,
             "semantic": 0.8643,
-            "lexical": 0.6545,
+            "lexical": 0.6552,
             "coverage": 1.0,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.4992,
+            "score": 0.5078,
             "semantic": 0.6192,
-            "lexical": 0.2763,
+            "lexical": 0.3008,
             "coverage": 0.5714,
             "source": "01_leave_policy.txt",
             "text": "Part-time employees receive leave in proportion to their contracted hours."
           }
         ],
         "premise_status": null,
-        "answerability": 14.357,
+        "answerability": 13.924,
         "answer_span": "24",
         "notes": [],
         "claim_statuses": [
@@ -135,7 +197,12 @@
         ],
         "self_supported": [
           true
-        ]
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
       }
     },
     {
@@ -149,8 +216,8 @@
       "missing_facts": [],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Each request must specify the date, the work location and a brief reason. [2] The reporting manager reviews and approves each request. [3] Approval is not automatic. [4] Requests for more than 2 remote days per week require written approval from the department head and HR. [5] Employees working remotely must remain reachable during core hours from 10:00 a.m. to 4:00 p.m. [6]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 1.487
+        "retrieval_s": 0.013,
+        "verification_s": 1.499
       },
       "trace": {
         "key_terms": [
@@ -167,17 +234,17 @@
         "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.5273,
+            "score": 0.5369,
             "semantic": 0.6633,
-            "lexical": 0.2748,
+            "lexical": 0.3023,
             "coverage": 0.4,
             "source": "02_work_from_home_policy.txt",
             "text": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day."
           },
           {
-            "score": 0.4297,
+            "score": 0.4386,
             "semantic": 0.5598,
-            "lexical": 0.1881,
+            "lexical": 0.2137,
             "coverage": 0.4,
             "source": "02_work_from_home_policy.txt",
             "text": "Requests for more than 2 remote days per week require written approval from the department head and HR."
@@ -202,7 +269,12 @@
           true,
           true,
           true
-        ]
+        ],
+        "budget": {
+          "budget": 24,
+          "used_total": 12,
+          "retrieval_rounds": 0
+        }
       }
     },
     {
@@ -212,12 +284,14 @@
       "expected_behavior": "answer",
       "observed_behavior": "answer",
       "behavior_ok": true,
-      "fact_recall": 1.0,
-      "missing_facts": [],
-      "answer": "All full-time employees are covered by a group health insurance plan that includes their spouse and children. [1] The company contributes to each employee's retirement fund as required by law. [2] Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [3] Prior manager approval is required before enrolling in a course that will be reimbursed. [4] Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [5]",
+      "fact_recall": 0.8,
+      "missing_facts": [
+        "prior manager approval"
+      ],
+      "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1] Employees joining during the year receive a prorated allowance based on their start date. [2] All full-time employees are covered by a group health insurance plan that includes their spouse and children. [3] The company contributes to each employee's retirement fund as required by law. [4] Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [5] Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [6]",
       "timings": {
-        "retrieval_s": 0.017,
-        "verification_s": 0.626
+        "retrieval_s": 0.014,
+        "verification_s": 0.721
       },
       "trace": {
         "key_terms": [
@@ -236,61 +310,70 @@
         ],
         "evidence": [
           {
-            "score": 0.3961,
+            "score": 0.4009,
             "semantic": 0.5247,
-            "lexical": 0.1573,
+            "lexical": 0.1709,
             "coverage": 0.4,
             "source": "03_employee_benefits.txt",
             "text": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services."
           },
           {
-            "score": 0.3444,
+            "score": 0.3502,
             "semantic": 0.504,
-            "lexical": 0.0478,
+            "lexical": 0.0646,
             "coverage": 0.4,
             "source": "03_employee_benefits.txt",
             "text": "The company contributes to each employee's retirement fund as required by law."
           },
           {
-            "score": 0.3298,
+            "score": 0.335,
             "semantic": 0.4843,
-            "lexical": 0.0428,
+            "lexical": 0.0577,
             "coverage": 0.4,
             "source": "01_leave_policy.txt",
             "text": "Employees joining during the year receive a prorated allowance based on their start date."
           },
           {
-            "score": 0.3193,
+            "score": 0.3243,
             "semantic": 0.4694,
-            "lexical": 0.0407,
+            "lexical": 0.0547,
             "coverage": 0.2,
             "source": "03_employee_benefits.txt",
             "text": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications."
           },
           {
-            "score": 0.3122,
+            "score": 0.3171,
             "semantic": 0.4584,
-            "lexical": 0.0407,
+            "lexical": 0.0547,
             "coverage": 0.2,
             "source": "03_employee_benefits.txt",
             "text": "All full-time employees are covered by a group health insurance plan that includes their spouse and children."
           },
           {
-            "score": 0.311,
+            "score": 0.3159,
             "semantic": 0.4565,
-            "lexical": 0.0407,
+            "lexical": 0.0547,
             "coverage": 0.4,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.257,
+            "semantic": 0.2649,
+            "lexical": 0.2425,
+            "coverage": 0.4,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees should contact HR for clarification; no pet-adoption benefit is established by this document."
           }
         ],
         "premise_status": null,
-        "answerability": 3.599,
+        "answerability": 4.127,
         "answer_span": "wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services",
         "notes": [
           "Retrieval heuristics flagged: Best evidence score 0.40 is below 0.45."
         ],
         "claim_statuses": [
+          "SUPPORTED",
           "SUPPORTED",
           "SUPPORTED",
           "SUPPORTED",
@@ -302,8 +385,14 @@
           true,
           true,
           true,
+          true,
           true
-        ]
+        ],
+        "budget": {
+          "budget": 28,
+          "used_total": 16,
+          "retrieval_rounds": 2
+        }
       }
     },
     {
@@ -318,7 +407,7 @@
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1] Leave of more than 10 consecutive days requires additional approval from HR. [2] Up to 5 unused annual-leave days can be carried forward to the next calendar year. [3] Carried-forward days must be used by March 31. [4] Any carried-forward days not used by that date expire. [5] Personal leave cannot be carried forward. [6]",
       "timings": {
         "retrieval_s": 0.014,
-        "verification_s": 0.941
+        "verification_s": 0.879
       },
       "trace": {
         "key_terms": [
@@ -337,88 +426,88 @@
         "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.5197,
+            "score": 0.5183,
             "semantic": 0.6467,
-            "lexical": 0.284,
+            "lexical": 0.2799,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Up to 5 unused annual-leave days can be carried forward to the next calendar year."
           },
           {
-            "score": 0.5084,
+            "score": 0.5123,
             "semantic": 0.64,
-            "lexical": 0.2642,
+            "lexical": 0.2753,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Personal leave cannot be carried forward."
           },
           {
-            "score": 0.4253,
+            "score": 0.4237,
             "semantic": 0.5487,
-            "lexical": 0.196,
+            "lexical": 0.1917,
             "coverage": 0.1429,
             "source": "01_leave_policy.txt",
             "text": "Any carried-forward days not used by that date expire."
           },
           {
-            "score": 0.3966,
+            "score": 0.399,
             "semantic": 0.5725,
-            "lexical": 0.0699,
+            "lexical": 0.0768,
             "coverage": 0.1429,
             "source": "01_leave_policy.txt",
             "text": "Leave of more than 10 consecutive days requires additional approval from HR."
           },
           {
-            "score": 0.3923,
+            "score": 0.3982,
             "semantic": 0.5514,
-            "lexical": 0.0967,
+            "lexical": 0.1135,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.3589,
-            "semantic": 0.5182,
-            "lexical": 0.063,
-            "coverage": 0.1429,
-            "source": "01_leave_policy.txt",
-            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+            "score": 0.3836,
+            "semantic": 0.5291,
+            "lexical": 0.1135,
+            "coverage": 0.2857,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
           },
           {
-            "score": 0.3584,
+            "score": 0.3655,
             "semantic": 0.4902,
-            "lexical": 0.1136,
+            "lexical": 0.1338,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Part-time employees receive leave in proportion to their contracted hours."
           },
           {
-            "score": 0.3192,
+            "score": 0.361,
+            "semantic": 0.5182,
+            "lexical": 0.069,
+            "coverage": 0.1429,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.3251,
             "semantic": 0.439,
-            "lexical": 0.0967,
+            "lexical": 0.1135,
             "coverage": 0.2857,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
           },
           {
-            "score": 0.3074,
+            "score": 0.3114,
             "semantic": 0.4538,
-            "lexical": 0.0355,
+            "lexical": 0.0469,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Employees joining during the year receive a prorated allowance based on their start date."
-          },
-          {
-            "score": 0.2824,
-            "semantic": 0.4344,
-            "lexical": 0.0,
-            "coverage": 0.0,
-            "source": "01_leave_policy.txt",
-            "text": "Carried-forward days must be used by March 31."
           }
         ],
         "premise_status": "UNCERTAIN",
-        "answerability": 12.002,
+        "answerability": 12.122,
         "answer_span": "Up to 5 unused annual-leave days can be carried forward to the next calendar year",
         "notes": [
           "The sources do not clearly establish the question's premise \"Employees can carry forward unused leave.\" (UNCERTAIN)."
@@ -438,7 +527,12 @@
           true,
           true,
           true
-        ]
+        ],
+        "budget": {
+          "budget": 26,
+          "used_total": 14,
+          "retrieval_rounds": 1
+        }
       }
     },
     {
@@ -453,7 +547,7 @@
       "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Eligible employees receive maternity leave according to applicable law and the company's parental-leave program. [1]",
       "timings": {
         "retrieval_s": 0.013,
-        "verification_s": 0.031
+        "verification_s": 0.037
       },
       "trace": {
         "key_terms": [
@@ -470,38 +564,39 @@
         "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.5728,
+            "score": 0.5648,
             "semantic": 0.6248,
-            "lexical": 0.4763,
+            "lexical": 0.4534,
             "coverage": 0.6,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
           },
           {
-            "score": 0.4504,
+            "score": 0.459,
             "semantic": 0.5627,
-            "lexical": 0.242,
+            "lexical": 0.2664,
             "coverage": 0.6,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
           },
           {
-            "score": 0.4056,
+            "score": 0.4102,
             "semantic": 0.5755,
-            "lexical": 0.0901,
+            "lexical": 0.1032,
             "coverage": 0.2,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           }
         ],
         "premise_status": null,
-        "answerability": -1.975,
+        "answerability": -0.804,
         "answer_span": null,
         "notes": [
-          "The retrieved evidence does not appear to contain an answer (QA answerability -2.0)."
+          "The retrieved evidence does not appear to contain an answer (QA answerability -0.8)."
         ],
         "claim_statuses": [],
-        "self_supported": []
+        "self_supported": [],
+        "budget": null
       }
     },
     {
@@ -516,7 +611,7 @@
       "answer": "The sources do not establish this. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
         "retrieval_s": 0.013,
-        "verification_s": 0.168
+        "verification_s": 0.152
       },
       "trace": {
         "key_terms": [
@@ -547,57 +642,57 @@
             "text": "Employees should contact HR for clarification; no pet-adoption benefit is established by this document."
           },
           {
-            "score": 0.3708,
+            "score": 0.3653,
             "semantic": 0.4727,
-            "lexical": 0.1816,
+            "lexical": 0.1659,
             "coverage": 0.3333,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
           },
           {
-            "score": 0.355,
+            "score": 0.3599,
             "semantic": 0.502,
-            "lexical": 0.082,
+            "lexical": 0.0959,
             "coverage": 0.1667,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Parental leave for other parents is available under the same program."
           },
           {
-            "score": 0.339,
+            "score": 0.344,
             "semantic": 0.4107,
-            "lexical": 0.2059,
+            "lexical": 0.22,
             "coverage": 0.3333,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.283,
+            "score": 0.2872,
             "semantic": 0.3963,
-            "lexical": 0.0724,
+            "lexical": 0.0844,
             "coverage": 0.1667,
             "source": "01_leave_policy.txt",
             "text": "Part-time employees receive leave in proportion to their contracted hours."
           },
           {
-            "score": 0.2717,
+            "score": 0.2752,
             "semantic": 0.3849,
-            "lexical": 0.0616,
+            "lexical": 0.0716,
             "coverage": 0.1667,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
           },
           {
-            "score": 0.2589,
+            "score": 0.2629,
             "semantic": 0.3615,
-            "lexical": 0.0684,
+            "lexical": 0.0796,
             "coverage": 0.1667,
             "source": "01_leave_policy.txt",
             "text": "Leave of more than 10 consecutive days requires additional approval from HR."
           },
           {
-            "score": 0.2513,
+            "score": 0.2547,
             "semantic": 0.3534,
-            "lexical": 0.0616,
+            "lexical": 0.0716,
             "coverage": 0.1667,
             "source": "01_leave_policy.txt",
             "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
@@ -615,7 +710,8 @@
         ],
         "self_supported": [
           false
-        ]
+        ],
+        "budget": null
       }
     },
     {
@@ -631,8 +727,8 @@
       ],
       "answer": "Company's annual leave policy: Full-time employees receive 24 days of paid leave per calendar year. [1] Part-time employees receive leave in proportion to their contracted hours. [2] Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [3] Requests are approved by the employee's reporting manager. [4] Leave of more than 10 consecutive days requires additional approval from HR. [5] Personal leave cannot be carried forward. [6] Work-from-home policy: Employees who have completed their probation period are eligible to work remotely. [7] Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [8] Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [9] Each request must specify the date, the work location and a brief reason. [10] The reporting manager reviews and approves each request. [11] Approval is not automatic. [12]",
       "timings": {
-        "retrieval_s": 0.016,
-        "verification_s": 1.413
+        "retrieval_s": 0.014,
+        "verification_s": 1.398
       },
       "trace": {
         "key_terms": [
@@ -648,89 +744,91 @@
           "comparison"
         ],
         "premise": null,
-        "retrieval_sufficient": true,
+        "retrieval_sufficient": false,
         "retrieval_expanded": true,
-        "retrieval_reasons": [],
+        "retrieval_reasons": [
+          "Best evidence score 0.42 is below 0.45."
+        ],
         "evidence": [
           {
-            "score": 0.4107,
+            "score": 0.4156,
             "semantic": 0.5133,
-            "lexical": 0.1548,
+            "lexical": 0.169,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Leave of more than 10 consecutive days requires additional approval from HR."
           },
           {
-            "score": 0.3931,
+            "score": 0.387,
             "semantic": 0.5101,
-            "lexical": 0.1758,
+            "lexical": 0.1585,
             "coverage": 0.2857,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
           },
           {
-            "score": 0.3491,
+            "score": 0.3508,
             "semantic": 0.4295,
-            "lexical": 0.1996,
+            "lexical": 0.2046,
             "coverage": 0.2857,
             "source": "02_work_from_home_policy.txt",
             "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
           },
           {
-            "score": 0.3436,
+            "score": 0.3473,
             "semantic": 0.4908,
-            "lexical": 0.0701,
+            "lexical": 0.0806,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Part-time employees receive leave in proportion to their contracted hours."
           },
           {
-            "score": 0.3388,
+            "score": 0.3434,
             "semantic": 0.4754,
-            "lexical": 0.085,
+            "lexical": 0.0983,
             "coverage": 0.1429,
             "source": "01_leave_policy.txt",
             "text": "Personal leave cannot be carried forward."
           },
           {
-            "score": 0.3341,
+            "score": 0.3371,
             "semantic": 0.4818,
-            "lexical": 0.0597,
+            "lexical": 0.0684,
             "coverage": 0.2857,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.3279,
+            "score": 0.3322,
             "semantic": 0.4617,
-            "lexical": 0.0794,
+            "lexical": 0.0916,
             "coverage": 0.1429,
             "source": "04_attendance_and_parental_leave.txt",
             "text": "Parental leave for other parents is available under the same program."
           },
           {
-            "score": 0.3128,
+            "score": 0.329,
+            "semantic": 0.4208,
+            "lexical": 0.1585,
+            "coverage": 0.2857,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
+          },
+          {
+            "score": 0.3158,
             "semantic": 0.4491,
-            "lexical": 0.0597,
+            "lexical": 0.0684,
             "coverage": 0.1429,
             "source": "01_leave_policy.txt",
             "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
           },
           {
-            "score": 0.2789,
+            "score": 0.2795,
             "semantic": 0.3574,
-            "lexical": 0.1331,
+            "lexical": 0.135,
             "coverage": 0.1429,
             "source": "02_work_from_home_policy.txt",
             "text": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day."
-          },
-          {
-            "score": 0.2769,
-            "semantic": 0.3518,
-            "lexical": 0.0726,
-            "coverage": 0.2857,
-            "source": "02_work_from_home_policy.txt",
-            "text": "Requests for more than 2 remote days per week require written approval from the department head and HR."
           }
         ],
         "premise_status": null,
@@ -767,7 +865,12 @@
           true,
           true,
           true
-        ]
+        ],
+        "budget": {
+          "budget": 48,
+          "used_total": 24,
+          "retrieval_rounds": 0
+        }
       }
     },
     {
@@ -781,8 +884,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1] Employees joining during the year receive a prorated allowance based on their start date. [2] Part-time employees receive leave in proportion to their contracted hours. [3]",
       "timings": {
-        "retrieval_s": 0.017,
-        "verification_s": 0.159
+        "retrieval_s": 0.014,
+        "verification_s": 0.175
       },
       "trace": {
         "key_terms": [
@@ -804,20 +907,36 @@
         "retrieval_reasons": [],
         "evidence": [
           {
-            "score": 0.5309,
+            "score": 0.5417,
             "semantic": 0.6735,
-            "lexical": 0.2659,
+            "lexical": 0.2968,
             "coverage": 0.625,
             "source": "01_leave_policy.txt",
             "text": "Full-time employees receive 24 days of paid leave per calendar year."
           },
           {
-            "score": 0.3893,
+            "score": 0.42,
+            "semantic": 0.514,
+            "lexical": 0.2454,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
+          },
+          {
+            "score": 0.3926,
             "semantic": 0.537,
-            "lexical": 0.1151,
+            "lexical": 0.1245,
             "coverage": 0.25,
             "source": "01_leave_policy.txt",
             "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          },
+          {
+            "score": 0.3805,
+            "semantic": 0.5143,
+            "lexical": 0.1319,
+            "coverage": 0.375,
+            "source": "01_leave_policy.txt",
+            "text": "Part-time employees receive leave in proportion to their contracted hours."
           }
         ],
         "premise_status": "CONTRADICTED",
@@ -831,8 +950,2390 @@
         ],
         "self_supported": [
           false
-        ]
+        ],
+        "budget": null
       }
+    },
+    {
+      "id": "domestic_booking",
+      "category": "factual",
+      "question": "How far in advance must domestic trips be booked?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Domestic trips must be booked at least 7 days before departure. [1]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.138
+      },
+      "trace": {
+        "key_terms": [
+          "far",
+          "advanc",
+          "must",
+          "domestic",
+          "trip",
+          "book"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7909,
+            "semantic": 0.8542,
+            "lexical": 0.5212,
+            "coverage": 0.6667,
+            "source": "05_travel_policy.txt",
+            "text": "Domestic trips must be booked at least 7 days before departure."
+          },
+          {
+            "score": 0.5945,
+            "semantic": 0.6933,
+            "lexical": 0.2968,
+            "coverage": 0.5,
+            "source": "05_travel_policy.txt",
+            "text": "International trips must be booked at least 21 days before departure and require approval from the department head."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 13.262,
+        "answer_span": "7 days",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "laptop_replacement",
+      "category": "factual",
+      "question": "How often are company laptops replaced?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Laptops are replaced every 3 years. [1]",
+      "timings": {
+        "retrieval_s": 0.013,
+        "verification_s": 0.136
+      },
+      "trace": {
+        "key_terms": [
+          "often",
+          "company",
+          "laptop",
+          "replac"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7871,
+            "semantic": 0.8485,
+            "lexical": 0.5589,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Laptops are replaced every 3 years."
+          },
+          {
+            "score": 0.5674,
+            "semantic": 0.6351,
+            "lexical": 0.3274,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 13.809,
+        "answer_span": "every 3 years",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "password_change",
+      "category": "factual",
+      "question": "How often must passwords be changed?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Passwords must be changed every 90 days. [1]",
+      "timings": {
+        "retrieval_s": 0.012,
+        "verification_s": 0.147
+      },
+      "trace": {
+        "key_terms": [
+          "often",
+          "must",
+          "password",
+          "chang"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.8297,
+            "semantic": 0.7943,
+            "lexical": 0.724,
+            "coverage": 0.75,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Passwords must be changed every 90 days."
+          },
+          {
+            "score": 0.2586,
+            "semantic": 0.3979,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Laptops are replaced every 3 years."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 15.053,
+        "answer_span": "every 90 days",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "hotel_limit",
+      "category": "factual",
+      "question": "What is the hotel reimbursement limit per night in metro cities?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Hotel stays are reimbursed up to ₹6,000 per night in metro cities. [1]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.156
+      },
+      "trace": {
+        "key_terms": [
+          "hotel",
+          "reimbursement",
+          "limit",
+          "per",
+          "night",
+          "metro",
+          "city"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7307,
+            "semantic": 0.8174,
+            "lexical": 0.5696,
+            "coverage": 0.7143,
+            "source": "05_travel_policy.txt",
+            "text": "Hotel stays are reimbursed up to ₹6,000 per night in metro cities."
+          },
+          {
+            "score": 0.2621,
+            "semantic": 0.4033,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "06_travel_faq_2026.txt",
+            "text": "The daily meal allowance for domestic travel is ₹3,000."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 6.859,
+        "answer_span": "₹6,000",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "lost_device",
+      "category": "factual",
+      "question": "Within how many hours must a lost device be reported?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Lost or stolen devices must be reported to the IT helpdesk within 24 hours. [1]",
+      "timings": {
+        "retrieval_s": 0.017,
+        "verification_s": 0.153
+      },
+      "trace": {
+        "key_terms": [
+          "within",
+          "hour",
+          "must",
+          "los",
+          "devic",
+          "report"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.9389,
+            "semantic": 0.8128,
+            "lexical": 0.9446,
+            "coverage": 1.0,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Lost or stolen devices must be reported to the IT helpdesk within 24 hours."
+          },
+          {
+            "score": 0.3767,
+            "semantic": 0.4198,
+            "lexical": 0.2203,
+            "coverage": 0.3333,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 5.806,
+        "answer_span": "24 hours",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "remote_days",
+      "category": "factual",
+      "question": "How many days per week can employees work remotely?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [1]",
+      "timings": {
+        "retrieval_s": 0.012,
+        "verification_s": 0.141
+      },
+      "trace": {
+        "key_terms": [
+          "day",
+          "per",
+          "week",
+          "employe",
+          "work",
+          "remot"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.9314,
+            "semantic": 0.8714,
+            "lexical": 0.8142,
+            "coverage": 1.0,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
+          },
+          {
+            "score": 0.6637,
+            "semantic": 0.6117,
+            "lexical": 0.6081,
+            "coverage": 0.6667,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Requests for more than 2 remote days per week require written approval from the department head and HR."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 13.24,
+        "answer_span": "2",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "carry_deadline",
+      "category": "factual",
+      "question": "When must carried-forward leave days be used?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Carried-forward days must be used by March 31. [1] Any carried-forward days not used by that date expire. [2]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.25
+      },
+      "trace": {
+        "key_terms": [
+          "must",
+          "carried-forward",
+          "leav",
+          "day",
+          "use"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7967,
+            "semantic": 0.7253,
+            "lexical": 0.9293,
+            "coverage": 0.8,
+            "source": "01_leave_policy.txt",
+            "text": "Carried-forward days must be used by March 31."
+          },
+          {
+            "score": 0.7192,
+            "semantic": 0.6568,
+            "lexical": 0.8351,
+            "coverage": 0.6,
+            "source": "01_leave_policy.txt",
+            "text": "Any carried-forward days not used by that date expire."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 15.3,
+        "answer_span": "March 31",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 8,
+          "used_total": 4,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "learning_amount",
+      "category": "factual",
+      "question": "What is the annual learning allowance?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [1]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.119
+      },
+      "trace": {
+        "key_terms": [
+          "annual",
+          "learn",
+          "allowanc"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.6875,
+            "semantic": 0.7854,
+            "lexical": 0.5057,
+            "coverage": 0.6667,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications."
+          },
+          {
+            "score": 0.3859,
+            "semantic": 0.4765,
+            "lexical": 0.2178,
+            "coverage": 0.6667,
+            "source": "01_leave_policy.txt",
+            "text": "Employees joining during the year receive a prorated allowance based on their start date."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 13.099,
+        "answer_span": "₹20,000",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true
+        ],
+        "budget": {
+          "budget": 6,
+          "used_total": 2,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "laptop_return",
+      "category": "factual",
+      "question": "What happens to an employee's laptop when they leave the company?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Every new employee receives a company laptop on their first working day. [1] Laptops are replaced every 3 years. [2] Employees must return their laptop within 5 working days of leaving the company. [3]",
+      "timings": {
+        "retrieval_s": 0.011,
+        "verification_s": 0.268
+      },
+      "trace": {
+        "key_terms": [
+          "employe",
+          "laptop",
+          "leav",
+          "company"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.8104,
+            "semantic": 0.7639,
+            "lexical": 0.8967,
+            "coverage": 1.0,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
+          },
+          {
+            "score": 0.6762,
+            "semantic": 0.6474,
+            "lexical": 0.7298,
+            "coverage": 0.75,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Every new employee receives a company laptop on their first working day."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 5.43,
+        "answer_span": "Laptops are replaced every 3 years",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 12,
+          "used_total": 6,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "intl_booking",
+      "category": "procedure",
+      "question": "What is the procedure for booking international travel, including approvals?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "All business travel must be booked through the TravelDesk portal. [1] Domestic trips must be booked at least 7 days before departure. [2] International trips must be booked at least 21 days before departure and require approval from the department head. [3]",
+      "timings": {
+        "retrieval_s": 0.011,
+        "verification_s": 0.291
+      },
+      "trace": {
+        "key_terms": [
+          "book",
+          "international",
+          "travel",
+          "approval"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.6613,
+            "semantic": 0.6713,
+            "lexical": 0.6428,
+            "coverage": 0.75,
+            "source": "05_travel_policy.txt",
+            "text": "International trips must be booked at least 21 days before departure and require approval from the department head."
+          },
+          {
+            "score": 0.481,
+            "semantic": 0.4457,
+            "lexical": 0.5466,
+            "coverage": 0.5,
+            "source": "06_travel_faq_2026.txt",
+            "text": "Travel insurance for international trips is arranged by the TravelDesk team."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 9.293,
+        "answer_span": "International trips must be booked at least 21 days before departure",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 12,
+          "used_total": 6,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "device_security",
+      "category": "multi_fact",
+      "question": "What are the security requirements for company devices?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Every new employee receives a company laptop on their first working day. [1] Passwords must be changed every 90 days. [2] Multi-factor authentication is mandatory for email and PeoplePortal. [3] Lost or stolen devices must be reported to the IT helpdesk within 24 hours. [4] Personal devices may be used for email only after the IT team installs the device-management app. [5] Software that is not on the approved list must not be installed on company laptops. [6]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.546
+      },
+      "trace": {
+        "key_terms": [
+          "security",
+          "company",
+          "devic"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.3789,
+            "semantic": 0.4273,
+            "lexical": 0.289,
+            "coverage": 0.3333,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Personal devices may be used for email only after the IT team installs the device-management app."
+          },
+          {
+            "score": 0.3547,
+            "semantic": 0.4165,
+            "lexical": 0.24,
+            "coverage": 0.6667,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Software that is not on the approved list must not be installed on company laptops."
+          },
+          {
+            "score": 0.3513,
+            "semantic": 0.3849,
+            "lexical": 0.289,
+            "coverage": 0.6667,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Lost or stolen devices must be reported to the IT helpdesk within 24 hours."
+          },
+          {
+            "score": 0.3446,
+            "semantic": 0.4148,
+            "lexical": 0.2144,
+            "coverage": 0.3333,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Every new employee receives a company laptop on their first working day."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 1.106,
+        "answer_span": "Lost or stolen devices must be reported to the IT helpdesk within 24 hours",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 24,
+          "used_total": 12,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "personal_devices",
+      "category": "multi_fact",
+      "question": "Explain the rules for using personal devices.",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Personal devices may be used for email only after the IT team installs the device-management app. [1] Software that is not on the approved list must not be installed on company laptops. [2]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.209
+      },
+      "trace": {
+        "key_terms": [
+          "using",
+          "personal",
+          "devic"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.5541,
+            "semantic": 0.5641,
+            "lexical": 0.5356,
+            "coverage": 0.6667,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Personal devices may be used for email only after the IT team installs the device-management app."
+          },
+          {
+            "score": 0.337,
+            "semantic": 0.3743,
+            "lexical": 0.2678,
+            "coverage": 0.3333,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Lost or stolen devices must be reported to the IT helpdesk within 24 hours."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 1.626,
+        "answer_span": "Personal devices may be used for email only after the IT team installs the device-management app",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 8,
+          "used_total": 4,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "shared_portal",
+      "category": "multi_hop",
+      "question": "Which portal is used both for leave requests and work-from-home requests?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [1] Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [2]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.2
+      },
+      "trace": {
+        "key_terms": [
+          "portal",
+          "use",
+          "leav",
+          "request",
+          "work-from-hom"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.4581,
+            "semantic": 0.5142,
+            "lexical": 0.3537,
+            "coverage": 0.4,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day."
+          },
+          {
+            "score": 0.4135,
+            "semantic": 0.5013,
+            "lexical": 0.2505,
+            "coverage": 0.4,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.3575,
+            "semantic": 0.4675,
+            "lexical": 0.1532,
+            "coverage": 0.2,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Each request must specify the date, the work location and a brief reason."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 5.775,
+        "answer_span": "PeoplePortal",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 8,
+          "used_total": 4,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "long_leave_approval",
+      "category": "multi_hop",
+      "question": "What approval does an employee need for a 12-day leave?",
+      "expected_behavior": "answer",
+      "observed_behavior": "not_specified",
+      "behavior_ok": false,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Leave of more than 10 consecutive days requires additional approval from HR. [1]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.023
+      },
+      "trace": {
+        "key_terms": [
+          "approval",
+          "employe",
+          "nee",
+          "12-day",
+          "leav"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.5645,
+            "semantic": 0.7246,
+            "lexical": 0.2673,
+            "coverage": 0.4,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          },
+          {
+            "score": 0.4255,
+            "semantic": 0.5589,
+            "lexical": 0.1779,
+            "coverage": 0.4,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.3997,
+            "semantic": 0.5566,
+            "lexical": 0.1082,
+            "coverage": 0.2,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -5.18,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -5.2)."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "midyear_joiner",
+      "category": "multi_hop",
+      "question": "If an employee joins in July, how much annual leave do they get?",
+      "expected_behavior": "answer",
+      "observed_behavior": "not_specified",
+      "behavior_ok": false,
+      "fact_recall": 0.0,
+      "missing_facts": [
+        "prorated"
+      ],
+      "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Full-time employees receive 24 days of paid leave per calendar year. [1]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.024
+      },
+      "trace": {
+        "key_terms": [
+          "employe",
+          "join",
+          "july",
+          "annual",
+          "leav",
+          "get"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.4874,
+            "semantic": 0.6214,
+            "lexical": 0.1244,
+            "coverage": 0.5,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.4218,
+            "semantic": 0.5324,
+            "lexical": 0.2166,
+            "coverage": 0.6667,
+            "source": "01_leave_policy.txt",
+            "text": "Employees joining during the year receive a prorated allowance based on their start date."
+          },
+          {
+            "score": 0.411,
+            "semantic": 0.5533,
+            "lexical": 0.1467,
+            "coverage": 0.5,
+            "source": "01_leave_policy.txt",
+            "text": "Part-time employees receive leave in proportion to their contracted hours."
+          },
+          {
+            "score": 0.3521,
+            "semantic": 0.4747,
+            "lexical": 0.1244,
+            "coverage": 0.3333,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -5.854,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -5.9)."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "compare_requests",
+      "category": "compare",
+      "question": "Compare the leave request procedure with the work-from-home request procedure.",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Leave request procedure: Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [1] Requests are approved by the employee's reporting manager. [2] Leave of more than 10 consecutive days requires additional approval from HR. [3] Work-from-home request procedure: Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [4] Each request must specify the date, the work location and a brief reason. [5] The reporting manager reviews and approves each request. [6] Approval is not automatic. [7]",
+      "timings": {
+        "retrieval_s": 0.009,
+        "verification_s": 0.632
+      },
+      "trace": {
+        "key_terms": [
+          "leav",
+          "request",
+          "work-from-hom"
+        ],
+        "intents": [
+          "comparison"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.6139,
+            "semantic": 0.592,
+            "lexical": 0.6547,
+            "coverage": 0.6667,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day."
+          },
+          {
+            "score": 0.6126,
+            "semantic": 0.6927,
+            "lexical": 0.4637,
+            "coverage": 0.6667,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.4898,
+            "semantic": 0.5464,
+            "lexical": 0.2323,
+            "coverage": 0.6667,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          }
+        ],
+        "premise_status": null,
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Comparison side 1: retrieved for \"leave request procedure\".",
+          "Comparison side 2: retrieved for \"work-from-home request procedure\"."
+        ],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 28,
+          "used_total": 14,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "compare_allowances",
+      "category": "compare",
+      "question": "What is the difference between the learning allowance and the wellness benefit?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Learning allowance: Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [1] Prior manager approval is required before enrolling in a course that will be reimbursed. [2] Wellness benefit: Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [3]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.311
+      },
+      "trace": {
+        "key_terms": [
+          "differenc",
+          "learn",
+          "allowanc",
+          "wellnes",
+          "benefit"
+        ],
+        "intents": [
+          "comparison"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.4605,
+            "semantic": 0.5402,
+            "lexical": 0.3124,
+            "coverage": 0.4,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications."
+          },
+          {
+            "score": 0.4407,
+            "semantic": 0.5245,
+            "lexical": 0.285,
+            "coverage": 0.4,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services."
+          }
+        ],
+        "premise_status": null,
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Comparison side 1: retrieved for \"learning allowance\".",
+          "Comparison side 2: retrieved for \"wellness benefit\"."
+        ],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 12,
+          "used_total": 6,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "compare_booking",
+      "category": "compare",
+      "question": "Compare domestic travel booking with international travel booking.",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Domestic travel booking: All business travel must be booked through the TravelDesk portal. [1] Domestic trips must be booked at least 7 days before departure. [2] International trips must be booked at least 21 days before departure and require approval from the department head. [3] International travel booking: All business travel must be booked through the TravelDesk portal. [1] Domestic trips must be booked at least 7 days before departure. [2] International trips must be booked at least 21 days before departure and require approval from the department head. [3]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.556
+      },
+      "trace": {
+        "key_terms": [
+          "domestic",
+          "travel",
+          "book",
+          "international"
+        ],
+        "intents": [
+          "comparison"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.4744,
+            "semantic": 0.454,
+            "lexical": 0.5122,
+            "coverage": 0.5,
+            "source": "05_travel_policy.txt",
+            "text": "Domestic trips must be booked at least 7 days before departure."
+          },
+          {
+            "score": 0.4552,
+            "semantic": 0.4232,
+            "lexical": 0.5146,
+            "coverage": 0.5,
+            "source": "06_travel_faq_2026.txt",
+            "text": "Travel insurance for international trips is arranged by the TravelDesk team."
+          },
+          {
+            "score": 0.4401,
+            "semantic": 0.438,
+            "lexical": 0.4438,
+            "coverage": 0.5,
+            "source": "05_travel_policy.txt",
+            "text": "International trips must be booked at least 21 days before departure and require approval from the department head."
+          },
+          {
+            "score": 0.4292,
+            "semantic": 0.3848,
+            "lexical": 0.5116,
+            "coverage": 0.5,
+            "source": "05_travel_policy.txt",
+            "text": "All business travel must be booked through the TravelDesk portal."
+          }
+        ],
+        "premise_status": null,
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Comparison side 1: retrieved for \"domestic travel booking\".",
+          "Comparison side 2: retrieved for \"international travel booking\"."
+        ],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "budget": {
+          "budget": 24,
+          "used_total": 12,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "paternity_weeks",
+      "category": "unsupported",
+      "question": "How many weeks of paternity leave do fathers get?",
+      "expected_behavior": "not_specified",
+      "observed_behavior": "abstain",
+      "behavior_ok": false,
+      "fact_recall": 0.0,
+      "missing_facts": [
+        "parental leave"
+      ],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.013,
+        "verification_s": 0.024
+      },
+      "trace": {
+        "key_terms": [
+          "week",
+          "paternity",
+          "leav",
+          "father",
+          "get"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 40% of key terms found (missing: paternity, father, get)."
+        ],
+        "evidence": [
+          {
+            "score": 0.4544,
+            "semantic": 0.5335,
+            "lexical": 0.2159,
+            "coverage": 0.4,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
+          },
+          {
+            "score": 0.3603,
+            "semantic": 0.494,
+            "lexical": 0.112,
+            "coverage": 0.2,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Parental leave for other parents is available under the same program."
+          },
+          {
+            "score": 0.317,
+            "semantic": 0.413,
+            "lexical": 0.0931,
+            "coverage": 0.2,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          },
+          {
+            "score": 0.3037,
+            "semantic": 0.4221,
+            "lexical": 0.0836,
+            "coverage": 0.2,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
+          },
+          {
+            "score": 0.3023,
+            "semantic": 0.3954,
+            "lexical": 0.0836,
+            "coverage": 0.2,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.2544,
+            "semantic": 0.3217,
+            "lexical": 0.0836,
+            "coverage": 0.2,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -2.422,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -2.4)."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "laptop_brand",
+      "category": "unsupported",
+      "question": "What brand of laptop does the company provide?",
+      "expected_behavior": "not_specified",
+      "observed_behavior": "abstain",
+      "behavior_ok": false,
+      "fact_recall": 0.0,
+      "missing_facts": [
+        "laptop"
+      ],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.024
+      },
+      "trace": {
+        "key_terms": [
+          "brand",
+          "laptop",
+          "company",
+          "provid"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 50% of key terms found (missing: brand, provid)."
+        ],
+        "evidence": [
+          {
+            "score": 0.4589,
+            "semantic": 0.5348,
+            "lexical": 0.3179,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Every new employee receives a company laptop on their first working day."
+          },
+          {
+            "score": 0.4225,
+            "semantic": 0.4584,
+            "lexical": 0.3559,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Software that is not on the approved list must not be installed on company laptops."
+          },
+          {
+            "score": 0.4035,
+            "semantic": 0.5074,
+            "lexical": 0.2107,
+            "coverage": 0.25,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Laptops are replaced every 3 years."
+          },
+          {
+            "score": 0.3732,
+            "semantic": 0.4116,
+            "lexical": 0.3018,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Employees must return their laptop within 5 working days of leaving the company."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -7.017,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -7.0)."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "business_class",
+      "category": "unsupported",
+      "question": "Does the company cover business class upgrades?",
+      "expected_behavior": "not_specified",
+      "observed_behavior": "not_specified",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The sources do not establish this. The sources state: Upgrades to business class are not covered by this FAQ. [1] Travel insurance for international trips is arranged by the TravelDesk team. [2]",
+      "timings": {
+        "retrieval_s": 0.009,
+        "verification_s": 0.124
+      },
+      "trace": {
+        "key_terms": [
+          "company",
+          "cover",
+          "busines",
+          "clas",
+          "upgrad"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "The company covers business class upgrades.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.8265,
+            "semantic": 0.7331,
+            "lexical": 1.0,
+            "coverage": 0.8,
+            "source": "06_travel_faq_2026.txt",
+            "text": "Upgrades to business class are not covered by this FAQ."
+          },
+          {
+            "score": 0.2816,
+            "semantic": 0.3172,
+            "lexical": 0.2154,
+            "coverage": 0.2,
+            "source": "05_travel_policy.txt",
+            "text": "Economy class is required for flights shorter than 6 hours."
+          }
+        ],
+        "premise_status": "NOT_SPECIFIED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "The evidence states that this is not established or specified, which is not the same as the sources ruling it out.",
+          "Premise contradicted: \"The company covers business class upgrades.\""
+        ],
+        "claim_statuses": [
+          "NOT_SPECIFIED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "stock_options",
+      "category": "absent",
+      "question": "What is the company's stock option vesting schedule?",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.009,
+        "verification_s": 0.022
+      },
+      "trace": {
+        "key_terms": [
+          "company",
+          "stock",
+          "option",
+          "vest",
+          "schedul"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "No evidence passed the minimum relevance score."
+        ],
+        "evidence": [],
+        "premise_status": null,
+        "answerability": -14.172,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -14.2)."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "relocation_bonus",
+      "category": "absent",
+      "question": "How much is the relocation bonus for new employees?",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.026
+      },
+      "trace": {
+        "key_terms": [
+          "reloc",
+          "bonu",
+          "new",
+          "employe"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 50% of key terms found (missing: reloc, bonu).",
+          "Best evidence score 0.28 is below 0.45."
+        ],
+        "evidence": [
+          {
+            "score": 0.2768,
+            "semantic": 0.256,
+            "lexical": 0.3153,
+            "coverage": 0.5,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Every new employee receives a company laptop on their first working day."
+          },
+          {
+            "score": 0.2709,
+            "semantic": 0.3477,
+            "lexical": 0.071,
+            "coverage": 0.25,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.2658,
+            "semantic": 0.3687,
+            "lexical": 0.0748,
+            "coverage": 0.25,
+            "source": "01_leave_policy.txt",
+            "text": "Employees joining during the year receive a prorated allowance based on their start date."
+          },
+          {
+            "score": 0.0645,
+            "semantic": 0.0993,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Laptops are replaced every 3 years."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -10.122,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -10.1)."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "dress_code",
+      "category": "absent",
+      "question": "What is the dress code at Northstar Digital?",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The sources do not mention Northstar Digital, so this question cannot be answered from them.",
+      "timings": {
+        "retrieval_s": 0.009
+      },
+      "trace": {
+        "key_terms": [
+          "dres",
+          "cod",
+          "northstar",
+          "digital"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "No evidence passed the minimum relevance score."
+        ],
+        "evidence": [],
+        "premise_status": null,
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "No ingested source mentions Northstar Digital."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    },
+    {
+      "id": "yearly_laptop",
+      "category": "false_premise",
+      "question": "Does the company give every employee a new laptop every year?",
+      "expected_behavior": "reject_premise",
+      "observed_behavior": "yes",
+      "behavior_ok": false,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Yes. Every new employee receives a company laptop on their first working day. Laptops are replaced every 3 years. [1][2]",
+      "timings": {
+        "retrieval_s": 0.012,
+        "verification_s": 0.107
+      },
+      "trace": {
+        "key_terms": [
+          "company",
+          "employe",
+          "new",
+          "laptop",
+          "year"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "The company gives every employee a new laptop every year.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7902,
+            "semantic": 0.7999,
+            "lexical": 0.7722,
+            "coverage": 0.8,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Every new employee receives a company laptop on their first working day."
+          },
+          {
+            "score": 0.6197,
+            "semantic": 0.6967,
+            "lexical": 0.4766,
+            "coverage": 0.4,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Laptops are replaced every 3 years."
+          }
+        ],
+        "premise_status": "SUPPORTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "mfa_optional",
+      "category": "false_premise",
+      "question": "Is multi-factor authentication optional for email?",
+      "expected_behavior": "reject_premise",
+      "observed_behavior": "reject_premise",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "No. The sources state: Multi-factor authentication is mandatory for email and PeoplePortal. [1] Passwords must be changed every 90 days. [2] Lost or stolen devices must be reported to the IT helpdesk within 24 hours. [3]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.137
+      },
+      "trace": {
+        "key_terms": [
+          "multi-factor",
+          "authentic",
+          "optional",
+          "email"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "Multi-factor is authentication optional for email.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.861,
+            "semantic": 0.8811,
+            "lexical": 0.8238,
+            "coverage": 0.75,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Multi-factor authentication is mandatory for email and PeoplePortal."
+          },
+          {
+            "score": 0.3302,
+            "semantic": 0.4034,
+            "lexical": 0.1943,
+            "coverage": 0.25,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Personal devices may be used for email only after the IT team installs the device-management app."
+          }
+        ],
+        "premise_status": "CONTRADICTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Premise contradicted: \"Multi-factor is authentication optional for email.\""
+        ],
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "intl_3_days",
+      "category": "false_premise",
+      "question": "Why are international trips booked only 3 days in advance?",
+      "expected_behavior": "reject_premise",
+      "observed_behavior": "reject_premise",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The question's assumption is not supported by the sources. The sources state: International trips must be booked at least 21 days before departure and require approval from the department head. [1] All business travel must be booked through the TravelDesk portal. [2] Domestic trips must be booked at least 7 days before departure. [3]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.137
+      },
+      "trace": {
+        "key_terms": [
+          "international",
+          "trip",
+          "book",
+          "3",
+          "day",
+          "advanc"
+        ],
+        "intents": [
+          "causal"
+        ],
+        "premise": "International trips are booked only 3 days in advance.",
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "The question asks for causal evidence, but none of the selected evidence is causal evidence about the question's subject."
+        ],
+        "evidence": [
+          {
+            "score": 0.609,
+            "semantic": 0.6771,
+            "lexical": 0.4826,
+            "coverage": 0.6667,
+            "source": "05_travel_policy.txt",
+            "text": "International trips must be booked at least 21 days before departure and require approval from the department head."
+          },
+          {
+            "score": 0.5728,
+            "semantic": 0.6691,
+            "lexical": 0.394,
+            "coverage": 0.5,
+            "source": "05_travel_policy.txt",
+            "text": "Domestic trips must be booked at least 7 days before departure."
+          },
+          {
+            "score": 0.3805,
+            "semantic": 0.389,
+            "lexical": 0.3646,
+            "coverage": 0.3333,
+            "source": "06_travel_faq_2026.txt",
+            "text": "Travel insurance for international trips is arranged by the TravelDesk team."
+          },
+          {
+            "score": 0.3143,
+            "semantic": 0.44,
+            "lexical": 0.0808,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Carried-forward days must be used by March 31."
+          },
+          {
+            "score": 0.3113,
+            "semantic": 0.3677,
+            "lexical": 0.2066,
+            "coverage": 0.3333,
+            "source": "05_travel_policy.txt",
+            "text": "Travel expenses must be claimed within 30 days of returning from the trip."
+          },
+          {
+            "score": 0.2857,
+            "semantic": 0.3931,
+            "lexical": 0.0863,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Any carried-forward days not used by that date expire."
+          },
+          {
+            "score": 0.273,
+            "semantic": 0.3134,
+            "lexical": 0.1981,
+            "coverage": 0.1667,
+            "source": "05_travel_policy.txt",
+            "text": "All business travel must be booked through the TravelDesk portal."
+          },
+          {
+            "score": 0.2569,
+            "semantic": 0.249,
+            "lexical": 0.2716,
+            "coverage": 0.3333,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.2558,
+            "semantic": 0.3936,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "05_travel_policy.txt",
+            "text": "Economy class is required for flights shorter than 6 hours."
+          }
+        ],
+        "premise_status": "CONTRADICTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Premise contradicted: \"International trips are booked only 3 days in advance.\""
+        ],
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "personal_carry",
+      "category": "false_premise",
+      "question": "Can personal leave be carried forward?",
+      "expected_behavior": "reject_premise",
+      "observed_behavior": "reject_premise",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "No. The sources state: Personal leave cannot be carried forward. [1] Up to 5 unused annual-leave days can be carried forward to the next calendar year. [2] Carried-forward days must be used by March 31. [3]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.128
+      },
+      "trace": {
+        "key_terms": [
+          "personal",
+          "leav",
+          "carri",
+          "forward"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "Personal can leave be carried forward.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.8811,
+            "semantic": 0.817,
+            "lexical": 1.0,
+            "coverage": 1.0,
+            "source": "01_leave_policy.txt",
+            "text": "Personal leave cannot be carried forward."
+          },
+          {
+            "score": 0.5097,
+            "semantic": 0.4986,
+            "lexical": 0.5302,
+            "coverage": 0.5,
+            "source": "01_leave_policy.txt",
+            "text": "Up to 5 unused annual-leave days can be carried forward to the next calendar year."
+          }
+        ],
+        "premise_status": "CONTRADICTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Premise contradicted: \"Personal can leave be carried forward.\""
+        ],
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "mfa_portal",
+      "category": "yes",
+      "question": "Is multi-factor authentication mandatory for PeoplePortal?",
+      "expected_behavior": "yes",
+      "observed_behavior": "yes",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Yes. Multi-factor authentication is mandatory for email and PeoplePortal. [1]",
+      "timings": {
+        "retrieval_s": 0.011,
+        "verification_s": 0.112
+      },
+      "trace": {
+        "key_terms": [
+          "multi-factor",
+          "authentic",
+          "mandatory",
+          "peopleportal"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "Multi-factor is authentication mandatory for PeoplePortal.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.9114,
+            "semantic": 0.8636,
+            "lexical": 1.0,
+            "coverage": 1.0,
+            "source": "07_it_equipment_policy.txt",
+            "text": "Multi-factor authentication is mandatory for email and PeoplePortal."
+          }
+        ],
+        "premise_status": "SUPPORTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "intl_approval",
+      "category": "yes",
+      "question": "Do international trips require approval from the department head?",
+      "expected_behavior": "yes",
+      "observed_behavior": "yes",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Yes. International trips must be booked at least 21 days before departure and require approval from the department head. [1]",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.176
+      },
+      "trace": {
+        "key_terms": [
+          "international",
+          "trip",
+          "requir",
+          "approval",
+          "department",
+          "head"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "International trips require approval from the department head.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7464,
+            "semantic": 0.71,
+            "lexical": 0.8142,
+            "coverage": 1.0,
+            "source": "05_travel_policy.txt",
+            "text": "International trips must be booked at least 21 days before departure and require approval from the department head."
+          },
+          {
+            "score": 0.4269,
+            "semantic": 0.3702,
+            "lexical": 0.5321,
+            "coverage": 0.6667,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Requests for more than 2 remote days per week require written approval from the department head and HR."
+          }
+        ],
+        "premise_status": "SUPPORTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "receipts",
+      "category": "yes",
+      "question": "Are original receipts required for travel expenses above ₹500?",
+      "expected_behavior": "yes",
+      "observed_behavior": "yes",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Yes. Travel expenses must be claimed within 30 days of returning from the trip. Original receipts are required for every expense above ₹500. [1][2]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.124
+      },
+      "trace": {
+        "key_terms": [
+          "original",
+          "receipt",
+          "requir",
+          "travel",
+          "expens",
+          "500"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "Original receipts are required for travel expenses above ₹500.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.9333,
+            "semantic": 0.9057,
+            "lexical": 0.9845,
+            "coverage": 0.8333,
+            "source": "05_travel_policy.txt",
+            "text": "Original receipts are required for every expense above ₹500."
+          },
+          {
+            "score": 0.4414,
+            "semantic": 0.5336,
+            "lexical": 0.2703,
+            "coverage": 0.3333,
+            "source": "05_travel_policy.txt",
+            "text": "Travel expenses must be claimed within 30 days of returning from the trip."
+          }
+        ],
+        "premise_status": "SUPPORTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "meal_allowance",
+      "category": "conflict",
+      "question": "What is the daily meal allowance for domestic travel?",
+      "expected_behavior": "conflict",
+      "observed_behavior": "conflict",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The daily meal allowance for domestic travel is ₹2,500. (verification was inconclusive) [1] The daily meal allowance for domestic travel is ₹3,000. (verification was inconclusive) [2]",
+      "timings": {
+        "retrieval_s": 0.009,
+        "verification_s": 0.264
+      },
+      "trace": {
+        "key_terms": [
+          "dai",
+          "meal",
+          "allowanc",
+          "domestic",
+          "travel"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.8878,
+            "semantic": 0.8273,
+            "lexical": 1.0,
+            "coverage": 1.0,
+            "source": "06_travel_faq_2026.txt",
+            "text": "The daily meal allowance for domestic travel is ₹3,000."
+          },
+          {
+            "score": 0.3147,
+            "semantic": 0.3752,
+            "lexical": 0.2025,
+            "coverage": 0.2,
+            "source": "05_travel_policy.txt",
+            "text": "Domestic trips must be booked at least 7 days before departure."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 16.309,
+        "answer_span": "₹2,500",
+        "notes": [],
+        "claim_statuses": [
+          "UNCERTAIN",
+          "UNCERTAIN"
+        ],
+        "self_supported": [
+          false,
+          false
+        ],
+        "budget": {
+          "budget": 8,
+          "used_total": 8,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "claim_deadline",
+      "category": "conflict",
+      "question": "Within how many days must travel expenses be claimed?",
+      "expected_behavior": "conflict",
+      "observed_behavior": "conflict",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Travel expenses must be claimed within 30 days of returning from the trip. (verification was inconclusive) [1] Travel expenses must be claimed within 45 days of returning from the trip. (verification was inconclusive) [2]",
+      "timings": {
+        "retrieval_s": 0.01,
+        "verification_s": 0.28
+      },
+      "trace": {
+        "key_terms": [
+          "within",
+          "day",
+          "must",
+          "travel",
+          "expens",
+          "claim"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.9694,
+            "semantic": 0.8597,
+            "lexical": 0.9446,
+            "coverage": 1.0,
+            "source": "05_travel_policy.txt",
+            "text": "Travel expenses must be claimed within 30 days of returning from the trip."
+          },
+          {
+            "score": 0.4491,
+            "semantic": 0.5436,
+            "lexical": 0.1974,
+            "coverage": 0.3333,
+            "source": "05_travel_policy.txt",
+            "text": "Domestic trips must be booked at least 7 days before departure."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 6.852,
+        "answer_span": "45 days",
+        "notes": [],
+        "claim_statuses": [
+          "UNCERTAIN",
+          "UNCERTAIN"
+        ],
+        "self_supported": [
+          false,
+          false
+        ],
+        "budget": {
+          "budget": 8,
+          "used_total": 8,
+          "retrieval_rounds": 0
+        }
+      }
+    },
+    {
+      "id": "remote_4_days",
+      "category": "false_premise",
+      "question": "Can employees work remotely 4 days per week without any approval?",
+      "expected_behavior": "reject_premise",
+      "observed_behavior": "reject_premise",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "No. The sources state: Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [1] Employees who have completed their probation period are eligible to work remotely. [2] Roles that require on-site equipment are not eligible for remote work. [3]",
+      "timings": {
+        "retrieval_s": 0.009,
+        "verification_s": 0.147
+      },
+      "trace": {
+        "key_terms": [
+          "employe",
+          "work",
+          "remot",
+          "4",
+          "day",
+          "per",
+          "week",
+          "without",
+          "approval"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "Employees can work remotely 4 days per week without any approval.",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.7242,
+            "semantic": 0.8321,
+            "lexical": 0.524,
+            "coverage": 0.7778,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
+          },
+          {
+            "score": 0.6012,
+            "semantic": 0.7026,
+            "lexical": 0.4129,
+            "coverage": 0.5556,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Requests for more than 2 remote days per week require written approval from the department head and HR."
+          }
+        ],
+        "premise_status": "CONTRADICTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Premise contradicted: \"Employees can work remotely 4 days per week without any approval.\""
+        ],
+        "claim_statuses": [
+          "CONTRADICTED"
+        ],
+        "self_supported": [
+          false
+        ],
+        "budget": null
+      }
+    },
+    {
+      "id": "vague",
+      "category": "vague",
+      "question": "What about it?",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.009
+      },
+      "trace": {
+        "key_terms": [],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "No evidence passed the minimum relevance score."
+        ],
+        "evidence": [],
+        "premise_status": null,
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "The question does not name any specific subject to look up."
+        ],
+        "claim_statuses": [],
+        "self_supported": [],
+        "budget": null
+      }
+    }
+  ],
+  "budget_sweep": [
+    {
+      "answer_budget": "automatic",
+      "behavior_correct": 38,
+      "n": 43,
+      "mean_fact_recall": 0.922,
+      "self_supported_rate": 0.934,
+      "mean_checks_used": 7.22,
+      "mean_retrieval_rounds": 0.13
+    },
+    {
+      "answer_budget": 8,
+      "behavior_correct": 38,
+      "n": 43,
+      "mean_fact_recall": 0.922,
+      "self_supported_rate": 0.906,
+      "mean_checks_used": 5.13,
+      "mean_retrieval_rounds": 0.09
+    },
+    {
+      "answer_budget": 12,
+      "behavior_correct": 38,
+      "n": 43,
+      "mean_fact_recall": 0.922,
+      "self_supported_rate": 0.924,
+      "mean_checks_used": 6.7,
+      "mean_retrieval_rounds": 0.13
+    },
+    {
+      "answer_budget": 20,
+      "behavior_correct": 38,
+      "n": 43,
+      "mean_fact_recall": 0.922,
+      "self_supported_rate": 0.932,
+      "mean_checks_used": 8.09,
+      "mean_retrieval_rounds": 0.13
     }
   ]
 }
