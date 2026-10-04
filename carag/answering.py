@@ -154,6 +154,42 @@ class GroundedAnswerer:
                 if e.unit.evidence_id not in used and e.coverage >= 0.3
                 and contains_marker(e.unit.text, _CAVEAT_MARKERS)][:1]
 
+    def _complete_multi_part(self, question: str, retrieval: RetrievalResult, selected: list[ScoredEvidence],
+                             anchor: ScoredEvidence) -> list[ScoredEvidence]:
+        """Extend the answer to a multi-part question (procedure, list, rules).
+
+        The parts of such an answer are usually spread over one document: several
+        retrieved sentences of similar score (one per benefit), and the rest of a short
+        section ("... must be used by March 31." before "... not used by that date expire.").
+        Every added sentence is still verified like any other answer sentence.
+        """
+        cfg = self.config
+        index = self.retriever.index
+        analysis = retrieval.analysis
+        same_doc = [e for e in retrieval.evidence if e.unit.source == anchor.unit.source]
+        best = max([e.score for e in same_doc] + [anchor.score])
+        core = {e.unit.evidence_id: e for e in [anchor] + selected}
+        for e in same_doc:
+            if e.score >= cfg.multi_part_relative * best:
+                core.setdefault(e.unit.evidence_id, e)
+
+        sizes: dict[tuple, int] = {}
+        for u in index.units:
+            sizes[(u.source, u.section)] = sizes.get((u.source, u.section), 0) + 1
+        sections = {(e.unit.source, e.unit.section) for e in core.values()
+                    if e.unit.section and sizes[(e.unit.source, e.unit.section)] <= cfg.max_section_units}
+        scores = self.retriever.scorer.score(question, analysis.key_terms, analysis.intents)
+        completion = [self.retriever.scorer.make_evidence(i, scores, "section completion")
+                      for i, u in enumerate(index.units)
+                      if (u.source, u.section) in sections and u.evidence_id not in core]
+
+        # Priority: the anchor and its section, then the strongest of the rest.
+        anchor_key = (anchor.unit.source, anchor.unit.section)
+        rest = sorted([e for e in list(core.values()) + completion if e.unit.evidence_id != anchor.unit.evidence_id],
+                      key=lambda e: ((e.unit.source, e.unit.section) != anchor_key, -e.score))
+        chosen = [anchor] + rest[: cfg.multi_part_sentences - 1]
+        return sorted(chosen, key=lambda e: (e.unit.source, e.unit.position))
+
     def _section_context(self, retrieval: RetrievalResult, anchor_ids: list[str]) -> list[ScoredEvidence]:
         """Retrieved sentences from the same section as the anchor evidence (e.g. the
         prorated-leave rule next to '24 days per year'), in document order."""
@@ -288,6 +324,8 @@ class GroundedAnswerer:
         if not selected:
             timings["verification_s"] = round(time.perf_counter() - start, 3)
             return self._abstain(result, "No retrieved sentence was relevant enough to answer.")
+        if analysis.multi_part and adaptive:
+            selected = self._complete_multi_part(question, retrieval, selected, span_evidence or selected[0])
         used = {e.unit.evidence_id for e in selected}
         drafts = [(e, "answer") for e in selected] + [(e, "caveat") for e in self._caveats(retrieval, used)]
 

@@ -43,3 +43,16 @@ def test_missing_detail_on_covered_topic_says_not_specified(handbook):
     result = handbook.ask("What is the company's maternity leave duration in weeks?")
     assert result.abstained   # still no answer to the question asked
     assert "do not specify" in result.answer and "maternity leave" in result.answer
+
+
+@pytest.mark.parametrize("question, facts", [
+    ("What is the procedure for requesting work-from-home permission, including the deadline and approval "
+     "requirements?", ["PeoplePortal", "3:00 p.m.", "the date, the work location", "manager", "not automatic"]),
+    ("What employee benefits are available, and what are the annual reimbursement limits?",
+     ["20,000", "5,000", "health insurance", "retirement", "Prior manager approval"]),
+    ("Can employees carry forward unused leave? Explain the limits and expiration rules.",
+     ["Up to 5", "March 31", "expire", "Personal leave cannot"]),
+])
+def test_multi_part_answers_are_complete(handbook, question, facts):
+    answer = handbook.ask(question).answer
+    assert all(f in answer for f in facts), [f for f in facts if f not in answer]

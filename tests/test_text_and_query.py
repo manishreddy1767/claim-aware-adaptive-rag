@@ -73,3 +73,9 @@ def test_decompose_causal_resolves_pronoun():
     noun_cause = decompose_causal("Trial Two consumed more energy due to its sampling frequency.")
     assert noun_cause.cause is None and noun_cause.effect == "Trial Two consumed more energy."
     assert decompose_causal("Trial Two used 10 Hz.") is None
+
+
+def test_multi_part_questions():
+    assert analyze_question("What is the procedure for requesting leave?").multi_part
+    assert analyze_question("What benefits are available, and what are the limits?").multi_part
+    assert not analyze_question("How many paid leave days does a full-time employee receive?").multi_part

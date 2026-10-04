@@ -42,6 +42,10 @@ _IRREGULAR_PAST = {
 }
 _THIRD_PERSON_IRREGULAR = {"have": "has", "do": "does", "go": "goes"}
 _MODALS = ("can", "could", "will", "would")
+_MULTI_PART = re.compile(
+    r"\b(procedure|process|steps|explain|describe|list|including|rules|requirements|conditions|limits|"
+    r"what (?:are|were) the|what \w+ (?:\w+ )?are (?:available|offered|provided))\b|"
+    r",?\s+and (?:what|which|how|when|who)\b")
 
 
 @dataclass
@@ -52,6 +56,8 @@ class QueryAnalysis:
     is_vague: bool = False
     vague_reason: str = ""
     premise: str | None = None   # declarative statement the question presupposes or asks
+    # Asks for several facts (a procedure, a list, rules, "including X, Y and Z").
+    multi_part: bool = False
     entities: list[str] = field(default_factory=list)  # named things the evidence must mention
 
     @property
@@ -203,6 +209,7 @@ def analyze_question(question: str) -> QueryAnalysis:
         )
 
     analysis.entities = extract_entities(q)
+    analysis.multi_part = bool(_MULTI_PART.search(low))
     # The premise comes from the first sentence only; a follow-up request
     # ("Explain the limits.") is answered normally, not as yes/no.
     if re.match(r"^(is|are|was|were|did|does|do|has|have|had|can|could|will|would|why|how come)\b",
