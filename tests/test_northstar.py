@@ -124,3 +124,17 @@ def test_comparison_budget_is_shared_between_sides(handbook):
 def test_different_frequency_is_not_a_yes(handbook):
     result = handbook.ask("Does the company give every employee a new laptop every year?")
     assert result.answer.startswith("No.") and "every 3 years" in result.answer
+
+
+@pytest.mark.parametrize("question, mentioned", [
+    ("What brand of laptop does the company provide?", "laptop"),
+    ("How many weeks of paternity leave do fathers get?", "parental leave"),
+])
+def test_covered_topic_with_missing_detail_says_not_specified(handbook, question, mentioned):
+    result = handbook.ask(question)
+    assert result.abstained and "do not specify" in result.answer and mentioned in result.answer
+
+
+def test_absent_topic_abstains_generically(handbook):
+    result = handbook.ask("How much is the relocation bonus for new employees?")
+    assert result.abstained and "do not specify" not in result.answer

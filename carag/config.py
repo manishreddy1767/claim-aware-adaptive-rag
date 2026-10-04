@@ -141,6 +141,11 @@ class AnswerConfig:
     # (0 = the model's own no-answer decision; not tuned).
     answerability_margin: float = 0.0
     relevance_context_k: int = 8
+    # When the QA model finds no answer, say "not specified" (topic covered, detail missing)
+    # instead of the generic abstention if the best evidence has at least this cosine
+    # similarity to the question. Set from 13 handbook/synthetic questions: covered topics
+    # scored 0.53-0.73, absent topics 0.26-0.41. Heuristic, not calibrated.
+    not_specified_min_semantic: float = 0.50
     abstain_message: str = (
         "I could not find sufficient evidence in the provided sources to "
         "answer this question reliably."

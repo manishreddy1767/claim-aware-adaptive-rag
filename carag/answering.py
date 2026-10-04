@@ -334,7 +334,11 @@ class GroundedAnswerer:
             if span.margin < cfg.answerability_margin or span_evidence is None:
                 timings["verification_s"] = round(time.perf_counter() - start, 3)
                 reason = f"The retrieved evidence does not appear to contain an answer (QA answerability {span.margin:.1f})."
-                if retrieval.sufficient and retrieval.evidence:
+                # The topic is covered when retrieval was sufficient, or when the closest evidence
+                # is semantically on topic although the asked detail's words ('brand', 'paternity')
+                # appear nowhere and so lower key-term coverage.
+                on_topic = retrieval.evidence and max(e.semantic for e in retrieval.evidence) >= cfg.not_specified_min_semantic
+                if retrieval.evidence and (retrieval.sufficient or on_topic):
                     return self._not_specified(result, retrieval, reason)
                 return self._abstain(result, reason)
             result.answer_span = span.text.strip()

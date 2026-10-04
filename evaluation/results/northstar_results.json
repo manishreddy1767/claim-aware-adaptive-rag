@@ -72,12 +72,13 @@
       "relevance_model": "deepset/minilm-uncased-squad2",
       "answerability_margin": 0.0,
       "relevance_context_k": 8,
+      "not_specified_min_semantic": 0.5,
       "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
     }
   },
-  "behavior_correct": 39,
+  "behavior_correct": 41,
   "n": 43,
-  "mean_fact_recall": 0.926,
+  "mean_fact_recall": 0.973,
   "self_supported_rate": 0.946,
   "mean_checks_used": 7.13,
   "mean_retrieval_rounds": 0.13,
@@ -124,8 +125,8 @@
     },
     "unsupported": {
       "n": 5,
-      "behavior_correct": 3,
-      "mean_fact_recall": 0.6
+      "behavior_correct": 5,
+      "mean_fact_recall": 1.0
     },
     "vague": {
       "n": 1,
@@ -151,7 +152,7 @@
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
         "retrieval_s": 0.082,
-        "verification_s": 0.346
+        "verification_s": 0.314
       },
       "trace": {
         "key_terms": [
@@ -216,8 +217,8 @@
       "missing_facts": [],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Each request must specify the date, the work location and a brief reason. [2] The reporting manager reviews and approves each request. [3] Approval is not automatic. [4] Requests for more than 2 remote days per week require written approval from the department head and HR. [5] Employees working remotely must remain reachable during core hours from 10:00 a.m. to 4:00 p.m. [6]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 1.759
+        "retrieval_s": 0.015,
+        "verification_s": 1.429
       },
       "trace": {
         "key_terms": [
@@ -288,8 +289,8 @@
       "missing_facts": [],
       "answer": "All full-time employees are covered by a group health insurance plan that includes their spouse and children. [1] The company contributes to each employee's retirement fund as required by law. [2] Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [3] Prior manager approval is required before enrolling in a course that will be reimbursed. [4] Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [5]",
       "timings": {
-        "retrieval_s": 0.019,
-        "verification_s": 0.605
+        "retrieval_s": 0.016,
+        "verification_s": 0.617
       },
       "trace": {
         "key_terms": [
@@ -402,8 +403,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1] Leave of more than 10 consecutive days requires additional approval from HR. [2] Up to 5 unused annual-leave days can be carried forward to the next calendar year. [3] Carried-forward days must be used by March 31. [4] Any carried-forward days not used by that date expire. [5] Personal leave cannot be carried forward. [6]",
       "timings": {
-        "retrieval_s": 0.019,
-        "verification_s": 0.886
+        "retrieval_s": 0.02,
+        "verification_s": 0.874
       },
       "trace": {
         "key_terms": [
@@ -542,8 +543,8 @@
       "missing_facts": [],
       "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Eligible employees receive maternity leave according to applicable law and the company's parental-leave program. [1]",
       "timings": {
-        "retrieval_s": 0.016,
-        "verification_s": 0.033
+        "retrieval_s": 0.013,
+        "verification_s": 0.041
       },
       "trace": {
         "key_terms": [
@@ -606,8 +607,8 @@
       "missing_facts": [],
       "answer": "The sources do not establish this. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.16
+        "retrieval_s": 0.013,
+        "verification_s": 0.175
       },
       "trace": {
         "key_terms": [
@@ -723,8 +724,8 @@
       ],
       "answer": "Company's annual leave policy: Full-time employees receive 24 days of paid leave per calendar year. [1] Part-time employees receive leave in proportion to their contracted hours. [2] Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [3] Requests are approved by the employee's reporting manager. [4] Leave of more than 10 consecutive days requires additional approval from HR. [5] Personal leave cannot be carried forward. [6] Work-from-home policy: Employees who have completed their probation period are eligible to work remotely. [7] Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [8] Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [9] Each request must specify the date, the work location and a brief reason. [10] The reporting manager reviews and approves each request. [11] Approval is not automatic. [12]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 1.416
+        "retrieval_s": 0.015,
+        "verification_s": 1.442
       },
       "trace": {
         "key_terms": [
@@ -880,8 +881,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1] Employees joining during the year receive a prorated allowance based on their start date. [2] Part-time employees receive leave in proportion to their contracted hours. [3]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.177
+        "retrieval_s": 0.014,
+        "verification_s": 0.169
       },
       "trace": {
         "key_terms": [
@@ -961,8 +962,8 @@
       "missing_facts": [],
       "answer": "Domestic trips must be booked at least 7 days before departure. [1]",
       "timings": {
-        "retrieval_s": 0.016,
-        "verification_s": 0.14
+        "retrieval_s": 0.015,
+        "verification_s": 0.15
       },
       "trace": {
         "key_terms": [
@@ -1027,7 +1028,7 @@
       "answer": "Laptops are replaced every 3 years. [1]",
       "timings": {
         "retrieval_s": 0.013,
-        "verification_s": 0.133
+        "verification_s": 0.146
       },
       "trace": {
         "key_terms": [
@@ -1090,7 +1091,7 @@
       "answer": "Passwords must be changed every 90 days. [1]",
       "timings": {
         "retrieval_s": 0.013,
-        "verification_s": 0.153
+        "verification_s": 0.137
       },
       "trace": {
         "key_terms": [
@@ -1152,8 +1153,8 @@
       "missing_facts": [],
       "answer": "Hotel stays are reimbursed up to ₹6,000 per night in metro cities. [1]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.144
+        "retrieval_s": 0.017,
+        "verification_s": 0.165
       },
       "trace": {
         "key_terms": [
@@ -1216,8 +1217,8 @@
       "missing_facts": [],
       "answer": "Lost or stolen devices must be reported to the IT helpdesk within 24 hours. [1]",
       "timings": {
-        "retrieval_s": 0.017,
-        "verification_s": 0.15
+        "retrieval_s": 0.012,
+        "verification_s": 0.153
       },
       "trace": {
         "key_terms": [
@@ -1281,8 +1282,8 @@
       "missing_facts": [],
       "answer": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [1]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.142
+        "retrieval_s": 0.015,
+        "verification_s": 0.175
       },
       "trace": {
         "key_terms": [
@@ -1347,7 +1348,7 @@
       "answer": "Carried-forward days must be used by March 31. [1] Any carried-forward days not used by that date expire. [2]",
       "timings": {
         "retrieval_s": 0.013,
-        "verification_s": 0.282
+        "verification_s": 0.284
       },
       "trace": {
         "key_terms": [
@@ -1411,7 +1412,7 @@
       "answer": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [1]",
       "timings": {
         "retrieval_s": 0.014,
-        "verification_s": 0.136
+        "verification_s": 0.156
       },
       "trace": {
         "key_terms": [
@@ -1470,8 +1471,8 @@
       "missing_facts": [],
       "answer": "Every new employee receives a company laptop on their first working day. [1] Laptops are replaced every 3 years. [2] Employees must return their laptop within 5 working days of leaving the company. [3]",
       "timings": {
-        "retrieval_s": 0.012,
-        "verification_s": 0.307
+        "retrieval_s": 0.02,
+        "verification_s": 0.319
       },
       "trace": {
         "key_terms": [
@@ -1535,8 +1536,8 @@
       "missing_facts": [],
       "answer": "All business travel must be booked through the TravelDesk portal. [1] Domestic trips must be booked at least 7 days before departure. [2] International trips must be booked at least 21 days before departure and require approval from the department head. [3]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.27
+        "retrieval_s": 0.011,
+        "verification_s": 0.29
       },
       "trace": {
         "key_terms": [
@@ -1601,7 +1602,7 @@
       "answer": "Every new employee receives a company laptop on their first working day. [1] Passwords must be changed every 90 days. [2] Multi-factor authentication is mandatory for email and PeoplePortal. [3] Lost or stolen devices must be reported to the IT helpdesk within 24 hours. [4] Personal devices may be used for email only after the IT team installs the device-management app. [5] Software that is not on the approved list must not be installed on company laptops. [6]",
       "timings": {
         "retrieval_s": 0.01,
-        "verification_s": 0.532
+        "verification_s": 0.552
       },
       "trace": {
         "key_terms": [
@@ -1686,8 +1687,8 @@
       "missing_facts": [],
       "answer": "Personal devices may be used for email only after the IT team installs the device-management app. [1] Software that is not on the approved list must not be installed on company laptops. [2]",
       "timings": {
-        "retrieval_s": 0.012,
-        "verification_s": 0.199
+        "retrieval_s": 0.01,
+        "verification_s": 0.219
       },
       "trace": {
         "key_terms": [
@@ -1748,8 +1749,8 @@
       "missing_facts": [],
       "answer": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [1] Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [2]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.18
+        "retrieval_s": 0.011,
+        "verification_s": 0.198
       },
       "trace": {
         "key_terms": [
@@ -1820,8 +1821,8 @@
       "missing_facts": [],
       "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Leave of more than 10 consecutive days requires additional approval from HR. [1]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.027
+        "retrieval_s": 0.013,
+        "verification_s": 0.028
       },
       "trace": {
         "key_terms": [
@@ -1886,8 +1887,8 @@
       ],
       "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.024
+        "retrieval_s": 0.013,
+        "verification_s": 0.037
       },
       "trace": {
         "key_terms": [
@@ -1961,8 +1962,8 @@
       "missing_facts": [],
       "answer": "Leave request procedure: Leave requests must be submitted through PeoplePortal at least 5 working days in advance. [1] Requests are approved by the employee's reporting manager. [2] Leave of more than 10 consecutive days requires additional approval from HR. [3] Work-from-home request procedure: Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [4] Each request must specify the date, the work location and a brief reason. [5] The reporting manager reviews and approves each request. [6] Approval is not automatic. [7]",
       "timings": {
-        "retrieval_s": 0.011,
-        "verification_s": 0.671
+        "retrieval_s": 0.012,
+        "verification_s": 0.683
       },
       "trace": {
         "key_terms": [
@@ -2047,7 +2048,7 @@
       "answer": "Learning allowance: Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications. [1] Prior manager approval is required before enrolling in a course that will be reimbursed. [2] Wellness benefit: Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [3]",
       "timings": {
         "retrieval_s": 0.01,
-        "verification_s": 0.283
+        "verification_s": 0.371
       },
       "trace": {
         "key_terms": [
@@ -2118,7 +2119,7 @@
       "answer": "Domestic travel booking: All business travel must be booked through the TravelDesk portal. [1] Domestic trips must be booked at least 7 days before departure. [2] International trips must be booked at least 21 days before departure and require approval from the department head. [3] International travel booking: All business travel must be booked through the TravelDesk portal. [1] Domestic trips must be booked at least 7 days before departure. [2] International trips must be booked at least 21 days before departure and require approval from the department head. [3]",
       "timings": {
         "retrieval_s": 0.01,
-        "verification_s": 0.536
+        "verification_s": 0.567
       },
       "trace": {
         "key_terms": [
@@ -2203,16 +2204,14 @@
       "category": "unsupported",
       "question": "How many weeks of paternity leave do fathers get?",
       "expected_behavior": "not_specified",
-      "observed_behavior": "abstain",
-      "behavior_ok": false,
-      "fact_recall": 0.0,
-      "missing_facts": [
-        "parental leave"
-      ],
-      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "observed_behavior": "not_specified",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Employees should notify HR at least 8 weeks before the expected start of parental leave. [1]",
       "timings": {
-        "retrieval_s": 0.012,
-        "verification_s": 0.027
+        "retrieval_s": 0.011,
+        "verification_s": 0.024
       },
       "trace": {
         "key_terms": [
@@ -2297,16 +2296,14 @@
       "category": "unsupported",
       "question": "What brand of laptop does the company provide?",
       "expected_behavior": "not_specified",
-      "observed_behavior": "abstain",
-      "behavior_ok": false,
-      "fact_recall": 0.0,
-      "missing_facts": [
-        "laptop"
-      ],
-      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "observed_behavior": "not_specified",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Every new employee receives a company laptop on their first working day. [1]",
       "timings": {
-        "retrieval_s": 0.014,
-        "verification_s": 0.027
+        "retrieval_s": 0.01,
+        "verification_s": 0.024
       },
       "trace": {
         "key_terms": [
@@ -2378,8 +2375,8 @@
       "missing_facts": [],
       "answer": "The sources do not establish this. The sources state: Upgrades to business class are not covered by this FAQ. [1] Travel insurance for international trips is arranged by the TravelDesk team. [2]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.132
+        "retrieval_s": 0.014,
+        "verification_s": 0.125
       },
       "trace": {
         "key_terms": [
@@ -2441,8 +2438,8 @@
       "missing_facts": [],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.009,
-        "verification_s": 0.024
+        "retrieval_s": 0.01,
+        "verification_s": 0.023
       },
       "trace": {
         "key_terms": [
@@ -2482,8 +2479,8 @@
       "missing_facts": [],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.024
+        "retrieval_s": 0.011,
+        "verification_s": 0.028
       },
       "trace": {
         "key_terms": [
@@ -2558,7 +2555,7 @@
       "missing_facts": [],
       "answer": "The sources do not mention Northstar Digital, so this question cannot be answered from them.",
       "timings": {
-        "retrieval_s": 0.01
+        "retrieval_s": 0.011
       },
       "trace": {
         "key_terms": [
@@ -2597,8 +2594,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Employees must return their laptop within 5 working days of leaving the company. [1] Every new employee receives a company laptop on their first working day. [2] Laptops are replaced every 3 years. [3]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.124
+        "retrieval_s": 0.011,
+        "verification_s": 0.138
       },
       "trace": {
         "key_terms": [
@@ -2659,8 +2656,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Multi-factor authentication is mandatory for email and PeoplePortal. [1] Passwords must be changed every 90 days. [2] Lost or stolen devices must be reported to the IT helpdesk within 24 hours. [3]",
       "timings": {
-        "retrieval_s": 0.011,
-        "verification_s": 0.151
+        "retrieval_s": 0.012,
+        "verification_s": 0.142
       },
       "trace": {
         "key_terms": [
@@ -2720,8 +2717,8 @@
       "missing_facts": [],
       "answer": "The question's assumption is not supported by the sources. The sources state: International trips must be booked at least 21 days before departure and require approval from the department head. [1] All business travel must be booked through the TravelDesk portal. [2] Domestic trips must be booked at least 7 days before departure. [3]",
       "timings": {
-        "retrieval_s": 0.015,
-        "verification_s": 0.153
+        "retrieval_s": 0.016,
+        "verification_s": 0.142
       },
       "trace": {
         "key_terms": [
@@ -2841,8 +2838,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Personal leave cannot be carried forward. [1] Up to 5 unused annual-leave days can be carried forward to the next calendar year. [2] Carried-forward days must be used by March 31. [3]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.131
+        "retrieval_s": 0.011,
+        "verification_s": 0.149
       },
       "trace": {
         "key_terms": [
@@ -2902,8 +2899,8 @@
       "missing_facts": [],
       "answer": "Yes. Multi-factor authentication is mandatory for email and PeoplePortal. [1]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.123
+        "retrieval_s": 0.014,
+        "verification_s": 0.129
       },
       "trace": {
         "key_terms": [
@@ -2954,7 +2951,7 @@
       "answer": "Yes. International trips must be booked at least 21 days before departure and require approval from the department head. [1]",
       "timings": {
         "retrieval_s": 0.01,
-        "verification_s": 0.145
+        "verification_s": 0.139
       },
       "trace": {
         "key_terms": [
@@ -3014,8 +3011,8 @@
       "missing_facts": [],
       "answer": "Yes. Travel expenses must be claimed within 30 days of returning from the trip. Original receipts are required for every expense above ₹500. [1][2]",
       "timings": {
-        "retrieval_s": 0.011,
-        "verification_s": 0.129
+        "retrieval_s": 0.01,
+        "verification_s": 0.121
       },
       "trace": {
         "key_terms": [
@@ -3076,7 +3073,7 @@
       "answer": "The daily meal allowance for domestic travel is ₹2,500. (verification was inconclusive) [1] The daily meal allowance for domestic travel is ₹3,000. (verification was inconclusive) [2]",
       "timings": {
         "retrieval_s": 0.01,
-        "verification_s": 0.265
+        "verification_s": 0.295
       },
       "trace": {
         "key_terms": [
@@ -3139,8 +3136,8 @@
       "missing_facts": [],
       "answer": "Travel expenses must be claimed within 30 days of returning from the trip. (verification was inconclusive) [1] Travel expenses must be claimed within 45 days of returning from the trip. (verification was inconclusive) [2]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.265
+        "retrieval_s": 0.012,
+        "verification_s": 0.302
       },
       "trace": {
         "key_terms": [
@@ -3207,7 +3204,7 @@
       "answer": "No. The sources state: Employees may work remotely up to 2 days per week, subject to eligibility and manager approval. [1] Employees who have completed their probation period are eligible to work remotely. [2] Roles that require on-site equipment are not eligible for remote work. [3]",
       "timings": {
         "retrieval_s": 0.01,
-        "verification_s": 0.146
+        "verification_s": 0.157
       },
       "trace": {
         "key_terms": [
@@ -3272,7 +3269,7 @@
       "missing_facts": [],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.01
+        "retrieval_s": 0.013
       },
       "trace": {
         "key_terms": [],
