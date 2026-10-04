@@ -178,6 +178,16 @@ class GroundedAnswerer:
         result.notes.insert(0, reason)
         return result
 
+    def _not_specified(self, result: AnswerResult, retrieval: RetrievalResult, reason: str) -> AnswerResult:
+        """Abstain, but say the topic is covered and show the closest passage: retrieval found
+        the subject (e.g. maternity leave), only the requested detail (weeks) is missing."""
+        self._abstain(result, reason)
+        top = max(retrieval.evidence, key=lambda e: e.score)
+        marker = self._cite(top.unit, result.citations)
+        result.answer = ("The sources cover this topic but do not specify the requested detail. "
+                         f"The most relevant passage is: {top.unit.text} [{marker}]")
+        return result
+
     def _unit_for(self, evidence_id: str) -> EvidenceUnit:
         return next(u for u in self.retriever.index.units if u.evidence_id == evidence_id)
 
@@ -258,8 +268,10 @@ class GroundedAnswerer:
             result.answerability = round(span.margin, 3)
             if span.margin < cfg.answerability_margin or span_evidence is None:
                 timings["verification_s"] = round(time.perf_counter() - start, 3)
-                return self._abstain(result, "The retrieved evidence does not appear to contain an answer "
-                                             f"(QA answerability {span.margin:.1f}).")
+                reason = f"The retrieved evidence does not appear to contain an answer (QA answerability {span.margin:.1f})."
+                if retrieval.sufficient and retrieval.evidence:
+                    return self._not_specified(result, retrieval, reason)
+                return self._abstain(result, reason)
             result.answer_span = span.text.strip()
             if not retrieval.sufficient:
                 result.notes.append("Retrieval heuristics flagged: " + " ".join(retrieval.reasons))

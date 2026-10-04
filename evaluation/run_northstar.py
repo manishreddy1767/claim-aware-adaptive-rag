@@ -26,7 +26,7 @@ _NOT_SPECIFIED_MARKERS = ("not specified", "not establish", "does not specify", 
 def observed_behavior(result) -> str:
     text = result.answer.lower()
     if result.abstained:
-        return "abstain"
+        return "not_specified" if any(m in text for m in _NOT_SPECIFIED_MARKERS) else "abstain"
     if any(s.kind == "correction" for s in result.sentences):
         if text.startswith("no.") or "assumption is not supported" in text:
             return "reject_premise"

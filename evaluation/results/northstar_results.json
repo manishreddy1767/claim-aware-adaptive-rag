@@ -70,8 +70,8 @@
       "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
     }
   },
-  "behavior_correct": 6,
-  "mean_fact_recall": 0.577,
+  "behavior_correct": 7,
+  "mean_fact_recall": 0.702,
   "cases": [
     {
       "id": "paid_leave_days",
@@ -84,8 +84,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.054,
-        "verification_s": 0.189
+        "retrieval_s": 0.091,
+        "verification_s": 0.315
       },
       "trace": {
         "key_terms": [
@@ -145,8 +145,8 @@
       ],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Approval is not automatic. [2] Requests for more than 2 remote days per week require written approval from the department head and HR. [3]",
       "timings": {
-        "retrieval_s": 0.009,
-        "verification_s": 0.673
+        "retrieval_s": 0.017,
+        "verification_s": 1.125
       },
       "trace": {
         "key_terms": [
@@ -269,8 +269,8 @@
       ],
       "answer": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [1]",
       "timings": {
-        "retrieval_s": 0.009,
-        "verification_s": 0.087
+        "retrieval_s": 0.014,
+        "verification_s": 0.138
       },
       "trace": {
         "key_terms": [
@@ -363,8 +363,8 @@
       ],
       "answer": "Up to 5 unused annual-leave days can be carried forward to the next calendar year. [1] Any carried-forward days not used by that date expire. [2] Personal leave cannot be carried forward. [3]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.304
+        "retrieval_s": 0.014,
+        "verification_s": 0.51
       },
       "trace": {
         "key_terms": [
@@ -434,16 +434,14 @@
       "category": "unsupported",
       "question": "What is the company's maternity leave duration in weeks?",
       "expected_behavior": "not_specified",
-      "observed_behavior": "abstain",
-      "behavior_ok": false,
-      "fact_recall": 0.0,
-      "missing_facts": [
-        "maternity leave"
-      ],
-      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "observed_behavior": "not_specified",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "The sources cover this topic but do not specify the requested detail. The most relevant passage is: Eligible employees receive maternity leave according to applicable law and the company's parental-leave program. [1]",
       "timings": {
-        "retrieval_s": 0.009,
-        "verification_s": 0.02
+        "retrieval_s": 0.013,
+        "verification_s": 0.035
       },
       "trace": {
         "key_terms": [
@@ -496,8 +494,8 @@
       "missing_facts": [],
       "answer": "The sources do not establish this. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
-        "retrieval_s": 0.009,
-        "verification_s": 0.097
+        "retrieval_s": 0.013,
+        "verification_s": 0.157
       },
       "trace": {
         "key_terms": [
@@ -614,8 +612,8 @@
       ],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.009,
-        "verification_s": 0.022
+        "retrieval_s": 0.014,
+        "verification_s": 0.033
       },
       "trace": {
         "key_terms": [
@@ -742,8 +740,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1] Employees joining during the year receive a prorated allowance based on their start date. [2] Part-time employees receive leave in proportion to their contracted hours. [3]",
       "timings": {
-        "retrieval_s": 0.01,
-        "verification_s": 0.1
+        "retrieval_s": 0.015,
+        "verification_s": 0.15
       },
       "trace": {
         "key_terms": [
