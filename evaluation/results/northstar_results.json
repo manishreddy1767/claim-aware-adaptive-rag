@@ -1,0 +1,866 @@
+{
+  "dataset": "northstar (reconstructed)",
+  "config": {
+    "models": {
+      "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "nli_model": "cross-encoder/nli-deberta-v3-base",
+      "device": "auto",
+      "batch_size": 32
+    },
+    "ingestion": {
+      "min_sentence_words": 3,
+      "max_sentence_chars": 1200,
+      "request_timeout": 20,
+      "max_download_bytes": 10000000,
+      "ocr": true,
+      "ocr_scale": 3.0,
+      "render_js": true,
+      "js_min_units": 3
+    },
+    "retrieval": {
+      "semantic_weight": 0.65,
+      "lexical_weight": 0.35,
+      "intent_bonus": 0.08,
+      "min_k": 2,
+      "initial_k": 4,
+      "max_k": 10,
+      "relative_cutoff": 0.7,
+      "absolute_min_score": 0.25,
+      "sufficiency_score": 0.45,
+      "sufficiency_coverage": 0.6,
+      "full_coverage_relief": 0.1,
+      "max_expansion_rounds": 2,
+      "expand_neighbors": true,
+      "redundancy_threshold": 0.92,
+      "baseline_k": 5
+    },
+    "verification": {
+      "evidence_per_claim": 6,
+      "relevance_threshold": 0.4,
+      "support_threshold": 0.7,
+      "contradiction_threshold": 0.7,
+      "contradiction_relevance_threshold": 0.55,
+      "conflict_margin": 0.1,
+      "uncertain_threshold": 0.4,
+      "use_windows": true,
+      "decompose_causal": true,
+      "use_multi_sentence": true,
+      "multi_sentence_k": 3
+    },
+    "budget": {
+      "enabled": true,
+      "checks_per_claim": 4.0,
+      "min_budget": 6,
+      "step_size": 2,
+      "max_checks_per_claim": 12,
+      "gap_weight": 0.7,
+      "low_gain_threshold": 0.05,
+      "attempt_penalty": 0.8,
+      "low_gain_penalty": 0.75,
+      "strategy": "priority"
+    },
+    "answer": {
+      "max_answer_sentences": 3,
+      "min_answer_score": 0.4,
+      "check_question_premise": true,
+      "relevance_check": true,
+      "relevance_model": "deepset/minilm-uncased-squad2",
+      "answerability_margin": 0.0,
+      "relevance_context_k": 8,
+      "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
+    }
+  },
+  "behavior_correct": 4,
+  "mean_fact_recall": 0.421,
+  "cases": [
+    {
+      "id": "paid_leave_days",
+      "category": "factual",
+      "question": "How many paid leave days does a full-time employee receive annually?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
+      "timings": {
+        "retrieval_s": 0.087,
+        "verification_s": 0.304
+      },
+      "trace": {
+        "key_terms": [
+          "paid",
+          "leav",
+          "day",
+          "full-tim",
+          "employe",
+          "receiv",
+          "annual"
+        ],
+        "intents": [
+          "numeric"
+        ],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.8031,
+            "semantic": 0.8643,
+            "lexical": 0.4935,
+            "coverage": 0.8571,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.4661,
+            "semantic": 0.6192,
+            "lexical": 0.1816,
+            "coverage": 0.4286,
+            "source": "01_leave_policy.txt",
+            "text": "Part-time employees receive leave in proportion to their contracted hours."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 14.357,
+        "answer_span": "24",
+        "notes": [],
+        "claim_statuses": [
+          "SUPPORTED"
+        ]
+      }
+    },
+    {
+      "id": "wfh_procedure",
+      "category": "procedure",
+      "question": "What is the procedure for requesting work-from-home permission, including the deadline and approval requirements?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 0.667,
+      "missing_facts": [
+        "date, the work location",
+        "manager"
+      ],
+      "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Approval is not automatic. [2] Requests for more than 2 remote days per week require written approval from the department head and HR. [3]",
+      "timings": {
+        "retrieval_s": 0.016,
+        "verification_s": 1.104
+      },
+      "trace": {
+        "key_terms": [
+          "procedur",
+          "request",
+          "work-from-hom",
+          "permission",
+          "includ",
+          "deadlin",
+          "approval",
+          "requirement"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 50% of key terms found (missing: permission, includ, deadlin, requirement)."
+        ],
+        "evidence": [
+          {
+            "score": 0.4854,
+            "semantic": 0.6633,
+            "lexical": 0.1549,
+            "coverage": 0.375,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day."
+          },
+          {
+            "score": 0.401,
+            "semantic": 0.5598,
+            "lexical": 0.106,
+            "coverage": 0.25,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Requests for more than 2 remote days per week require written approval from the department head and HR."
+          },
+          {
+            "score": 0.3398,
+            "semantic": 0.4929,
+            "lexical": 0.0553,
+            "coverage": 0.125,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.3297,
+            "semantic": 0.4742,
+            "lexical": 0.0614,
+            "coverage": 0.25,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Each request must specify the date, the work location and a brief reason."
+          },
+          {
+            "score": 0.324,
+            "semantic": 0.4588,
+            "lexical": 0.0736,
+            "coverage": 0.125,
+            "source": "01_leave_policy.txt",
+            "text": "Requests are approved by the employee's reporting manager."
+          },
+          {
+            "score": 0.2947,
+            "semantic": 0.4235,
+            "lexical": 0.0557,
+            "coverage": 0.125,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
+          },
+          {
+            "score": 0.2642,
+            "semantic": 0.4065,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees who have completed their probation period are eligible to work remotely."
+          },
+          {
+            "score": 0.2633,
+            "semantic": 0.3504,
+            "lexical": 0.1016,
+            "coverage": 0.375,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Approval is not automatic."
+          },
+          {
+            "score": 0.2623,
+            "semantic": 0.3669,
+            "lexical": 0.068,
+            "coverage": 0.25,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 9.36,
+        "answer_span": "Approval is not automatic",
+        "notes": [
+          "Retrieval heuristics flagged: Only 50% of key terms found (missing: permission, includ, deadlin, requirement)."
+        ],
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ]
+      }
+    },
+    {
+      "id": "benefit_limits",
+      "category": "multi_fact",
+      "question": "What employee benefits are available, and what are the annual reimbursement limits?",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 0.2,
+      "missing_facts": [
+        "20,000",
+        "health insurance",
+        "retirement",
+        "prior manager approval"
+      ],
+      "answer": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [1]",
+      "timings": {
+        "retrieval_s": 0.013,
+        "verification_s": 0.144
+      },
+      "trace": {
+        "key_terms": [
+          "employe",
+          "benefit",
+          "availabl",
+          "annual",
+          "reimbursement",
+          "limit"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 33% of key terms found (missing: employe, availabl, reimbursement, limit).",
+          "Best evidence score 0.37 is below 0.45."
+        ],
+        "evidence": [
+          {
+            "score": 0.3716,
+            "semantic": 0.5247,
+            "lexical": 0.0872,
+            "coverage": 0.1667,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services."
+          },
+          {
+            "score": 0.3276,
+            "semantic": 0.504,
+            "lexical": 0.0,
+            "coverage": 0.1667,
+            "source": "03_employee_benefits.txt",
+            "text": "The company contributes to each employee's retirement fund as required by law."
+          },
+          {
+            "score": 0.3148,
+            "semantic": 0.4843,
+            "lexical": 0.0,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Employees joining during the year receive a prorated allowance based on their start date."
+          },
+          {
+            "score": 0.3051,
+            "semantic": 0.4694,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees can claim a learning allowance of up to ₹20,000 per year for courses and certifications."
+          },
+          {
+            "score": 0.298,
+            "semantic": 0.4584,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "03_employee_benefits.txt",
+            "text": "All full-time employees are covered by a group health insurance plan that includes their spouse and children."
+          },
+          {
+            "score": 0.2967,
+            "semantic": 0.4565,
+            "lexical": 0.0,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          }
+        ],
+        "premise_status": null,
+        "answerability": 3.599,
+        "answer_span": "wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services",
+        "notes": [
+          "Retrieval heuristics flagged: Only 33% of key terms found (missing: employe, availabl, reimbursement, limit). Best evidence score 0.37 is below 0.45."
+        ],
+        "claim_statuses": [
+          "SUPPORTED"
+        ]
+      }
+    },
+    {
+      "id": "carry_forward",
+      "category": "multi_fact",
+      "question": "Can employees carry forward unused leave? Explain the limits and expiration rules.",
+      "expected_behavior": "answer",
+      "observed_behavior": "abstain",
+      "behavior_ok": false,
+      "fact_recall": 0.0,
+      "missing_facts": [
+        "up to 5",
+        "march 31",
+        "expire",
+        "personal leave cannot"
+      ],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.014,
+        "verification_s": 0.158
+      },
+      "trace": {
+        "key_terms": [
+          "employ",
+          "carry",
+          "forward",
+          "unus",
+          "leav",
+          "limit",
+          "expir",
+          "rul"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "Employees carry forward can unused leave? Explain the limits and expiration rules..",
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.5014,
+            "semantic": 0.6467,
+            "lexical": 0.2315,
+            "coverage": 0.375,
+            "source": "01_leave_policy.txt",
+            "text": "Up to 5 unused annual-leave days can be carried forward to the next calendar year."
+          },
+          {
+            "score": 0.4914,
+            "semantic": 0.64,
+            "lexical": 0.2153,
+            "coverage": 0.375,
+            "source": "01_leave_policy.txt",
+            "text": "Personal leave cannot be carried forward."
+          },
+          {
+            "score": 0.4126,
+            "semantic": 0.5487,
+            "lexical": 0.1598,
+            "coverage": 0.25,
+            "source": "01_leave_policy.txt",
+            "text": "Any carried-forward days not used by that date expire."
+          },
+          {
+            "score": 0.3921,
+            "semantic": 0.5725,
+            "lexical": 0.057,
+            "coverage": 0.125,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          }
+        ],
+        "premise_status": "INSUFFICIENT_EVIDENCE",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "The sources neither confirm nor contradict this statement.",
+          "The sources do not clearly establish the question's premise \"Employees carry forward can unused leave? Explain the limits and expiration rules..\" (INSUFFICIENT_EVIDENCE)."
+        ],
+        "claim_statuses": []
+      }
+    },
+    {
+      "id": "maternity_weeks",
+      "category": "unsupported",
+      "question": "What is the company's maternity leave duration in weeks?",
+      "expected_behavior": "not_specified",
+      "observed_behavior": "abstain",
+      "behavior_ok": false,
+      "fact_recall": 0.0,
+      "missing_facts": [
+        "maternity leave"
+      ],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.019,
+        "verification_s": 0.038
+      },
+      "trace": {
+        "key_terms": [
+          "company'",
+          "maternity",
+          "leav",
+          "dur",
+          "week"
+        ],
+        "intents": [],
+        "premise": null,
+        "retrieval_sufficient": true,
+        "retrieval_expanded": false,
+        "retrieval_reasons": [],
+        "evidence": [
+          {
+            "score": 0.5786,
+            "semantic": 0.6248,
+            "lexical": 0.4927,
+            "coverage": 0.6,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
+          },
+          {
+            "score": 0.4473,
+            "semantic": 0.5627,
+            "lexical": 0.2329,
+            "coverage": 0.6,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -1.975,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -2.0)."
+        ],
+        "claim_statuses": []
+      }
+    },
+    {
+      "id": "pet_adoption",
+      "category": "unsupported",
+      "question": "Does the company provide paid leave for pet adoption?",
+      "expected_behavior": "not_specified",
+      "observed_behavior": "reject_premise",
+      "behavior_ok": false,
+      "fact_recall": 1.0,
+      "missing_facts": [],
+      "answer": "No. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
+      "timings": {
+        "retrieval_s": 0.016,
+        "verification_s": 0.162
+      },
+      "trace": {
+        "key_terms": [
+          "company",
+          "provid",
+          "paid",
+          "leav",
+          "pet",
+          "adoption"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "The company provides paid leave for pet adoption.",
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 33% of key terms found (missing: company, provid, pet, adoption).",
+          "Best evidence score 0.41 is below 0.45."
+        ],
+        "evidence": [
+          {
+            "score": 0.4139,
+            "semantic": 0.6368,
+            "lexical": 0.0,
+            "coverage": 0.0,
+            "source": "03_employee_benefits.txt",
+            "text": "Employees should contact HR for clarification; no pet-adoption benefit is established by this document."
+          },
+          {
+            "score": 0.3543,
+            "semantic": 0.502,
+            "lexical": 0.0799,
+            "coverage": 0.1667,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Parental leave for other parents is available under the same program."
+          },
+          {
+            "score": 0.3372,
+            "semantic": 0.4107,
+            "lexical": 0.2006,
+            "coverage": 0.3333,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.3283,
+            "semantic": 0.4727,
+            "lexical": 0.06,
+            "coverage": 0.1667,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
+          },
+          {
+            "score": 0.2823,
+            "semantic": 0.3963,
+            "lexical": 0.0705,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Part-time employees receive leave in proportion to their contracted hours."
+          },
+          {
+            "score": 0.2712,
+            "semantic": 0.3849,
+            "lexical": 0.06,
+            "coverage": 0.1667,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
+          },
+          {
+            "score": 0.2583,
+            "semantic": 0.3615,
+            "lexical": 0.0667,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          },
+          {
+            "score": 0.2507,
+            "semantic": 0.3534,
+            "lexical": 0.06,
+            "coverage": 0.1667,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          }
+        ],
+        "premise_status": "CONTRADICTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Premise contradicted: \"The company provides paid leave for pet adoption.\""
+        ],
+        "claim_statuses": [
+          "CONTRADICTED"
+        ]
+      }
+    },
+    {
+      "id": "leave_vs_wfh",
+      "category": "compare",
+      "question": "Compare the company's annual leave policy with its work-from-home policy, including eligibility, approval procedures, and restrictions.",
+      "expected_behavior": "answer",
+      "observed_behavior": "abstain",
+      "behavior_ok": false,
+      "fact_recall": 0.0,
+      "missing_facts": [
+        "24 days",
+        "5 working days",
+        "probation",
+        "3:00 p.m.",
+        "manager",
+        "2 remote days"
+      ],
+      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "timings": {
+        "retrieval_s": 0.017,
+        "verification_s": 0.035
+      },
+      "trace": {
+        "key_terms": [
+          "compar",
+          "company'",
+          "annual",
+          "leav",
+          "policy",
+          "work-from-hom",
+          "includ",
+          "eligibility",
+          "approval",
+          "procedur",
+          "restriction"
+        ],
+        "intents": [
+          "comparison"
+        ],
+        "premise": null,
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Best evidence score 0.38 is below 0.45."
+        ],
+        "evidence": [
+          {
+            "score": 0.3782,
+            "semantic": 0.5133,
+            "lexical": 0.0859,
+            "coverage": 0.1818,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          },
+          {
+            "score": 0.3703,
+            "semantic": 0.5101,
+            "lexical": 0.1106,
+            "coverage": 0.1818,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
+          },
+          {
+            "score": 0.3327,
+            "semantic": 0.4908,
+            "lexical": 0.0389,
+            "coverage": 0.1818,
+            "source": "01_leave_policy.txt",
+            "text": "Part-time employees receive leave in proportion to their contracted hours."
+          },
+          {
+            "score": 0.3255,
+            "semantic": 0.4754,
+            "lexical": 0.0472,
+            "coverage": 0.0909,
+            "source": "01_leave_policy.txt",
+            "text": "Personal leave cannot be carried forward."
+          },
+          {
+            "score": 0.3248,
+            "semantic": 0.4818,
+            "lexical": 0.0331,
+            "coverage": 0.1818,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.318,
+            "semantic": 0.4295,
+            "lexical": 0.1108,
+            "coverage": 0.1818,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
+          },
+          {
+            "score": 0.3155,
+            "semantic": 0.4617,
+            "lexical": 0.0441,
+            "coverage": 0.0909,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Parental leave for other parents is available under the same program."
+          },
+          {
+            "score": 0.3035,
+            "semantic": 0.4491,
+            "lexical": 0.0331,
+            "coverage": 0.0909,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.2644,
+            "semantic": 0.4067,
+            "lexical": 0.0,
+            "coverage": 0.0909,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees who have completed their probation period are eligible to work remotely."
+          },
+          {
+            "score": 0.2581,
+            "semantic": 0.3574,
+            "lexical": 0.0738,
+            "coverage": 0.1818,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day."
+          }
+        ],
+        "premise_status": null,
+        "answerability": -13.733,
+        "answer_span": null,
+        "notes": [
+          "The retrieved evidence does not appear to contain an answer (QA answerability -13.7)."
+        ],
+        "claim_statuses": []
+      }
+    },
+    {
+      "id": "false_30_days",
+      "category": "false_premise",
+      "question": "Does the company guarantee 30 days of paid annual leave to every employee?",
+      "expected_behavior": "reject_premise",
+      "observed_behavior": "reject_premise",
+      "behavior_ok": true,
+      "fact_recall": 0.5,
+      "missing_facts": [
+        "prorated"
+      ],
+      "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1]",
+      "timings": {
+        "retrieval_s": 0.013,
+        "verification_s": 0.15
+      },
+      "trace": {
+        "key_terms": [
+          "company",
+          "guarante",
+          "30",
+          "day",
+          "paid",
+          "annual",
+          "leav",
+          "every",
+          "employe"
+        ],
+        "intents": [
+          "yes_no"
+        ],
+        "premise": "The company guarantees 30 days of paid annual leave to every employee.",
+        "retrieval_sufficient": false,
+        "retrieval_expanded": true,
+        "retrieval_reasons": [
+          "Only 56% of key terms found (missing: guarante, 30, every, employe)."
+        ],
+        "evidence": [
+          {
+            "score": 0.4997,
+            "semantic": 0.6735,
+            "lexical": 0.1769,
+            "coverage": 0.4444,
+            "source": "01_leave_policy.txt",
+            "text": "Full-time employees receive 24 days of paid leave per calendar year."
+          },
+          {
+            "score": 0.3793,
+            "semantic": 0.537,
+            "lexical": 0.0864,
+            "coverage": 0.2222,
+            "source": "01_leave_policy.txt",
+            "text": "Leave of more than 10 consecutive days requires additional approval from HR."
+          },
+          {
+            "score": 0.366,
+            "semantic": 0.543,
+            "lexical": 0.0373,
+            "coverage": 0.1111,
+            "source": "01_leave_policy.txt",
+            "text": "Up to 5 unused annual-leave days can be carried forward to the next calendar year."
+          },
+          {
+            "score": 0.3517,
+            "semantic": 0.5143,
+            "lexical": 0.0498,
+            "coverage": 0.2222,
+            "source": "01_leave_policy.txt",
+            "text": "Part-time employees receive leave in proportion to their contracted hours."
+          },
+          {
+            "score": 0.351,
+            "semantic": 0.54,
+            "lexical": 0.0,
+            "coverage": 0.2222,
+            "source": "01_leave_policy.txt",
+            "text": "Employees joining during the year receive a prorated allowance based on their start date."
+          },
+          {
+            "score": 0.3078,
+            "semantic": 0.4108,
+            "lexical": 0.1165,
+            "coverage": 0.1111,
+            "source": "03_employee_benefits.txt",
+            "text": "The company contributes to each employee's retirement fund as required by law."
+          },
+          {
+            "score": 0.2951,
+            "semantic": 0.4121,
+            "lexical": 0.0778,
+            "coverage": 0.2222,
+            "source": "01_leave_policy.txt",
+            "text": "Leave requests must be submitted through PeoplePortal at least 5 working days in advance."
+          },
+          {
+            "score": 0.2893,
+            "semantic": 0.4277,
+            "lexical": 0.0322,
+            "coverage": 0.1111,
+            "source": "02_work_from_home_policy.txt",
+            "text": "Employees may work remotely up to 2 days per week, subject to eligibility and manager approval."
+          },
+          {
+            "score": 0.2843,
+            "semantic": 0.4146,
+            "lexical": 0.0424,
+            "coverage": 0.1111,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Eligible employees receive maternity leave according to applicable law and the company's parental-leave program."
+          },
+          {
+            "score": 0.2817,
+            "semantic": 0.4105,
+            "lexical": 0.0424,
+            "coverage": 0.1111,
+            "source": "04_attendance_and_parental_leave.txt",
+            "text": "Employees should notify HR at least 8 weeks before the expected start of parental leave."
+          }
+        ],
+        "premise_status": "CONTRADICTED",
+        "answerability": null,
+        "answer_span": null,
+        "notes": [
+          "Premise contradicted: \"The company guarantees 30 days of paid annual leave to every employee.\""
+        ],
+        "claim_statuses": [
+          "CONTRADICTED"
+        ]
+      }
+    }
+  ]
+}

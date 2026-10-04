@@ -1,0 +1,33 @@
+{
+  "description": "Regression questions for the Northstar Digital handbook (evaluation/datasets/northstar/). The documents are a reconstruction from the facts listed in the 2026-09-28 manual test report, not the original files. expected_behavior: answer | not_specified | reject_premise. required_facts are lower-case substrings the final answer must contain.",
+  "questions": [
+    {"id": "paid_leave_days", "category": "factual",
+     "question": "How many paid leave days does a full-time employee receive annually?",
+     "expected_behavior": "answer", "required_facts": ["24 days"]},
+    {"id": "wfh_procedure", "category": "procedure",
+     "question": "What is the procedure for requesting work-from-home permission, including the deadline and approval requirements?",
+     "expected_behavior": "answer",
+     "required_facts": ["peopleportal", "3:00 p.m.", "date, the work location", "manager", "not automatic", "department head"]},
+    {"id": "benefit_limits", "category": "multi_fact",
+     "question": "What employee benefits are available, and what are the annual reimbursement limits?",
+     "expected_behavior": "answer",
+     "required_facts": ["20,000", "5,000", "health insurance", "retirement", "prior manager approval"]},
+    {"id": "carry_forward", "category": "multi_fact",
+     "question": "Can employees carry forward unused leave? Explain the limits and expiration rules.",
+     "expected_behavior": "answer",
+     "required_facts": ["up to 5", "march 31", "expire", "personal leave cannot"]},
+    {"id": "maternity_weeks", "category": "unsupported",
+     "question": "What is the company's maternity leave duration in weeks?",
+     "expected_behavior": "not_specified", "required_facts": ["maternity leave"]},
+    {"id": "pet_adoption", "category": "unsupported",
+     "question": "Does the company provide paid leave for pet adoption?",
+     "expected_behavior": "not_specified", "required_facts": ["pet-adoption"]},
+    {"id": "leave_vs_wfh", "category": "compare",
+     "question": "Compare the company's annual leave policy with its work-from-home policy, including eligibility, approval procedures, and restrictions.",
+     "expected_behavior": "answer",
+     "required_facts": ["24 days", "5 working days", "probation", "3:00 p.m.", "manager", "2 remote days"]},
+    {"id": "false_30_days", "category": "false_premise",
+     "question": "Does the company guarantee 30 days of paid annual leave to every employee?",
+     "expected_behavior": "reject_premise", "required_facts": ["24 days", "prorated"]}
+  ]
+}
