@@ -31,3 +31,9 @@ def test_undocumented_benefit_is_not_answered_no(handbook):
     result = handbook.ask("Does the company provide paid leave for pet adoption?")
     assert not result.answer.startswith("No.")
     assert result.answer.startswith("The sources do not establish this.")
+
+
+def test_rejected_premise_includes_section_context(handbook):
+    result = handbook.ask("Does the company guarantee 30 days of paid annual leave to every employee?")
+    assert result.answer.startswith("No.")
+    assert "24 days" in result.answer and "prorated" in result.answer

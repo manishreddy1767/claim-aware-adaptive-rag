@@ -52,7 +52,7 @@ class AnswerSentence:
     text: str
     citation_markers: list[int]
     claims: list[ClaimVerification]
-    kind: str = "answer"           # "answer" | "caveat" | "correction"
+    kind: str = "answer"           # "answer" | "caveat" | "correction" | "context"
     qualifier: str | None = None
 
 
@@ -154,6 +154,16 @@ class GroundedAnswerer:
                 if e.unit.evidence_id not in used and e.coverage >= 0.3
                 and contains_marker(e.unit.text, _CAVEAT_MARKERS)][:1]
 
+    def _section_context(self, retrieval: RetrievalResult, anchor_ids: list[str]) -> list[ScoredEvidence]:
+        """Retrieved sentences from the same section as the anchor evidence (e.g. the
+        prorated-leave rule next to '24 days per year'), in document order."""
+        anchors = [self._unit_for(eid) for eid in anchor_ids]
+        keys = {(u.source, u.section) for u in anchors if u.section}
+        extra = [e for e in retrieval.evidence
+                 if e.unit.evidence_id not in anchor_ids and (e.unit.source, e.unit.section) in keys]
+        extra = sorted(extra, key=lambda e: -e.score)[: self.config.max_answer_sentences - 1]
+        return sorted(extra, key=lambda e: e.unit.position)
+
     @staticmethod
     def _cite(unit: EvidenceUnit, citations: list[Citation]) -> int:
         for c in citations:
@@ -216,6 +226,10 @@ class GroundedAnswerer:
                     lead = "The question's assumption is not supported by the sources."
                 result.sentences.append(AnswerSentence(text, markers, [premise], kind="correction"))
                 result.answer = f"{lead} The sources state: {text} " + "".join(f"[{m}]" for m in markers)
+                for e in self._section_context(retrieval, ids):
+                    marker = self._cite(e.unit, result.citations)
+                    result.sentences.append(AnswerSentence(e.unit.text, [marker], [], kind="context"))
+                    result.answer += f" {e.unit.text} [{marker}]"
                 result.notes.append(f"Premise contradicted: \"{analysis.premise}\"")
                 timings["verification_s"] = round(time.perf_counter() - start, 3)
                 return result
