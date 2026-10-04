@@ -70,8 +70,8 @@
       "abstain_message": "I could not find sufficient evidence in the provided sources to answer this question reliably."
     }
   },
-  "behavior_correct": 4,
-  "mean_fact_recall": 0.421,
+  "behavior_correct": 5,
+  "mean_fact_recall": 0.515,
   "cases": [
     {
       "id": "paid_leave_days",
@@ -84,8 +84,8 @@
       "missing_facts": [],
       "answer": "Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.087,
-        "verification_s": 0.304
+        "retrieval_s": 0.095,
+        "verification_s": 0.306
       },
       "trace": {
         "key_terms": [
@@ -145,8 +145,8 @@
       ],
       "answer": "Work-from-home requests must be submitted through PeoplePortal by 3:00 p.m. on the preceding working day. [1] Approval is not automatic. [2] Requests for more than 2 remote days per week require written approval from the department head and HR. [3]",
       "timings": {
-        "retrieval_s": 0.016,
-        "verification_s": 1.104
+        "retrieval_s": 0.015,
+        "verification_s": 1.111
       },
       "trace": {
         "key_terms": [
@@ -269,8 +269,8 @@
       ],
       "answer": "Employees receive a wellness benefit of ₹5,000 per year for gym memberships, fitness classes or mental-health services. [1]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.144
+        "retrieval_s": 0.014,
+        "verification_s": 0.214
       },
       "trace": {
         "key_terms": [
@@ -355,19 +355,16 @@
       "category": "multi_fact",
       "question": "Can employees carry forward unused leave? Explain the limits and expiration rules.",
       "expected_behavior": "answer",
-      "observed_behavior": "abstain",
-      "behavior_ok": false,
-      "fact_recall": 0.0,
+      "observed_behavior": "answer",
+      "behavior_ok": true,
+      "fact_recall": 0.75,
       "missing_facts": [
-        "up to 5",
-        "march 31",
-        "expire",
-        "personal leave cannot"
+        "march 31"
       ],
-      "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
+      "answer": "Up to 5 unused annual-leave days can be carried forward to the next calendar year. [1] Any carried-forward days not used by that date expire. [2] Personal leave cannot be carried forward. [3]",
       "timings": {
         "retrieval_s": 0.014,
-        "verification_s": 0.158
+        "verification_s": 0.545
       },
       "trace": {
         "key_terms": [
@@ -380,10 +377,8 @@
           "expir",
           "rul"
         ],
-        "intents": [
-          "yes_no"
-        ],
-        "premise": "Employees carry forward can unused leave? Explain the limits and expiration rules..",
+        "intents": [],
+        "premise": "Employees can carry forward unused leave.",
         "retrieval_sufficient": true,
         "retrieval_expanded": false,
         "retrieval_reasons": [],
@@ -421,14 +416,17 @@
             "text": "Leave of more than 10 consecutive days requires additional approval from HR."
           }
         ],
-        "premise_status": "INSUFFICIENT_EVIDENCE",
-        "answerability": null,
-        "answer_span": null,
+        "premise_status": "UNCERTAIN",
+        "answerability": 12.879,
+        "answer_span": "Any carried-forward days not used by that date expire",
         "notes": [
-          "The sources neither confirm nor contradict this statement.",
-          "The sources do not clearly establish the question's premise \"Employees carry forward can unused leave? Explain the limits and expiration rules..\" (INSUFFICIENT_EVIDENCE)."
+          "The sources do not clearly establish the question's premise \"Employees can carry forward unused leave.\" (UNCERTAIN)."
         ],
-        "claim_statuses": []
+        "claim_statuses": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ]
       }
     },
     {
@@ -444,8 +442,8 @@
       ],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.019,
-        "verification_s": 0.038
+        "retrieval_s": 0.026,
+        "verification_s": 0.049
       },
       "trace": {
         "key_terms": [
@@ -498,8 +496,8 @@
       "missing_facts": [],
       "answer": "No. The sources state: Employees should contact HR for clarification; no pet-adoption benefit is established by this document. [1]",
       "timings": {
-        "retrieval_s": 0.016,
-        "verification_s": 0.162
+        "retrieval_s": 0.017,
+        "verification_s": 0.149
       },
       "trace": {
         "key_terms": [
@@ -615,8 +613,8 @@
       ],
       "answer": "I could not find sufficient evidence in the provided sources to answer this question reliably.",
       "timings": {
-        "retrieval_s": 0.017,
-        "verification_s": 0.035
+        "retrieval_s": 0.015,
+        "verification_s": 0.036
       },
       "trace": {
         "key_terms": [
@@ -745,8 +743,8 @@
       ],
       "answer": "No. The sources state: Full-time employees receive 24 days of paid leave per calendar year. [1]",
       "timings": {
-        "retrieval_s": 0.013,
-        "verification_s": 0.15
+        "retrieval_s": 0.015,
+        "verification_s": 0.142
       },
       "trace": {
         "key_terms": [

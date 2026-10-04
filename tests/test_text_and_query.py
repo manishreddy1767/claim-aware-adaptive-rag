@@ -44,6 +44,14 @@ def test_premise_extraction():
     assert analyze_question("What sampling frequency did Trial One use?").premise is None
 
 
+def test_premise_from_first_sentence_with_follow_up():
+    analysis = analyze_question("Can employees carry forward unused leave? Explain the limits and expiration rules.")
+    assert analysis.premise == "Employees can carry forward unused leave."
+    assert not analysis.is_yes_no   # the follow-up asks for an explanation, not yes/no
+    assert not analyze_question("Is leave paid, and how many days are given?").is_yes_no
+    assert analyze_question("Can employees work remotely?").is_yes_no
+
+
 def test_extract_claims_splits_only_safe_clauses():
     text = ("Trial One used 1 Hz, whereas Trial Two used 10 Hz [1]. "
             "Trial Two consumed more energy, and it also overheated. What next?")

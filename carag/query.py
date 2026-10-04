@@ -41,6 +41,7 @@ _IRREGULAR_PAST = {
     "do": "did", "be": "was", "drop": "dropped", "stop": "stopped", "begin": "began",
 }
 _THIRD_PERSON_IRREGULAR = {"have": "has", "do": "does", "go": "goes"}
+_MODALS = ("can", "could", "will", "would")
 
 
 @dataclass
@@ -118,7 +119,8 @@ def _declarative(question: str) -> str | None:
     tokens = rest.split()
     if len(tokens) < 2:
         return None
-    split = _subject_end(tokens, expect_verb=aux in ("did", "does", "do"))
+    # After do/does/did and modals the predicate starts with a base verb ("can carry ...").
+    split = _subject_end(tokens, expect_verb=aux in ("did", "does", "do") + _MODALS)
     if split <= 0 or split >= len(tokens):
         return None
     subject, predicate = tokens[:split], tokens[split:]
@@ -129,7 +131,22 @@ def _declarative(question: str) -> str | None:
     elif aux != "do":
         predicate = [aux] + predicate
     sentence = " ".join(subject + predicate)
+    if re.search(r"[?!]", sentence):
+        return None   # leftover question fragments make an unverifiable premise
     return sentence[0].upper() + sentence[1:] + "."
+
+
+def _first_sentence(question: str) -> tuple[str, bool]:
+    """The question's first sentence, and whether more is asked after it.
+
+    'Can X do Y? Explain the limits.' and 'Is X true, and what is Z?' ask for more
+    than a yes/no answer.
+    """
+    parts = [p for p in re.split(r"(?<=[?.!])\s+", question.strip()) if p.strip()]
+    first = parts[0] if parts else question.strip()
+    follow_up = len(parts) > 1 or bool(
+        re.search(r",?\s+(?:and|or)\s+(?:what|which|how|why|when|where|who)\b", first, flags=re.I))
+    return first, follow_up
 
 
 _ENTITY_RE = re.compile(r"\b[A-Z][\w-]*(?:\s+(?:[A-Z][\w-]*|\d[\w.-]*))+|\b[A-Z][a-z]*[A-Z0-9][\w-]*\b")
@@ -167,7 +184,8 @@ def analyze_question(question: str) -> QueryAnalysis:
         intents.add("numeric")
     if re.search(r"\b(limitation|limitations|caveat|weakness|drawback|shortcoming|uncertain|reliab|generaliz)", low):
         intents.add("limitation")
-    if re.match(r"^(is|are|was|were|did|does|do|has|have|had|can|could|will|would)\b", low):
+    first, follow_up = _first_sentence(q)
+    if re.match(r"^(is|are|was|were|did|does|do|has|have|had|can|could|will|would)\b", low) and not follow_up:
         intents.add("yes_no")
 
     terms = [t for t in content_terms(q) if t not in _QUESTION_NOISE]
@@ -185,6 +203,9 @@ def analyze_question(question: str) -> QueryAnalysis:
         )
 
     analysis.entities = extract_entities(q)
-    if "yes_no" in intents or low.startswith(("why ", "how come ")):
-        analysis.premise = _declarative(q)
+    # The premise comes from the first sentence only; a follow-up request
+    # ("Explain the limits.") is answered normally, not as yes/no.
+    if re.match(r"^(is|are|was|were|did|does|do|has|have|had|can|could|will|would|why|how come)\b",
+                first.lower()):
+        analysis.premise = _declarative(first)
     return analysis
