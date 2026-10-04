@@ -251,7 +251,7 @@ class GroundedAnswerer:
 
         start = time.perf_counter()
         if adaptive:
-            retrieval = self.retriever.retrieve(question)
+            retrieval = self.retriever.retrieve(question, max_rounds=self._round_cap())
         else:
             from .query import analyze_question
             analysis = analyze_question(question)
@@ -357,7 +357,8 @@ class GroundedAnswerer:
 
         # 4. Verify each claim (under a shared evidence budget when enabled);
         #    drop unsupported/contradicted claims, qualify partial/uncertain ones.
-        result.sentences.extend(s for s in self._verify_drafts(result, drafts, retrieval.evidence, verify) if s)
+        result.sentences.extend(s for s in self._verify_drafts(result, drafts, retrieval.evidence, verify,
+                                                               rounds=retrieval.expansion_rounds) if s)
         timings["verification_s"] = round(time.perf_counter() - start, 3)
 
         if not any(s.kind == "answer" for s in result.sentences):
@@ -367,16 +368,40 @@ class GroundedAnswerer:
         result.answer = self._render(result.sentences)
         return result
 
+    def _round_cap(self, parts: int = 1) -> int | None:
+        """Expansion rounds the answer budget allows (per retrieval, over ``parts`` retrievals),
+        keeping min_budget for verification; None when no answer budget is set."""
+        if self.budgeted is None or not self.budgeted.config.enabled:
+            return None
+        bcfg = self.budgeted.config
+        if bcfg.answer_budget is None:
+            return None
+        spare = max(0, bcfg.answer_budget - bcfg.min_budget)
+        return spare // max(1, bcfg.retrieval_round_cost) // parts
+
     def _verify_drafts(self, result: AnswerResult, drafts: list[tuple[ScoredEvidence, str]],
-                       pool: list[ScoredEvidence], verify: bool) -> list[AnswerSentence | None]:
+                       pool: list[ScoredEvidence], verify: bool, rounds: int = 0,
+                       groups: list[int] | None = None) -> list[AnswerSentence | None]:
         """Verify the claims of each draft sentence under one shared budget. Returns one
-        entry per draft: its AnswerSentence, or None when every claim failed."""
+        entry per draft: its AnswerSentence, or None when every claim failed.
+
+        ``rounds`` retrieval expansion rounds are charged to the budget; ``groups`` gives
+        each draft's question part (e.g. comparison side) for a fair split of the budget.
+        """
         draft_claims = [extract_claims(item.unit.text) or [item.unit.text] for item, _ in drafts]
         flat = [c for claims in draft_claims for c in claims]
         if not verify:
             flat_verdicts = []
         elif self.budgeted is not None and self.budgeted.config.enabled:
-            flat_verdicts, result.budget = self.budgeted.verify_claims(flat, pool)
+            bcfg = self.budgeted.config
+            cost = rounds * bcfg.retrieval_round_cost
+            budget = None if bcfg.answer_budget is None else max(bcfg.min_budget, bcfg.answer_budget - cost)
+            claim_groups = ([g for g, claims in zip(groups, draft_claims) for _ in claims] if groups else None)
+            flat_verdicts, report = self.budgeted.verify_claims(flat, pool, budget=budget, groups=claim_groups)
+            report.retrieval_rounds, report.retrieval_cost = rounds, cost
+            report.budget += cost
+            report.used_total += cost
+            result.budget = report
         else:
             flat_verdicts = [self.verifier.verify(c, pool) for c in flat]
         sentences: list[AnswerSentence | None] = []
@@ -417,10 +442,11 @@ class GroundedAnswerer:
         multi-part answer; all claims are then verified under one shared budget.
         """
         start = time.perf_counter()
-        drafts, side_of, pool, missing = [], [], {}, []
+        drafts, side_of, pool, missing, rounds = [], [], {}, [], 0
         for side, target in enumerate(analysis.comparison_targets):
             sub_query = f"{target}: {analysis.comparison_aspects}" if analysis.comparison_aspects else target
-            side_retrieval = self.retriever.retrieve(sub_query)
+            side_retrieval = self.retriever.retrieve(sub_query, max_rounds=self._round_cap(parts=2))
+            rounds += side_retrieval.expansion_rounds
             terms = [t for t in content_terms(target) if t not in _GENERIC_SUBJECT_TERMS]
             needed = max(1, (len(terms) + 1) // 2)
             unit_terms = self.retriever.index.unit_terms
@@ -440,7 +466,7 @@ class GroundedAnswerer:
             result.timings["verification_s"] = round(time.perf_counter() - start, 3)
             return self._abstain(result, "The sources do not describe either side of the comparison.")
 
-        verified = self._verify_drafts(result, drafts, list(pool.values()), verify)
+        verified = self._verify_drafts(result, drafts, list(pool.values()), verify, rounds=rounds, groups=side_of)
         result.timings["verification_s"] = round(time.perf_counter() - start, 3)
         parts = []
         for side, target in enumerate(analysis.comparison_targets):

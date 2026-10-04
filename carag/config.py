@@ -113,6 +113,13 @@ class BudgetConfig:
     low_gain_penalty: float = 0.75
     # "priority" (evidence-gain aware) or "round_robin" (baseline).
     strategy: str = "priority"
+    # Answer-level accounting: one adaptive-retrieval expansion round costs this many
+    # evidence checks. With answer_budget unset, the cost of the rounds actually run is
+    # added on top of the verification budget (reported, not limited). With answer_budget
+    # set, it is a hard total: expansion rounds are capped so min_budget is left for
+    # verification, and verification gets the remainder.
+    retrieval_round_cost: int = 2
+    answer_budget: int | None = None
 
 
 @dataclass

@@ -81,6 +81,10 @@ def sidebar_config() -> RAGConfig:
             cfg.budget.strategy = st.selectbox("Scheduling", ["priority", "round_robin"],
                                                help="priority = evidence-gain-aware (default); "
                                                     "round_robin = baseline")
+            total = st.slider("Total budget per answer (0 = automatic)", 0, 60, cfg.budget.answer_budget or 0,
+                              help="Caps retrieval rounds plus evidence checks for one answer. Each extra "
+                                   f"retrieval round costs {cfg.budget.retrieval_round_cost} checks.")
+            cfg.budget.answer_budget = total or None
         with st.expander("Answering", expanded=False):
             cfg.answer.max_answer_sentences = st.slider("Max answer sentences", 1, 6,
                                                         cfg.answer.max_answer_sentences)
@@ -113,6 +117,10 @@ def render_claim(v: ClaimVerification, key: str) -> None:
 def render_budget(report) -> None:
     st.markdown(f"**Evidence budget:** used {report.used_total} of {report.budget} evidence checks"
                 + (" (budget exhausted)" if report.exhausted else ""))
+    if report.retrieval_rounds:
+        st.caption(f"Includes {report.retrieval_rounds} extra retrieval round(s), costing {report.retrieval_cost} checks.")
+    if report.groups:
+        st.caption("Checks per question part: " + ", ".join(f"part {int(g) + 1}: {n}" for g, n in report.groups.items()))
     st.dataframe(pd.DataFrame([{
         "Claim": c["claim"], "Priority": c["base_priority"], "Retrieval steps": c["attempts"],
         "Checks": f"{c['checks']}/{c['candidates']}", "Evidence gain": c["total_gain"], "Result": c["status"],

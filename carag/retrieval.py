@@ -46,6 +46,10 @@ class RetrievalResult:
     expanded: bool = False
     refined: bool = False
 
+    @property
+    def expansion_rounds(self) -> int:
+        return sum(1 for step in self.trace if step.get("round", 0) > 0)
+
     def to_dict(self) -> dict:
         return {
             "question": self.question,
@@ -173,7 +177,9 @@ class AdaptiveRetriever:
             sources[i] = found_by
         return chosen, dropped
 
-    def retrieve(self, question: str, analysis: QueryAnalysis | None = None) -> RetrievalResult:
+    def retrieve(self, question: str, analysis: QueryAnalysis | None = None,
+                 max_rounds: int | None = None) -> RetrievalResult:
+        """``max_rounds`` caps expansion rounds below ``max_expansion_rounds`` (budget-limited)."""
         cfg = self.config
         analysis = analysis or analyze_question(question)
         if not len(self.index):
@@ -193,7 +199,8 @@ class AdaptiveRetriever:
         sufficient, reasons = self._sufficiency(chosen, scores, analysis)
         expanded = False
 
-        for round_number in range(1, cfg.max_expansion_rounds + 1):
+        rounds = cfg.max_expansion_rounds if max_rounds is None else min(max_rounds, cfg.max_expansion_rounds)
+        for round_number in range(1, rounds + 1):
             if sufficient:
                 break
             expanded = True

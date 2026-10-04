@@ -56,6 +56,7 @@ class _ClaimState:
     premises: list
     base_priority: float
     dynamic_priority: float
+    group: int = 0             # question part the claim belongs to (e.g. a comparison side)
     judgements: list[EvidenceJudgement] = field(default_factory=list)
     cursor: int = 0
     attempts: int = 0
@@ -72,7 +73,10 @@ class BudgetReport:
     used: int
     extra_checks: int          # budget spent on causal decomposition after the scheduling loop
     exhausted: bool
-    used_total: int = 0        # used + extra_checks (never exceeds budget)
+    used_total: int = 0        # used + extra_checks (+ retrieval_cost when charged; never exceeds budget)
+    retrieval_rounds: int = 0  # adaptive-retrieval expansion rounds charged to this budget
+    retrieval_cost: int = 0    # retrieval_rounds x retrieval_round_cost
+    groups: dict[str, int] = field(default_factory=dict)   # checks used per question part
     steps: list[dict] = field(default_factory=list)
     claims: list[dict] = field(default_factory=list)
 
@@ -101,17 +105,25 @@ class BudgetedVerifier:
             s.dynamic_priority / (1 + cfg.attempt_penalty * s.attempts)
             / (1 + cfg.low_gain_penalty * s.low_gain_streak), -s.index))
 
+    def default_budget(self, n_claims: int) -> int:
+        cfg = self.config
+        return max(cfg.min_budget, math.ceil(cfg.checks_per_claim * n_claims)) if n_claims else 0
+
     def verify_claims(self, claims: list[str], pool: list[ScoredEvidence] | None = None,
-                      budget: int | None = None) -> tuple[list[ClaimVerification], BudgetReport]:
+                      budget: int | None = None, groups: list[int] | None = None
+                      ) -> tuple[list[ClaimVerification], BudgetReport]:
+        """``groups`` assigns each claim to a question part; each part is then guaranteed an
+        equal share of the scheduling budget before any part may use more than its share."""
         cfg = self.config
         if budget is None:
-            budget = max(cfg.min_budget, math.ceil(cfg.checks_per_claim * len(claims))) if claims else 0
+            budget = self.default_budget(len(claims))
+        groups = groups or [0] * len(claims)
         states = []
         for i, claim in enumerate(claims):
             premises = self.verifier.candidate_premises(claim, pool)[: cfg.max_checks_per_claim]
             gap = 1.0 - max((p[2] for p in premises), default=0.0)
             priority = cfg.gap_weight * gap + (1 - cfg.gap_weight) * linguistic_uncertainty(claim)
-            states.append(_ClaimState(i, claim, premises, round(priority, 4), priority))
+            states.append(_ClaimState(i, claim, premises, round(priority, 4), priority, group=groups[i]))
 
         # Reserve part of the budget for checking the components of causal claims
         # ("A because B") after the main loop; at most a third of the budget.
@@ -120,17 +132,24 @@ class BudgetedVerifier:
         loop_budget = budget - reserve
 
         report = BudgetReport(strategy=cfg.strategy, budget=budget, used=0, extra_checks=0, exhausted=False)
+        part_ids = sorted(set(groups))
+        share = loop_budget // len(part_ids) if part_ids else loop_budget
+        group_used = {g: 0 for g in part_ids}
         while report.used < loop_budget:
             active = [s for s in states if not s.resolved and s.cursor < len(s.premises)]
             if not active:
                 break
-            state = self._pick(active)
+            # Parts still under their share go first; once all have used theirs (or have
+            # nothing left to check) any part may use the rest.
+            under = [s for s in active if group_used[s.group] < share]
+            state = self._pick(under or active)
             take = min(cfg.step_size, loop_budget - report.used, len(state.premises) - state.cursor)
             batch = state.premises[state.cursor: state.cursor + take]
             state.judgements += self.verifier.judge(state.claim, batch)
             state.cursor += take
             state.attempts += 1
             report.used += take
+            group_used[state.group] += take
 
             new_decisiveness = self._decisiveness(state.judgements)
             gain = max(0.0, new_decisiveness - state.decisiveness)
@@ -145,6 +164,7 @@ class BudgetedVerifier:
                                  "interim_status": interim.value, "resolved": state.resolved})
 
         report.exhausted = any(not s.resolved and s.cursor < len(s.premises) for s in states)
+        report.groups = {str(g): used for g, used in group_used.items()} if len(part_ids) > 1 else {}
         results = []
         for state in states:
             if state.attempts == 0 and state.premises:

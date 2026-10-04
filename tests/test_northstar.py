@@ -86,3 +86,36 @@ def test_checked_answer_does_not_call_undocumented_claim_wrong(handbook):
     check = handbook.check_answer("Employees get paid leave for pet adoption.")
     assert "Not established" in check.revised.text and "Correction" not in check.revised.text
 
+
+BENEFITS = "What employee benefits are available, and what are the annual reimbursement limits?"
+COMPARE = ("Compare the company's annual leave policy with its work-from-home policy, "
+           "including eligibility, approval procedures, and restrictions.")
+
+
+def test_retrieval_rounds_are_charged_to_the_budget(handbook):
+    result = handbook.ask(BENEFITS)
+    report, rounds = result.budget, result.retrieval.expansion_rounds
+    assert rounds > 0   # this question needs adaptive expansion
+    assert report.retrieval_rounds == rounds
+    assert report.retrieval_cost == rounds * handbook.config.budget.retrieval_round_cost
+    assert report.used_total <= report.budget
+
+
+def test_answer_budget_is_a_hard_total(handbook):
+    import copy
+    original = handbook.config
+    config = copy.deepcopy(original)
+    config.budget.answer_budget = 8
+    handbook.apply_config(config)
+    try:
+        result = handbook.ask(BENEFITS)
+        # (8 - min_budget 6) // cost 2 = 1 round allowed; verification gets the rest.
+        assert result.retrieval.expansion_rounds <= 1
+        assert result.budget.budget == 8 and result.budget.used_total <= 8
+    finally:
+        handbook.apply_config(original)
+
+
+def test_comparison_budget_is_shared_between_sides(handbook):
+    groups = handbook.ask(COMPARE).budget.groups
+    assert set(groups) == {"0", "1"} and all(n > 0 for n in groups.values())
