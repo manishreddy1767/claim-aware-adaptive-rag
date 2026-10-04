@@ -75,6 +75,16 @@ def test_decompose_causal_resolves_pronoun():
     assert decompose_causal("Trial Two used 10 Hz.") is None
 
 
+def test_comparison_targets():
+    analysis = analyze_question("Compare the company's annual leave policy with its work-from-home policy, "
+                                "including eligibility, approval procedures, and restrictions.")
+    assert analysis.comparison_targets == ["company's annual leave policy", "work-from-home policy"]
+    assert analysis.comparison_aspects == "eligibility, approval procedures, and restrictions"
+    assert analyze_question("What is the difference between Trial One and Trial Two?").comparison_targets == \
+        ["Trial One", "Trial Two"]
+    assert not analyze_question("How did the battery life of Trial One compare with Trial Two?").comparison_targets
+
+
 def test_multi_part_questions():
     assert analyze_question("What is the procedure for requesting leave?").multi_part
     assert analyze_question("What benefits are available, and what are the limits?").multi_part

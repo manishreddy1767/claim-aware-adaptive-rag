@@ -18,7 +18,7 @@ from .claims import extract_claims
 from .config import AnswerConfig
 from .retrieval import AdaptiveRetriever, RetrievalResult
 from .schema import ClaimStatus, ClaimVerification, EvidenceUnit, ScoredEvidence
-from .text_utils import contains_marker
+from .text_utils import contains_marker, content_terms
 from .budget import BudgetedVerifier, BudgetReport
 from .verification import ClaimVerifier
 
@@ -31,6 +31,9 @@ _CAVEAT_MARKERS = ("however", "limitation", "limitations", "caveat", "preliminar
 _ABSENCE = re.compile(
     r"\b(?:not|no)\b[^.;]{0,60}?\b(?:established|specified|stated|mentioned|covered|documented|defined)\b|"
     r"\b(?:does|do|did) not (?:specify|state|mention|cover|establish|define)\b", re.I)
+
+# Words in a compared subject ("the company's annual leave policy") that do not identify it.
+_GENERIC_SUBJECT_TERMS = {"company", "company'", "policy", "policie", "rul", "program"}
 
 _STATUS_QUALIFIER = {
     ClaimStatus.PARTIALLY_SUPPORTED: "only partly supported by the sources",
@@ -250,6 +253,8 @@ class GroundedAnswerer:
             return self._abstain(result, "No sources have been ingested yet.")
         if analysis.is_vague and adaptive:
             return self._abstain(result, analysis.vague_reason)
+        if analysis.comparison_targets and adaptive:
+            return self._answer_comparison(result, analysis, verify)
 
         # 1. Verify the question's premise (misleading assumptions / yes-no questions).
         start = time.perf_counter()
@@ -331,37 +336,97 @@ class GroundedAnswerer:
 
         # 4. Verify each claim (under a shared evidence budget when enabled);
         #    drop unsupported/contradicted claims, qualify partial/uncertain ones.
-        draft_claims = [extract_claims(item.unit.text) or [item.unit.text] for item, _ in drafts]
-        flat = [c for claims in draft_claims for c in claims]
-        if not verify:
-            flat_verdicts = []
-        elif self.budgeted is not None and self.budgeted.config.enabled:
-            flat_verdicts, result.budget = self.budgeted.verify_claims(flat, retrieval.evidence)
-        else:
-            flat_verdicts = [self.verifier.verify(c, retrieval.evidence) for c in flat]
-        cursor = 0
-        for (item, kind), claims in zip(drafts, draft_claims):
-            verdicts = flat_verdicts[cursor: cursor + len(claims)] if verify else []
-            cursor += len(claims)
-            bad = [v for v in verdicts if v.status in (ClaimStatus.CONTRADICTED, ClaimStatus.INSUFFICIENT_EVIDENCE)]
-            if bad and len(bad) == len(verdicts):
-                result.removed_claims.extend(bad)
-                continue
-            qualifier = next((_STATUS_QUALIFIER[v.status] for v in verdicts if v.status in _STATUS_QUALIFIER), None)
-            marker = self._cite(item.unit, result.citations)
-            result.sentences.append(AnswerSentence(item.unit.text, [marker], verdicts, kind, qualifier))
-            result.removed_claims.extend(bad)
+        result.sentences.extend(s for s in self._verify_drafts(result, drafts, retrieval.evidence, verify) if s)
         timings["verification_s"] = round(time.perf_counter() - start, 3)
 
         if not any(s.kind == "answer" for s in result.sentences):
             result.sentences.clear()
             result.citations.clear()
             return self._abstain(result, "None of the candidate answer claims could be verified against the sources.")
+        result.answer = self._render(result.sentences)
+        return result
 
+    def _verify_drafts(self, result: AnswerResult, drafts: list[tuple[ScoredEvidence, str]],
+                       pool: list[ScoredEvidence], verify: bool) -> list[AnswerSentence | None]:
+        """Verify the claims of each draft sentence under one shared budget. Returns one
+        entry per draft: its AnswerSentence, or None when every claim failed."""
+        draft_claims = [extract_claims(item.unit.text) or [item.unit.text] for item, _ in drafts]
+        flat = [c for claims in draft_claims for c in claims]
+        if not verify:
+            flat_verdicts = []
+        elif self.budgeted is not None and self.budgeted.config.enabled:
+            flat_verdicts, result.budget = self.budgeted.verify_claims(flat, pool)
+        else:
+            flat_verdicts = [self.verifier.verify(c, pool) for c in flat]
+        sentences: list[AnswerSentence | None] = []
+        cursor = 0
+        for (item, kind), claims in zip(drafts, draft_claims):
+            verdicts = flat_verdicts[cursor: cursor + len(claims)] if verify else []
+            cursor += len(claims)
+            bad = [v for v in verdicts if v.status in (ClaimStatus.CONTRADICTED, ClaimStatus.INSUFFICIENT_EVIDENCE)]
+            result.removed_claims.extend(bad)
+            if bad and len(bad) == len(verdicts):
+                sentences.append(None)
+                continue
+            qualifier = next((_STATUS_QUALIFIER[v.status] for v in verdicts if v.status in _STATUS_QUALIFIER), None)
+            marker = self._cite(item.unit, result.citations)
+            sentences.append(AnswerSentence(item.unit.text, [marker], verdicts, kind, qualifier))
+        return sentences
+
+    @staticmethod
+    def _render(sentences: list[AnswerSentence]) -> str:
         parts = []
-        for s in result.sentences:
+        for s in sentences:
             prefix = "Caveat: " if s.kind == "caveat" else ""
             suffix = f" ({s.qualifier})" if s.qualifier else ""
             parts.append(f"{prefix}{s.text}{suffix} " + "".join(f"[{m}]" for m in s.citation_markers))
-        result.answer = " ".join(parts).strip()
+        return " ".join(parts).strip()
+
+    def _answer_comparison(self, result: AnswerResult, analysis, verify: bool) -> AnswerResult:
+        """'Compare X with Y, including A and B': answer each side from its own retrieval.
+
+        Span QA cannot answer comparisons, and one retrieval for the whole question
+        favours whichever side shares more words with it. Each side is retrieved
+        separately, must mention the compared subject, and is completed like a
+        multi-part answer; all claims are then verified under one shared budget.
+        """
+        start = time.perf_counter()
+        drafts, side_of, pool, missing = [], [], {}, []
+        for side, target in enumerate(analysis.comparison_targets):
+            sub_query = f"{target}: {analysis.comparison_aspects}" if analysis.comparison_aspects else target
+            side_retrieval = self.retriever.retrieve(sub_query)
+            terms = [t for t in content_terms(target) if t not in _GENERIC_SUBJECT_TERMS]
+            needed = max(1, (len(terms) + 1) // 2)
+            unit_terms = self.retriever.index.unit_terms
+            position = {u.evidence_id: i for i, u in enumerate(self.retriever.index.units)}
+            anchor = next((e for e in side_retrieval.evidence
+                           if sum(t in unit_terms[position[e.unit.evidence_id]] for t in terms) >= needed), None)
+            result.notes.append(f"Comparison side {side + 1}: retrieved for \"{sub_query}\".")
+            if anchor is None or anchor.score < self.retriever.config.absolute_min_score:
+                missing.append(target)
+                continue
+            for e in self._complete_multi_part(sub_query, side_retrieval, [anchor], anchor):
+                drafts.append((e, "answer"))
+                side_of.append(side)
+            for e in side_retrieval.evidence:
+                pool.setdefault(e.unit.evidence_id, e)
+        if not drafts:
+            result.timings["verification_s"] = round(time.perf_counter() - start, 3)
+            return self._abstain(result, "The sources do not describe either side of the comparison.")
+
+        verified = self._verify_drafts(result, drafts, list(pool.values()), verify)
+        result.timings["verification_s"] = round(time.perf_counter() - start, 3)
+        parts = []
+        for side, target in enumerate(analysis.comparison_targets):
+            label = target[0].upper() + target[1:]
+            if target in missing:
+                parts.append(f"{label}: the sources do not describe this.")
+                continue
+            side_sentences = [s for s, k in zip(verified, side_of) if k == side and s]
+            result.sentences.extend(side_sentences)
+            parts.append(f"{label}: " + (self._render(side_sentences) or "no claim could be verified."))
+        if not result.sentences:
+            result.citations.clear()
+            return self._abstain(result, "None of the candidate answer claims could be verified against the sources.")
+        result.answer = " ".join(parts)
         return result

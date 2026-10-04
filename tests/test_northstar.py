@@ -56,3 +56,18 @@ def test_missing_detail_on_covered_topic_says_not_specified(handbook):
 def test_multi_part_answers_are_complete(handbook, question, facts):
     answer = handbook.ask(question).answer
     assert all(f in answer for f in facts), [f for f in facts if f not in answer]
+
+
+def test_comparison_answers_each_side(handbook):
+    result = handbook.ask("Compare the company's annual leave policy with its work-from-home policy, "
+                          "including eligibility, approval procedures, and restrictions.")
+    assert not result.abstained
+    leave, _, wfh = result.answer.partition("Work-from-home policy:")
+    assert "24 days" in leave and "5 working days" in leave
+    assert "probation" in wfh and "3:00 p.m." in wfh
+
+
+def test_comparison_reports_missing_side(handbook):
+    result = handbook.ask("Compare the annual leave policy with the travel reimbursement policy.")
+    assert "Travel reimbursement policy: the sources do not describe this." in result.answer
+    assert handbook.ask("Compare the stock option plan with the company car policy.").abstained

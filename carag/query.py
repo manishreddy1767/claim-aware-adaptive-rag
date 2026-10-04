@@ -58,6 +58,10 @@ class QueryAnalysis:
     premise: str | None = None   # declarative statement the question presupposes or asks
     # Asks for several facts (a procedure, a list, rules, "including X, Y and Z").
     multi_part: bool = False
+    # Explicit comparison ("Compare X with Y, including A and B"): the two subjects
+    # and the aspects to compare.
+    comparison_targets: list[str] = field(default_factory=list)
+    comparison_aspects: str = ""
     entities: list[str] = field(default_factory=list)  # named things the evidence must mention
 
     @property
@@ -142,6 +146,26 @@ def _declarative(question: str) -> str | None:
     return sentence[0].upper() + sentence[1:] + "."
 
 
+_COMPARISON = re.compile(
+    r"^(?:compare|contrast)\s+(?P<x>.+?)\s+(?:with|to|and|against|versus|vs\.?)\s+(?P<y>.+?)"
+    r"(?:,?\s+(?:including|in terms of|regarding|on)\s+(?P<aspects>.+?))?[?.!]*$|"
+    r"^what (?:is|are) the differences? between\s+(?P<x2>.+?)\s+and\s+(?P<y2>.+?)"
+    r"(?:,?\s+(?:including|in terms of|regarding)\s+(?P<aspects2>.+?))?[?.!]*$", re.I)
+
+
+def _comparison(question: str) -> tuple[list[str], str]:
+    """Only explicit comparisons are split ('Compare X with Y', 'difference between X and Y');
+    'How did X compare with Y?' keeps a single subject phrase and is answered as one question."""
+    match = _COMPARISON.match(question.strip())
+    if not match:
+        return [], ""
+    x = match.group("x") or match.group("x2")
+    y = match.group("y") or match.group("y2")
+    aspects = match.group("aspects") or match.group("aspects2") or ""
+    strip = lambda s: re.sub(r"^(?:the|its|their|our|his|her)\s+", "", s.strip(" ,"), flags=re.I)
+    return [strip(x), strip(y)], aspects.strip()
+
+
 def _first_sentence(question: str) -> tuple[str, bool]:
     """The question's first sentence, and whether more is asked after it.
 
@@ -210,6 +234,7 @@ def analyze_question(question: str) -> QueryAnalysis:
 
     analysis.entities = extract_entities(q)
     analysis.multi_part = bool(_MULTI_PART.search(low))
+    analysis.comparison_targets, analysis.comparison_aspects = _comparison(q)
     # The premise comes from the first sentence only; a follow-up request
     # ("Explain the limits.") is answered normally, not as yes/no.
     if re.match(r"^(is|are|was|were|did|does|do|has|have|had|can|could|will|would|why|how come)\b",
