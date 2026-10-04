@@ -183,6 +183,13 @@ class GroundedAnswerer:
         chosen = [anchor] + rest[: cfg.multi_part_sentences - 1]
         return sorted(chosen, key=lambda e: (e.unit.source, e.unit.position))
 
+    def _absent_entities(self, entities: list[str]) -> list[str]:
+        """Entities from the question that appear in no ingested sentence (case-insensitive)."""
+        if not entities:
+            return []
+        texts = [u.text.lower() for u in self.retriever.index.units]
+        return [e for e in entities if not any(e.lower() in t for t in texts)]
+
     def _section_units(self, retrieval: RetrievalResult, keys: set[tuple], exclude: set[str],
                        found_by: str) -> list[ScoredEvidence]:
         """Every sentence of the given short (<= max_section_units) sections, scored against
@@ -263,6 +270,15 @@ class GroundedAnswerer:
             return self._abstain(result, "No sources have been ingested yet.")
         if analysis.is_vague and adaptive:
             return self._abstain(result, analysis.vague_reason)
+        # A named subject that no source mentions cannot be answered, however confident the
+        # QA span or however well the (other) evidence verifies (Test 1: 'Who is Elizabeth Bennet?'
+        # answered with a list of other heroines, every claim SUPPORTED).
+        absent = self._absent_entities(analysis.entities)
+        if absent and adaptive:
+            names = ", ".join(absent)
+            self._abstain(result, f"No ingested source mentions {names}.")
+            result.answer = f"The sources do not mention {names}, so this question cannot be answered from them."
+            return result
         if analysis.comparison_targets and adaptive:
             return self._answer_comparison(result, analysis, verify)
 
