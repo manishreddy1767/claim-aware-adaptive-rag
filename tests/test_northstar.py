@@ -68,8 +68,8 @@ def test_comparison_answers_each_side(handbook):
 
 
 def test_comparison_reports_missing_side(handbook):
-    result = handbook.ask("Compare the annual leave policy with the travel reimbursement policy.")
-    assert "Travel reimbursement policy: the sources do not describe this." in result.answer
+    result = handbook.ask("Compare the annual leave policy with the sabbatical policy.")
+    assert "Sabbatical policy: the sources do not describe this." in result.answer
     assert handbook.ask("Compare the stock option plan with the company car policy.").abstained
 
 

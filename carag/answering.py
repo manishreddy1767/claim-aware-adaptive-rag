@@ -165,7 +165,10 @@ class GroundedAnswerer:
         cfg = self.config
         same_doc = [e for e in retrieval.evidence if e.unit.source == anchor.unit.source]
         best = max([e.score for e in same_doc] + [anchor.score])
-        core = {e.unit.evidence_id: e for e in [anchor] + selected}
+        # Sentences already selected from other documents stay only if they score at least
+        # as well as the anchor's document (otherwise they crowd out its remaining parts).
+        core = {e.unit.evidence_id: e for e in [anchor] + selected
+                if e.unit.source == anchor.unit.source or e.score >= best}
         for e in same_doc:
             if e.score >= cfg.multi_part_relative * best:
                 core.setdefault(e.unit.evidence_id, e)
