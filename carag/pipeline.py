@@ -72,6 +72,7 @@ class LLMAnswer:
     abstained: bool
     reason: str = ""                 # why it abstained
     timings: dict[str, float] = field(default_factory=dict)
+    provider: str = ""               # e.g. "Ollama", "LM Studio"
 
     @property
     def text(self) -> str:
@@ -252,13 +253,15 @@ class ClaimAwareRAG:
         if not question:
             raise ValueError("Please enter a question.")
         model = getattr(generator, "model", "local model")
+        provider = getattr(generator, "provider", "")
         timings: dict[str, float] = {}
         start = time.perf_counter()
         retrieval = self.retriever.retrieve(question)
         timings["retrieval_s"] = round(time.perf_counter() - start, 3)
 
         def abstain(reason: str, draft: str = "", evidence=None) -> LLMAnswer:
-            return LLMAnswer(question, model, draft, evidence or [], None, retrieval, True, reason, timings)
+            return LLMAnswer(question, model, draft, evidence or [], None, retrieval, True, reason, timings,
+                             provider)
 
         if not len(self.index):
             return abstain("No sources have been added yet.")
@@ -288,7 +291,7 @@ class ClaimAwareRAG:
         check = self.check_answer(content, pool=evidence)
         timings["verification_s"] = round(time.perf_counter() - start, 3)
         answer = LLMAnswer(question, model, draft, evidence, check, retrieval, check.revised.abstained,
-                           timings=timings)
+                           timings=timings, provider=provider)
         if answer.abstained:
             answer.reason = ("None of the statements in the model's answer could be verified against "
                              "the sources, so it is not shown as an answer.")

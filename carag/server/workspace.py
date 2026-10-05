@@ -30,7 +30,7 @@ from urllib.parse import urlsplit
 from ..answering import AnswerResult
 from ..config import RAGConfig
 from ..ingestion import SUPPORTED_EXTENSIONS, IngestionError, load_bytes, load_url
-from ..llm import DEFAULT_MODEL, OllamaClient, OllamaError, OllamaGenerator
+from ..llm import LLMError, LLMGenerator, Server, choose, client_for, discover, known_servers
 from ..pipeline import ClaimAwareRAG, LLMAnswer
 from ..schema import EvidenceUnit, SourceDocument
 from .store import Document, Store
@@ -134,7 +134,7 @@ def llm_answer_view(result: LLMAnswer) -> dict:
         "timings": result.timings,
         "budget": None if budget is None else {"used": budget.used_total, "budget": budget.budget,
                                                "retrieval_rounds": budget.retrieval_rounds},
-        "ai": {"model": result.model, "draft": result.draft},
+        "ai": {"model": result.model, "provider": result.provider, "draft": result.draft},
     }
 
 
@@ -167,43 +167,73 @@ class Workspaces:
         self.models_ready = threading.Event()
         self.model_error: str | None = None
         self.settings_path = Path(data_dir) / "settings.json"
-        self._ollama: OllamaClient | None = None
+        # Local LLM servers to look for; None = the usual ones (carag.llm.KNOWN_SERVERS).
+        self.llm_candidates: list[tuple[str, str, str]] | None = None
+        self._discovery: tuple[str, float, list[Server]] | None = None
 
-    @property
-    def ollama(self) -> OllamaClient:
-        """The Ollama client; reads OLLAMA_HOST each time unless one was set explicitly."""
-        return self._ollama or OllamaClient()
+    # -- local AI: any LLM server on this computer -------------------------------------
+    DISCOVERY_TTL_S = 20
 
-    @ollama.setter
-    def ollama(self, client: OllamaClient) -> None:
-        self._ollama = client
-
-    # -- AI (local LLM) settings ---------------------------------------------------------
     def ai_settings(self) -> dict:
-        settings = {"enabled": False, "model": DEFAULT_MODEL}
+        """enabled (default on), model ("auto" = the best one found) and an optional extra server URL."""
+        settings = {"enabled": True, "model": "auto", "server": None}
         try:
             settings.update(json.loads(self.settings_path.read_text(encoding="utf-8")).get("ai", {}))
         except (OSError, ValueError):
             pass
         return settings
 
-    def ai_status(self) -> dict:
-        settings = self.ai_settings()
-        return {**settings, **self.ollama.status(settings["model"])}
+    def _servers(self, refresh: bool = False) -> list[Server]:
+        candidates = (self.llm_candidates if self.llm_candidates is not None
+                      else known_servers(self.ai_settings().get("server")))
+        key = repr(candidates)
+        cached = self._discovery
+        if refresh or cached is None or cached[0] != key or time.time() - cached[1] > self.DISCOVERY_TTL_S:
+            self._discovery = cached = (key, time.time(), discover(candidates))
+        return cached[2]
 
-    def save_ai_settings(self, enabled: bool, model: str) -> dict:
-        model = (model or "").strip()
-        if not model or len(model) > 100:
-            raise WorkspaceError("Choose a model.")
+    def _active_llm(self, refresh: bool = False) -> tuple[Server, str] | None:
+        settings = self.ai_settings()
+        if not settings["enabled"]:
+            return None
+        return choose(self._servers(refresh), settings["model"], settings.get("server"))
+
+    def ai_status(self, refresh: bool = True) -> dict:
+        settings = self.ai_settings()
+        servers = self._servers(refresh)
+        active = choose(servers, settings["model"], settings.get("server")) if settings["enabled"] else None
+        if not settings["enabled"]:
+            message = "AI answers are off. Answers come directly from your documents."
+        elif active is None:
+            message = ("No local AI model was found on this computer, so answers come directly from your "
+                       "documents. To add one, install Ollama (ollama.com) or LM Studio and download a model.")
+        else:
+            server, model = active
+            message = f"Using {model} ({server.name})."
+            if settings["model"] not in ("auto", model, model.removesuffix(":latest")):
+                message = f"'{settings['model']}' was not found, so {model} ({server.name}) is used instead."
+        return {**settings, "servers": [s.to_dict() for s in servers],
+                "active": None if active is None else {"server": active[0].name, "url": active[0].url,
+                                                       "model": active[1]},
+                "message": message}
+
+    def save_ai_settings(self, enabled: bool, model: str, server: str | None = None) -> dict:
+        model = (model or "auto").strip()
+        if len(model) > 200:
+            raise WorkspaceError("That model name is too long.")
+        server = (server or "").strip() or None
+        if server is not None and (len(server) > 200 or not urlsplit(
+                server if "://" in server else "http://" + server).hostname):
+            raise WorkspaceError("Enter the server address like http://127.0.0.1:8080")
         data = {}
         try:
             data = json.loads(self.settings_path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             pass
-        data["ai"] = {"enabled": bool(enabled), "model": model}
+        data["ai"] = {"enabled": bool(enabled), "model": model, "server": server}
         self.settings_path.parent.mkdir(parents=True, exist_ok=True)
         self.settings_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
-        return self.ai_status()
+        return self.ai_status(refresh=True)
 
     @property
     def persistent(self) -> bool:
@@ -431,7 +461,11 @@ class Workspaces:
                 rag.index.remove_source(doc.name)
 
     # -- questions ---------------------------------------------------------------------
-    def ask(self, owner, question: str) -> dict:
+    def ask(self, owner, question: str, style: str = "auto") -> dict:
+        """Answer a question. style: "auto" (a local AI model when one is available, otherwise
+        the documents directly), "ai" (the same, noting when no model is available) or "quotes".
+        Whatever happens with the AI model, the question is answered: on any model problem the
+        answer comes directly from the documents."""
         question = (question or "").strip()
         if not question:
             raise WorkspaceError("Please enter a question.")
@@ -439,29 +473,28 @@ class Workspaces:
             raise WorkspaceError(f"Questions can be at most {MAX_QUESTION_CHARS} characters.")
         if not self._documents(owner):
             raise WorkspaceError("Add at least one document before asking a question.")
-        with self._lock:
-            view = answer_view(self._pipeline(owner).ask(question))
-        self._record(owner, question, view)
-        return view
-
-    def ask_ai(self, owner, question: str) -> dict:
-        """Answer with the configured local LLM (Ollama), verified claim by claim."""
-        settings = self.ai_settings()
-        if not settings["enabled"]:
-            raise WorkspaceError("AI answers are turned off. Turn them on in AI settings.")
-        question = (question or "").strip()
-        if not question:
-            raise WorkspaceError("Please enter a question.")
-        if len(question) > MAX_QUESTION_CHARS:
-            raise WorkspaceError(f"Questions can be at most {MAX_QUESTION_CHARS} characters.")
-        if not self._documents(owner):
-            raise WorkspaceError("Add at least one document before asking a question.")
-        generator = OllamaGenerator(settings["model"], self.ollama)
-        with self._lock:
-            try:
-                view = llm_answer_view(self._pipeline(owner).ask_with_llm(question, generator))
-            except OllamaError as exc:
-                raise WorkspaceError(str(exc)) from exc
+        view, note = None, None
+        llm = self._active_llm() if style != "quotes" else None
+        if llm is None and style == "ai":
+            note = ("No local AI model is available (see AI settings), so this answer comes directly "
+                    "from your documents.")
+        if llm is not None:
+            server, model = llm
+            generator = LLMGenerator(model, client_for(server.name, server.url, server.kind), server.name)
+            with self._lock:
+                try:
+                    view = llm_answer_view(self._pipeline(owner).ask_with_llm(question, generator))
+                except LLMError as exc:
+                    logger.warning("Local AI model failed, answering from the documents: %s", exc)
+                    note = (f"The local AI model ({model}) could not answer, so this answer comes directly "
+                            f"from your documents. ({exc})")
+                    self._discovery = None    # look for models again next time
+        if view is None:
+            with self._lock:
+                view = answer_view(self._pipeline(owner).ask(question))
+            if note:
+                view["notes"].insert(0, note)
+                view["fallback"] = note
         self._record(owner, question, view)
         return view
 

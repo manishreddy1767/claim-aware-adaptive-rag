@@ -12,9 +12,9 @@ Routes (JSON unless noted):
     POST   /api/documents/url           {url}
     POST   /api/documents/path          {path}   local mode, from this computer only
     DELETE /api/documents/{id}
-    POST   /api/ask                     {question, style: "quotes" | "ai"}
-    GET    /api/ai                      local LLM settings and Ollama status
-    PUT    /api/ai                      {enabled, model}   local mode only
+    POST   /api/ask                     {question, style: "auto" | "ai" | "quotes"}
+    GET    /api/ai                      local AI settings and the LLM servers found on this computer
+    PUT    /api/ai                      {enabled, model, server}   local mode only
     POST   /api/verify                  {text}
     GET    /api/history
     DELETE /api/history
@@ -233,14 +233,14 @@ def create_app(settings: Settings) -> Starlette:
     @requires_user
     async def ask(request: Request, user, owner):
         body = await _json(request)
-        question = str(body.get("question", ""))
-        if body.get("style") == "ai":
-            return JSONResponse(await _run(workspaces.ask_ai, owner, question))
-        return JSONResponse(await _run(workspaces.ask, owner, question))
+        style = str(body.get("style") or "auto")
+        if style not in ("auto", "ai", "quotes"):
+            style = "auto"
+        return JSONResponse(await _run(workspaces.ask, owner, str(body.get("question", "")), style))
 
     @requires_user
     async def ai_settings(request: Request, user, owner):
-        status = await _run(workspaces.ai_status)
+        status = await _run(workspaces.ai_status, request.query_params.get("refresh") == "1")
         return JSONResponse({**status, "editable": not web})
 
     @requires_user
@@ -248,7 +248,8 @@ def create_app(settings: Settings) -> Starlette:
         if web:
             return _error("AI settings are managed by the website's operator.", 403)
         body = await _json(request)
-        status = await _run(workspaces.save_ai_settings, bool(body.get("enabled")), str(body.get("model", "")))
+        status = await _run(workspaces.save_ai_settings, bool(body.get("enabled")),
+                            str(body.get("model") or "auto"), body.get("server") or None)
         return JSONResponse({**status, "editable": True})
 
     @requires_user
