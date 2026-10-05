@@ -49,6 +49,7 @@
       </div>
       <div class="topbar-right">
         <span class="status-dot" id="model-status" title="Model status">Loading models…</span>
+        <button class="btn btn-ghost" id="ai-open" title="Local AI model settings">AI settings</button>
         <span class="user" id="user-name"></span>
         <button class="btn btn-ghost" id="logout">Sign out</button>
       </div>
@@ -100,7 +101,13 @@
             <textarea id="question" rows="2" maxlength="1000"
                       placeholder="Ask a question about your documents…"></textarea>
             <div class="composer-row">
-              <span class="hint">Answers quote your documents and say so when they do not contain the answer. Ctrl+Enter to ask.</span>
+              <div class="style-switch" id="style-switch" role="radiogroup" aria-label="Answer style" hidden>
+                <button type="button" role="radio" aria-checked="true" data-style="quotes"
+                        title="Quotes sentences from your documents">Quoted</button>
+                <button type="button" role="radio" aria-checked="false" data-style="ai" id="style-ai"
+                        title="A local AI model writes the answer; every sentence is then checked">AI answer</button>
+              </div>
+              <span class="hint" id="ask-hint">Answers quote your documents and say so when they do not contain the answer. Ctrl+Enter to ask.</span>
               <button type="submit" class="btn btn-primary" id="ask-button">Ask</button>
             </div>
           </form>
@@ -137,6 +144,24 @@
       </main>
     </div>
   </div>
+
+  <dialog id="ai-dialog" aria-labelledby="ai-title">
+    <form method="dialog" id="ai-form">
+      <h2 id="ai-title">Local AI model</h2>
+      <p class="muted">A model on this computer (through Ollama) writes answers from your documents. Every sentence it
+        writes is then checked against the documents; unsupported ones are removed. Nothing is sent to the internet.</p>
+      <p class="ai-status" id="ai-status">Checking Ollama…</p>
+      <label class="check"><input type="checkbox" id="ai-enabled"> Offer AI-written answers</label>
+      <label for="ai-model">Model</label>
+      <select id="ai-model"></select>
+      <p class="hint" id="ai-help"></p>
+      <p class="form-error" id="ai-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="ai-close">Close</button>
+        <button type="submit" class="btn btn-primary" id="ai-save">Save</button>
+      </div>
+    </form>
+  </dialog>
 
   <div class="toast" id="toast" role="status" hidden></div>
 </body>

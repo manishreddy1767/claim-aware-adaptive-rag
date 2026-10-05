@@ -12,7 +12,9 @@ Routes (JSON unless noted):
     POST   /api/documents/url           {url}
     POST   /api/documents/path          {path}   local mode, from this computer only
     DELETE /api/documents/{id}
-    POST   /api/ask                     {question}
+    POST   /api/ask                     {question, style: "quotes" | "ai"}
+    GET    /api/ai                      local LLM settings and Ollama status
+    PUT    /api/ai                      {enabled, model}   local mode only
     POST   /api/verify                  {text}
     GET    /api/history
     DELETE /api/history
@@ -231,7 +233,23 @@ def create_app(settings: Settings) -> Starlette:
     @requires_user
     async def ask(request: Request, user, owner):
         body = await _json(request)
-        return JSONResponse(await _run(workspaces.ask, owner, str(body.get("question", ""))))
+        question = str(body.get("question", ""))
+        if body.get("style") == "ai":
+            return JSONResponse(await _run(workspaces.ask_ai, owner, question))
+        return JSONResponse(await _run(workspaces.ask, owner, question))
+
+    @requires_user
+    async def ai_settings(request: Request, user, owner):
+        status = await _run(workspaces.ai_status)
+        return JSONResponse({**status, "editable": not web})
+
+    @requires_user
+    async def save_ai_settings(request: Request, user, owner):
+        if web:
+            return _error("AI settings are managed by the website's operator.", 403)
+        body = await _json(request)
+        status = await _run(workspaces.save_ai_settings, bool(body.get("enabled")), str(body.get("model", "")))
+        return JSONResponse({**status, "editable": True})
 
     @requires_user
     async def verify(request: Request, user, owner):
@@ -263,6 +281,8 @@ def create_app(settings: Settings) -> Starlette:
         Route("/api/documents/path", add_path, methods=["POST"]),
         Route("/api/documents/{doc_id}", delete_document, methods=["DELETE"]),
         Route("/api/ask", ask, methods=["POST"]),
+        Route("/api/ai", ai_settings),
+        Route("/api/ai", save_ai_settings, methods=["PUT"]),
         Route("/api/verify", verify, methods=["POST"]),
         Route("/api/history", history),
         Route("/api/history", clear_history, methods=["DELETE"]),

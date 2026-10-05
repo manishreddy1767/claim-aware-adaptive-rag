@@ -82,7 +82,9 @@ function formatWhen(seconds) {
 
 /* ---------------------------------------------------------------- auth */
 
-let mode = "local";            // "local": saved on this computer; "web": kept only while signed in
+let mode = "local";
+let ai = { enabled: false, model_ready: false, model: "" };   // local LLM status from /api/ai
+let answerStyle = "quotes";            // "local": saved on this computer; "web": kept only while signed in
 let authMode = "login";
 let signupAllowed = true;
 let authModeChosen = false;   // the user picked a tab; a late config reply must not switch it back
@@ -352,6 +354,7 @@ function answerCard(view) {
   const card = el("article", { class: "card" });
   card.append(
     el("span", { class: `pill o-${view.outcome}`, text: view.outcome_label }),
+    view.ai ? el("span", { class: "ai-tag", text: `AI · ${view.ai.model}` }) : null,
     el("p", { class: "card-question", text: view.question }),
     answerText(view.answer, card));
 
@@ -365,7 +368,14 @@ function answerCard(view) {
   }
 
   const checks = [...view.claims.map(claimRow)];
-  if (view.removed_claims.length) {
+  if (view.ai && view.ai.draft) {
+    checks.push(el("p", { class: "claim-why", text: "The model's original answer, before checking:" }),
+      el("p", { class: "draft", text: view.ai.draft }));
+  }
+  if (view.ai && view.removed_claims.length) {
+    checks.push(el("p", { class: "claim-why", text: "Removed because the documents do not support them:" }),
+      ...view.removed_claims.map((c) => el("p", { class: "claim-why", text: `• ${c.claim}` })));
+  } else if (view.removed_claims.length) {
     checks.push(el("p", { class: "claim-why", text:
       `${view.removed_claims.length} candidate sentence(s) were left out because the documents do not support them.` }));
   }
@@ -396,11 +406,15 @@ async function ask(event) {
   const button = $("ask-button");
   button.disabled = true;
   $("welcome").hidden = true;
+  const style = ai.enabled && ai.model_ready ? answerStyle : "quotes";
   const pending = el("div", { class: "card thinking" }, el("span", { class: "spinner" }),
-    el("span", { text: "Searching your documents and checking each claim…" }));
+    el("span", { text: style === "ai"
+      ? `${ai.model} is writing an answer from your documents; each sentence is then checked. ` +
+        "The first answer can take a minute while the model loads."
+      : "Searching your documents and checking each claim…" }));
   $("answers").prepend(pending);
   try {
-    const view = await api("/api/ask", { method: "POST", body: { question } });
+    const view = await api("/api/ask", { method: "POST", body: { question, style } });
     pending.replaceWith(answerCard(view));
     input.value = "";
   } catch (error) {
@@ -477,6 +491,82 @@ async function clearHistory() {
   }
 }
 
+/* ---------------------------------------------------------------- local AI */
+
+function renderStyleSwitch() {
+  const available = ai.enabled && ai.model_ready;
+  $("style-switch").hidden = !available;
+  $("ask-hint").hidden = available;
+  $("style-ai").textContent = available ? `AI answer · ${ai.model}` : "AI answer";
+  if (!available) answerStyle = "quotes";
+  for (const button of $("style-switch").querySelectorAll("button")) {
+    button.setAttribute("aria-checked", String(button.dataset.style === answerStyle));
+  }
+}
+
+async function loadAi() {
+  try {
+    ai = await api("/api/ai");
+  } catch {
+    ai = { enabled: false, model_ready: false, model: "" };
+  }
+  try { if (localStorage.getItem("answerStyle") === "ai") answerStyle = "ai"; } catch { /* storage blocked */ }
+  renderStyleSwitch();
+}
+
+function renderAiDialog() {
+  const status = $("ai-status");
+  if (!ai.running) {
+    status.textContent = "Ollama is not running on this computer.";
+    status.className = "ai-status bad";
+    $("ai-help").textContent = "Install Ollama from https://ollama.com/download, start it, then run in a terminal: " +
+      `ollama pull ${ai.model || "qwen3:8b"}`;
+  } else if (!ai.model_ready) {
+    status.textContent = `Ollama is running, but ${ai.model} is not installed.`;
+    status.className = "ai-status bad";
+    $("ai-help").textContent = `In a terminal, run: ollama pull ${ai.model}   (or choose an installed model).`;
+  } else {
+    status.textContent = `Ready: ${ai.model}`;
+    status.className = "ai-status ok";
+    $("ai-help").textContent = "Larger models write better answers but need more memory. On a GPU with less than " +
+      "6 GB, an 8B model runs partly on the processor and is slower.";
+  }
+  const select = $("ai-model");
+  const names = [...new Set([...(ai.installed || []), ai.model].filter(Boolean))];
+  select.replaceChildren(...names.map((name) => el("option", {
+    value: name, text: (ai.installed || []).includes(name) ? name : `${name} (not installed)`,
+  })));
+  select.value = ai.model;
+  $("ai-enabled").checked = ai.enabled;
+  for (const id of ["ai-enabled", "ai-model", "ai-save"]) $(id).disabled = !ai.editable;
+  if (!ai.editable) $("ai-help").textContent = "AI settings are managed by the operator of this website.";
+}
+
+async function openAiDialog() {
+  showError("ai-error", "");
+  await loadAi();
+  renderAiDialog();
+  $("ai-dialog").showModal();
+}
+
+async function saveAi(event) {
+  event.preventDefault();
+  showError("ai-error", "");
+  try {
+    ai = await api("/api/ai", { method: "PUT", body: { enabled: $("ai-enabled").checked, model: $("ai-model").value } });
+    renderAiDialog();
+    renderStyleSwitch();
+    if (ai.enabled && !ai.model_ready) {
+      showError("ai-error", "Saved, but the model is not ready yet; AI answers appear once it is installed.");
+      return;
+    }
+    $("ai-dialog").close();
+    toast(ai.enabled ? `AI answers on: ${ai.model}` : "AI answers turned off");
+  } catch (error) {
+    showError("ai-error", error.message);
+  }
+}
+
 /* ---------------------------------------------------------------- shell */
 
 function selectTab(panelId) {
@@ -504,6 +594,7 @@ async function showApp(username) {
   note.className = mode === "web" ? "storage-note web" : "storage-note";
   selectTab("ask-panel");
   pollHealth();
+  loadAi();
   try {
     await loadDocuments();
   } catch (error) {
@@ -531,6 +622,16 @@ function init() {
   $("clear-history").addEventListener("click", clearHistory);
   setUpDropzone();
   setUpSourceForms();
+  $("ai-open").addEventListener("click", openAiDialog);
+  $("ai-close").addEventListener("click", () => $("ai-dialog").close());
+  $("ai-form").addEventListener("submit", saveAi);
+  $("style-switch").addEventListener("click", (event) => {
+    const style = event.target.dataset?.style;
+    if (!style) return;
+    answerStyle = style;
+    try { localStorage.setItem("answerStyle", style); } catch { /* storage blocked */ }
+    renderStyleSwitch();
+  });
 
   api("/api/auth/me")
     .then((me) => showApp(me.username))

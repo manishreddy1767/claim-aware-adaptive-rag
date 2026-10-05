@@ -347,3 +347,55 @@ def test_web_mode_deletes_documents_at_sign_out(page, web_server):
     expect(page.locator("#doc-count")).to_have_text("0")
     page.get_by_role("tab", name="History").click()
     expect(page.locator("#history-empty")).to_be_visible()
+
+
+def test_ai_settings_and_ai_answers(page, server, monkeypatch):
+    """Enable a local model in AI settings and ask with 'AI answer' (fake Ollama, fixed reply)."""
+    import http.server
+    import json
+
+    class FakeOllama(http.server.BaseHTTPRequestHandler):
+        def _send(self, payload):
+            body = json.dumps(payload).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            self._send({"models": [{"name": "fake:1b"}]})
+
+        def do_POST(self):
+            self.rfile.read(int(self.headers["Content-Length"]))
+            self._send({"message": {"content": "Full-time employees receive 24 days of paid leave per calendar "
+                                               "year. Every employee also gets a free car."}})
+
+        def log_message(self, *args):
+            pass
+
+    fake = http.server.ThreadingHTTPServer(("127.0.0.1", 0), FakeOllama)
+    threading.Thread(target=fake.serve_forever, daemon=True).start()
+    monkeypatch.setenv("OLLAMA_HOST", f"http://127.0.0.1:{fake.server_address[1]}")
+    try:
+        register(page, server, "grace")
+        upload(page, "01_leave_policy.txt")
+        expect(page.locator("#style-switch")).to_be_hidden()          # AI is off by default
+
+        page.get_by_role("button", name="AI settings").click()
+        expect(page.locator("#ai-status")).to_contain_text("qwen3:8b is not installed")
+        page.locator("#ai-model").select_option("fake:1b")
+        page.get_by_label("Offer AI-written answers").check()
+        page.locator("#ai-save").click()
+        expect(page.locator("#ai-dialog")).to_be_hidden()
+        expect(page.locator("#style-ai")).to_have_text("AI answer · fake:1b")
+
+        page.locator("#style-ai").click()
+        card = ask(page, "How many paid leave days does a full-time employee receive annually?")
+        expect(card.locator(".ai-tag")).to_have_text("AI · fake:1b")
+        expect(card.locator(".answer-text")).to_contain_text("24 days")
+        expect(card.locator(".answer-text")).not_to_contain_text("free car")
+        card.get_by_text("How this answer was checked").click()
+        expect(card.locator(".draft")).to_contain_text("free car")       # original shown in details
+    finally:
+        fake.shutdown()

@@ -30,7 +30,8 @@ from urllib.parse import urlsplit
 from ..answering import AnswerResult
 from ..config import RAGConfig
 from ..ingestion import SUPPORTED_EXTENSIONS, IngestionError, load_bytes, load_url
-from ..pipeline import ClaimAwareRAG
+from ..llm import DEFAULT_MODEL, OllamaClient, OllamaError, OllamaGenerator
+from ..pipeline import ClaimAwareRAG, LLMAnswer
 from ..schema import EvidenceUnit, SourceDocument
 from .store import Document, Store
 
@@ -105,6 +106,38 @@ def answer_view(result: AnswerResult) -> dict:
     }
 
 
+def llm_answer_view(result: LLMAnswer) -> dict:
+    """The UI view of an answer written by a local LLM and verified claim by claim."""
+    check = result.check
+    shown = check is not None and not result.abstained
+    budget = check.budget if check else None
+    citations = []
+    if shown:
+        citations = [{"marker": i, "source": u.source, "section": u.section, "page": u.page, "url": u.url,
+                      "text": u.text} for i, u in enumerate(check.revised.citations, start=1)]
+    removed = []
+    if check:
+        removed = [{"claim": c, "status": "INSUFFICIENT_EVIDENCE"} for c in check.revised.removed]
+        removed += [{"claim": c, "status": "CONTRADICTED"} for c in check.revised.corrected]
+    return {
+        "question": result.question,
+        "outcome": result.outcome,
+        "outcome_label": OUTCOME_LABELS[result.outcome],
+        "answer": result.text,
+        "answer_span": None,
+        "citations": citations,
+        "claims": [{"claim": c.claim, "status": c.status.value, "explanation": c.explanation,
+                    "self_supported": False} for c in (check.claims if check else [])],
+        "removed_claims": removed,
+        "notes": [f"Written by {result.model} from {len(result.evidence)} passages of your documents, "
+                  "then checked sentence by sentence."] if result.draft else [],
+        "timings": result.timings,
+        "budget": None if budget is None else {"used": budget.used_total, "budget": budget.budget,
+                                               "retrieval_rounds": budget.retrieval_rounds},
+        "ai": {"model": result.model, "draft": result.draft},
+    }
+
+
 @dataclass
 class _Memory:
     """Web mode: everything one sign-in session added, held only in memory."""
@@ -133,6 +166,44 @@ class Workspaces:
         self._lock = threading.RLock()
         self.models_ready = threading.Event()
         self.model_error: str | None = None
+        self.settings_path = Path(data_dir) / "settings.json"
+        self._ollama: OllamaClient | None = None
+
+    @property
+    def ollama(self) -> OllamaClient:
+        """The Ollama client; reads OLLAMA_HOST each time unless one was set explicitly."""
+        return self._ollama or OllamaClient()
+
+    @ollama.setter
+    def ollama(self, client: OllamaClient) -> None:
+        self._ollama = client
+
+    # -- AI (local LLM) settings ---------------------------------------------------------
+    def ai_settings(self) -> dict:
+        settings = {"enabled": False, "model": DEFAULT_MODEL}
+        try:
+            settings.update(json.loads(self.settings_path.read_text(encoding="utf-8")).get("ai", {}))
+        except (OSError, ValueError):
+            pass
+        return settings
+
+    def ai_status(self) -> dict:
+        settings = self.ai_settings()
+        return {**settings, **self.ollama.status(settings["model"])}
+
+    def save_ai_settings(self, enabled: bool, model: str) -> dict:
+        model = (model or "").strip()
+        if not model or len(model) > 100:
+            raise WorkspaceError("Choose a model.")
+        data = {}
+        try:
+            data = json.loads(self.settings_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass
+        data["ai"] = {"enabled": bool(enabled), "model": model}
+        self.settings_path.parent.mkdir(parents=True, exist_ok=True)
+        self.settings_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        return self.ai_status()
 
     @property
     def persistent(self) -> bool:
@@ -370,6 +441,31 @@ class Workspaces:
             raise WorkspaceError("Add at least one document before asking a question.")
         with self._lock:
             view = answer_view(self._pipeline(owner).ask(question))
+        self._record(owner, question, view)
+        return view
+
+    def ask_ai(self, owner, question: str) -> dict:
+        """Answer with the configured local LLM (Ollama), verified claim by claim."""
+        settings = self.ai_settings()
+        if not settings["enabled"]:
+            raise WorkspaceError("AI answers are turned off. Turn them on in AI settings.")
+        question = (question or "").strip()
+        if not question:
+            raise WorkspaceError("Please enter a question.")
+        if len(question) > MAX_QUESTION_CHARS:
+            raise WorkspaceError(f"Questions can be at most {MAX_QUESTION_CHARS} characters.")
+        if not self._documents(owner):
+            raise WorkspaceError("Add at least one document before asking a question.")
+        generator = OllamaGenerator(settings["model"], self.ollama)
+        with self._lock:
+            try:
+                view = llm_answer_view(self._pipeline(owner).ask_with_llm(question, generator))
+            except OllamaError as exc:
+                raise WorkspaceError(str(exc)) from exc
+        self._record(owner, question, view)
+        return view
+
+    def _record(self, owner, question: str, view: dict) -> None:
         if self.persistent:
             view["id"] = self.store.add_history(owner, question, view["outcome"], view)
         else:
@@ -378,7 +474,6 @@ class Workspaces:
             memory.history.insert(0, {"id": view["id"], "question": question, "outcome": view["outcome"],
                                       "result": view, "created_at": time.time()})
             del memory.history[HISTORY_LIMIT:]
-        return view
 
     def verify(self, owner, text: str) -> dict:
         """Check every claim in a piece of text (e.g. a chatbot answer) against the documents."""
