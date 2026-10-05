@@ -33,6 +33,19 @@ carag-app                       # or: python -m carag.server
 
 Options: `--port 9000`, `--data-dir PATH`, `--no-browser`, and `--no-signup` (only the first account can be created; use it when others can reach the computer). The server listens on `127.0.0.1` only, so other computers cannot reach it unless you pass `--host`.
 
+**Two modes**
+
+| | Local application (default) | Website (`carag-app --mode web --host 0.0.0.0`) |
+|---|---|---|
+| Accounts | stored | stored (needed to sign in) |
+| Documents you add | saved on this computer; still there after sign-out and restarts | kept **in memory only**, never written to disk; deleted at sign-out, after 2 hours without activity, or when the server stops |
+| Question history | saved | in memory, deleted at sign-out |
+| Upload files | yes | yes |
+| Add a webpage | yes | yes, public websites only (private-network addresses are refused, including after redirects) |
+| Add files or folders **on this computer** by path | yes, read in place (not copied; removing them in the app never deletes your files); only from the computer the application runs on | no |
+
+In website mode each sign-in has its own workspace, so a visitor's documents are never shared between devices or with other visitors.
+
 What the application does for you:
 
 - **Answers with citations**: every sentence of an answer is quoted from your documents and numbered; click a number to see the source sentence, file, section and page.

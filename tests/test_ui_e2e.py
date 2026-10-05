@@ -27,9 +27,8 @@ def _free_port() -> int:
         return sock.getsockname()[1]
 
 
-@pytest.fixture(scope="module")
-def server(tmp_path_factory):
-    """The application on a free port with an empty data folder."""
+def _serve(data_dir: Path, mode: str):
+    """Start the application on a free port; returns (url, stop)."""
     try:
         from carag.pipeline import ClaimAwareRAG
         ClaimAwareRAG().answerer
@@ -39,7 +38,7 @@ def server(tmp_path_factory):
     from carag.server.app import Settings, create_app
 
     port = _free_port()
-    app = create_app(Settings(data_dir=tmp_path_factory.mktemp("appdata")))
+    app = create_app(Settings(data_dir=data_dir, mode=mode))
     srv = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning"))
     thread = threading.Thread(target=srv.run, daemon=True)
     thread.start()
@@ -47,9 +46,50 @@ def server(tmp_path_factory):
         if srv.started:
             break
         time.sleep(0.1)
-    yield f"http://127.0.0.1:{port}/"
-    srv.should_exit = True
-    thread.join(timeout=10)
+
+    def stop():
+        srv.should_exit = True
+        thread.join(timeout=10)
+    return f"http://127.0.0.1:{port}/", stop
+
+
+@pytest.fixture(scope="module")
+def server(tmp_path_factory):
+    """The local application (documents saved) with an empty data folder."""
+    url, stop = _serve(tmp_path_factory.mktemp("appdata"), "local")
+    yield url
+    stop()
+
+
+@pytest.fixture(scope="module")
+def web_server(tmp_path_factory):
+    """The hosted-website mode: documents kept in memory for one sign-in only."""
+    url, stop = _serve(tmp_path_factory.mktemp("webdata"), "web")
+    yield url
+    stop()
+
+
+@pytest.fixture(scope="module")
+def webpage():
+    """A small website on this computer to add as a source."""
+    import http.server
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(b"<html><head><title>Parking</title></head><body><article><h1>Parking</h1>"
+                             b"<p>Employees can park in the basement garage free of charge.</p>"
+                             b"<p>Visitors must register at reception before parking.</p></article></body></html>")
+
+        def log_message(self, *args):
+            pass
+
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    yield f"http://localhost:{srv.server_address[1]}/parking"
+    srv.shutdown()
 
 
 @pytest.fixture(scope="module")
@@ -260,3 +300,50 @@ def test_small_screen_has_no_horizontal_scroll(browser, server):
     ask(page, "How many paid leave days does a full-time employee receive annually?")
     assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
     context.close()
+
+
+def test_local_mode_adds_a_folder_and_a_webpage(page, server, webpage, tmp_path):
+    folder = tmp_path / "policies"
+    folder.mkdir()
+    (folder / "leave.txt").write_bytes((DOCS / "01_leave_policy.txt").read_bytes())
+    register(page, server, "frank")
+    expect(page.locator("#storage-note")).to_contain_text("Saved on this computer")
+
+    page.get_by_label("Add from this computer").fill(str(folder))
+    page.locator("#path-button").click()
+    expect(page.locator("#doc-list")).to_contain_text("leave.txt", timeout=60_000)
+    expect(page.locator("#doc-list")).to_contain_text("On this computer")
+
+    page.get_by_label("Add a webpage").fill(webpage)
+    page.locator("#url-button").click()
+    expect(page.locator("#doc-list")).to_contain_text("Webpage · localhost", timeout=60_000)
+    card = ask(page, "Where can employees park?")
+    expect(card.locator(".answer-text")).to_contain_text("basement garage")
+    expect(card.locator(".source-where").first).to_contain_text(webpage)
+
+    page.get_by_role("button", name="Delete leave.txt").click()
+    expect(page.locator("#doc-list")).not_to_contain_text("leave.txt")
+    assert (folder / "leave.txt").exists()       # removed from the app, not from the computer
+
+    page.get_by_label("Add from this computer").fill("C:/no/such/folder")
+    page.locator("#path-button").click()
+    expect(page.locator("#uploads li.error")).to_contain_text("does not exist")
+
+
+def test_web_mode_deletes_documents_at_sign_out(page, web_server):
+    register(page, web_server, "visitor")
+    expect(page.locator("#storage-note")).to_contain_text("Signing out deletes")
+    expect(page.locator("#path-form")).to_be_hidden()
+    upload(page, "01_leave_policy.txt")
+    card = ask(page, "How many paid leave days does a full-time employee receive annually?")
+    expect(card.locator(".answer-text")).to_contain_text("24 days")
+
+    page.get_by_role("button", name="Sign out").click()          # the confirm prompt is accepted
+    expect(page.locator("#auth-fineprint")).to_contain_text("deleted when you sign out")
+    page.get_by_label("Username").fill("visitor")
+    page.get_by_label("Password").fill(PASSWORD)
+    page.locator("#auth-submit").click()
+    expect(page.locator("#user-name")).to_have_text("visitor")
+    expect(page.locator("#doc-count")).to_have_text("0")
+    page.get_by_role("tab", name="History").click()
+    expect(page.locator("#history-empty")).to_be_visible()

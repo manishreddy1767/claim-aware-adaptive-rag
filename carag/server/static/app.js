@@ -82,6 +82,7 @@ function formatWhen(seconds) {
 
 /* ---------------------------------------------------------------- auth */
 
+let mode = "local";            // "local": saved on this computer; "web": kept only while signed in
 let authMode = "login";
 let signupAllowed = true;
 let authModeChosen = false;   // the user picked a tab; a late config reply must not switch it back
@@ -106,6 +107,10 @@ async function showAuth(message) {
   try {
     const config = await api("/api/auth/config");
     signupAllowed = config.allow_signup;
+    mode = config.mode;
+    $("auth-fineprint").textContent = mode === "web"
+      ? "Documents you add are kept only while you are signed in and are deleted when you sign out."
+      : "Your account, documents and questions stay on this computer.";
     $("tab-register").hidden = !signupAllowed;
     $("auth-subtitle").textContent = config.has_users
       ? "Answers from your own documents, with every claim checked against the source."
@@ -141,6 +146,8 @@ async function submitAuth(event) {
 }
 
 async function logout() {
+  if (mode === "web" && documentCount > 0 &&
+      !confirm("Signing out deletes the documents you added and your questions. Sign out?")) return;
   try { await api("/api/auth/logout", { method: "POST" }); } catch { /* signing out anyway */ }
   $("answers").replaceChildren();
   $("check-result").replaceChildren();
@@ -178,19 +185,30 @@ async function pollHealth() {
 
 let documentCount = 0;
 
-function docIcon(name) {
+function docIcon(name, origin) {
+  if (origin === "url") return el("span", { class: "doc-icon", "aria-hidden": "true", text: "WEB" });
   const ext = name.includes(".") ? name.split(".").pop().toUpperCase() : "DOC";
   return el("span", { class: "doc-icon", "aria-hidden": "true", text: ext.slice(0, 4) });
+}
+
+function docOrigin(doc) {
+  if (doc.origin === "url") {
+    let host = doc.location;
+    try { host = new URL(doc.location).hostname; } catch { /* keep the raw address */ }
+    return `Webpage · ${host} · ${doc.sentences} sentences`;
+  }
+  if (doc.origin === "path") return `On this computer · ${doc.sentences} sentences`;
+  return `${doc.sentences} sentences · ${formatSize(doc.size)}`;
 }
 
 async function loadDocuments() {
   const data = await api("/api/documents");
   const list = $("doc-list");
   list.replaceChildren(...data.documents.map((doc) => el("li", {},
-    docIcon(doc.name),
+    docIcon(doc.name, doc.origin),
     el("div", { class: "doc-meta" },
       el("div", { class: "doc-name", text: doc.name, title: doc.name }),
-      el("div", { class: "doc-sub", text: `${doc.sentences} sentences · ${formatSize(doc.size)}` }),
+      el("div", { class: "doc-sub", text: docOrigin(doc), title: doc.location || undefined }),
       ...doc.warnings.map((w) => el("div", { class: "doc-warn", text: w }))),
     el("button", {
       class: "icon-btn", title: `Delete ${doc.name}`, "aria-label": `Delete ${doc.name}`, text: "✕",
@@ -230,6 +248,44 @@ async function uploadFiles(files) {
       setTimeout(() => row.remove(), 8000);
     }
   }
+}
+
+async function addFromForm(event, { input, button, path, body, describe }) {
+  event.preventDefault();
+  const value = $(input).value.trim();
+  if (!value) { $(input).focus(); return; }
+  const row = el("li", { text: `Adding ${value}…` });
+  $("uploads").append(row);
+  $(button).disabled = true;
+  try {
+    const data = await api(path, { method: "POST", body: body(value) });
+    row.remove();
+    $(input).value = "";
+    toast(describe(data));
+    await loadDocuments();
+  } catch (error) {
+    row.className = "error";
+    row.textContent = error.message;
+    setTimeout(() => row.remove(), 10000);
+  } finally {
+    $(button).disabled = false;
+  }
+}
+
+function setUpSourceForms() {
+  $("url-form").addEventListener("submit", (event) => addFromForm(event, {
+    input: "url-input", button: "url-button", path: "/api/documents/url", body: (url) => ({ url }),
+    describe: (data) => `Added ${data.document.name} (${data.document.sentences} sentences)`,
+  }));
+  $("path-form").addEventListener("submit", (event) => addFromForm(event, {
+    input: "path-input", button: "path-button", path: "/api/documents/path", body: (path) => ({ path }),
+    describe: (data) => {
+      const added = `Added ${data.added.length} document${data.added.length === 1 ? "" : "s"}`;
+      if (!data.errors.length) return added;
+      const first = data.errors[0];
+      return `${added}; ${data.errors.length} skipped (${first.name}: ${first.error})`;
+    },
+  }));
 }
 
 function setUpDropzone() {
@@ -436,6 +492,16 @@ async function showApp(username) {
   $("auth-view").hidden = true;
   $("app-view").hidden = false;
   $("user-name").textContent = username;
+  try {
+    const me = await api("/api/auth/me");
+    mode = me.mode;
+    $("path-form").hidden = !me.local_files;
+  } catch { /* keep defaults */ }
+  const note = $("storage-note");
+  note.textContent = mode === "web"
+    ? "Kept only while you are signed in. Signing out deletes your documents and questions."
+    : "Saved on this computer. Your documents stay after you sign out.";
+  note.className = mode === "web" ? "storage-note web" : "storage-note";
   selectTab("ask-panel");
   pollHealth();
   try {
@@ -464,6 +530,7 @@ function init() {
   $("check-form").addEventListener("submit", checkText);
   $("clear-history").addEventListener("click", clearHistory);
   setUpDropzone();
+  setUpSourceForms();
 
   api("/api/auth/me")
     .then((me) => showApp(me.username))

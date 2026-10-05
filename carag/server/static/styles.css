@@ -183,6 +183,17 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); box-sh
 .doc-sub { font-size: .78rem; color: var(--muted); }
 .doc-warn { font-size: .78rem; color: var(--warn); }
 .empty { color: var(--muted); font-size: .9rem; margin-top: .9rem; }
+.storage-note {
+  font-size: .8rem; color: var(--muted); background: var(--surface-2); border-radius: 8px;
+  padding: .45rem .6rem; margin: -.3rem 0 .8rem;
+}
+.storage-note.web { color: var(--info); background: var(--info-soft); }
+.add-form { margin-top: .9rem; }
+.add-form label { margin: 0 0 .35rem; font-size: .85rem; }
+.add-row { display: flex; gap: .4rem; }
+.add-row input { min-width: 0; padding: .45rem .6rem; font-size: .88rem; }
+.add-row .btn { padding: .45rem .8rem; flex: none; }
+.add-form .hint { margin-top: .3rem; font-size: .76rem; }
 
 /* Composer */
 .composer {

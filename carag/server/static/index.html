@@ -36,7 +36,7 @@
         <p class="form-error" id="auth-error" role="alert" hidden></p>
         <button type="submit" class="btn btn-primary btn-block" id="auth-submit">Sign in</button>
       </form>
-      <p class="fineprint">Your account, documents and questions stay on this computer.</p>
+      <p class="fineprint" id="auth-fineprint">Your account, documents and questions stay on this computer.</p>
     </section>
   </main>
 
@@ -60,11 +60,28 @@
           <h2 id="docs-title">Documents</h2>
           <span class="count" id="doc-count">0</span>
         </div>
+        <p class="storage-note" id="storage-note"></p>
         <label class="dropzone" id="dropzone" tabindex="0">
           <input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.docx" hidden>
           <span class="dropzone-title">Add documents</span>
           <span class="dropzone-sub">Drop files here or click to browse<br>PDF, TXT, Markdown or Word · up to 25 MB</span>
         </label>
+        <form class="add-form" id="url-form">
+          <label for="url-input">Add a webpage</label>
+          <div class="add-row">
+            <input id="url-input" type="url" inputmode="url" placeholder="https://example.com/policy" maxlength="2000"
+                   spellcheck="false" autocapitalize="off">
+            <button type="submit" class="btn btn-ghost" id="url-button">Add</button>
+          </div>
+        </form>
+        <form class="add-form" id="path-form" hidden>
+          <label for="path-input">Add from this computer</label>
+          <div class="add-row">
+            <input id="path-input" placeholder="C:\Users\you\Documents\policies" spellcheck="false" autocapitalize="off">
+            <button type="submit" class="btn btn-ghost" id="path-button">Add</button>
+          </div>
+          <p class="hint">A file or a whole folder. Files are read where they are; nothing is copied or changed.</p>
+        </form>
         <ul class="uploads" id="uploads" aria-live="polite"></ul>
         <ul class="doc-list" id="doc-list"></ul>
         <p class="empty" id="doc-empty">No documents yet. Add the files you want to ask about.</p>
