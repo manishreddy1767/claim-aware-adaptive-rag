@@ -17,7 +17,9 @@ DEFAULT_PORT = 8765
 
 
 def default_data_dir() -> Path:
-    """Per-user application data folder (accounts, documents, history)."""
+    """Per-user application data folder (accounts, documents, history); CARAG_DATA_DIR overrides it."""
+    if os.environ.get("CARAG_DATA_DIR"):
+        return Path(os.environ["CARAG_DATA_DIR"])
     if os.name == "nt":
         base = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local")
         return base / "ClaimAwareRAG"
@@ -65,8 +67,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-    for noisy in ("httpx", "huggingface_hub", "sentence_transformers", "transformers"):
-        logging.getLogger(noisy).setLevel(logging.WARNING)
+    from .prefetch import quiet_model_libraries
+    quiet_model_libraries()
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
     import uvicorn
     from .app import Settings, create_app
