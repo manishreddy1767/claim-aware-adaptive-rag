@@ -17,6 +17,8 @@ The application runs on your own computer: you sign in, add documents and ask qu
 
 **Windows: installer (recommended)**
 
+**Download:** [ClaimAwareRAG-Setup.exe](https://github.com/manishreddy1767/claim-aware-adaptive-rag/raw/main/release/ClaimAwareRAG-Setup.exe) (2 MB). Open it and follow the wizard.
+
 `ClaimAwareRAG-Setup.exe` installs Claim-Aware RAG like any desktop application: a setup wizard, Start menu and desktop icons, its own window (no browser, no console), and an entry in *Settings → Apps* to uninstall it. No administrator rights are needed. Setup downloads Python (if missing), PyTorch for the computer's GPU or CPU and the models (about 5 GB, 10–30 minutes). An optional task also installs [Ollama](https://ollama.com) and **qwen3:8b** and turns on AI-written answers. Build it with `python scripts/build_release.py` (needs Inno Setup 6: `winget install JRSoftware.InnoSetup`); it is written to `dist/`.
 
 Uninstalling (Settings → Apps → Claim-Aware RAG) removes the application and asks whether to also delete your accounts and documents. Ollama and its models are separate applications and stay installed.
