@@ -117,7 +117,15 @@ class Workspaces:
 
     # -- documents ---------------------------------------------------------------------
     def documents(self, user_id: int) -> list[dict]:
-        return [d.to_dict() for d in self.store.documents(user_id)]
+        docs = []
+        for doc in self.store.documents(user_id):
+            item = doc.to_dict()
+            if not self._path(doc).exists():
+                # Removed from disk outside the application: listed, but not used for answers.
+                item["warnings"] = item["warnings"] + ["The stored file is missing, so this document is not "
+                                                       "used. Delete it and add it again."]
+            docs.append(item)
+        return docs
 
     def add_document(self, user_id: int, filename: str, data: bytes) -> dict:
         name = clean_name(filename)

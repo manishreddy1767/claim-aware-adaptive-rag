@@ -227,6 +227,14 @@ def test_users_cannot_see_each_others_documents(tmp_path, models):
     assert alice.get("/api/history").json()["history"] == []
 
 
+def test_missing_stored_file_is_reported(alice, models, tmp_path):
+    upload(alice, "01_leave_policy.txt")
+    for stored in (tmp_path / "files").rglob("*.txt"):
+        stored.unlink()
+    doc = alice.get("/api/documents").json()["documents"][0]
+    assert any("stored file is missing" in w for w in doc["warnings"])
+
+
 def test_documents_and_accounts_survive_a_restart(tmp_path, models):
     first = make_client(tmp_path)
     first.post("/api/auth/register", json={"username": "alice", "password": PASSWORD})
