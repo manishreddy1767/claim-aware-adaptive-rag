@@ -303,6 +303,12 @@ dialog select {
 label.check { display: flex; align-items: center; gap: .5rem; font-weight: 600; }
 label.check input { width: auto; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: 1.2rem; }
+.ai-servers { list-style: none; padding: 0; margin: .5rem 0 0; font-size: .85rem; color: var(--muted); }
+.ai-servers li::before { content: "● "; color: var(--ok); }
+.ai-advanced { margin-top: .8rem; font-size: .9rem; }
+.ai-advanced summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.ai-advanced label { font-weight: 500; }
+.fallback { margin-top: .5rem; font-size: .82rem; color: var(--warn); }
 
 /* Toast */
 .toast {

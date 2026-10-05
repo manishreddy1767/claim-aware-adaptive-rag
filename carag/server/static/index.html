@@ -148,15 +148,23 @@
   <dialog id="ai-dialog" aria-labelledby="ai-title">
     <form method="dialog" id="ai-form">
       <h2 id="ai-title">Local AI model</h2>
-      <p class="muted">A model on this computer (through Ollama) writes answers from your documents. Every sentence it
-        writes is then checked against the documents; unsupported ones are removed. Nothing is sent to the internet.</p>
-      <p class="ai-status" id="ai-status">Checking Ollama…</p>
-      <label class="check"><input type="checkbox" id="ai-enabled"> Offer AI-written answers</label>
+      <p class="muted">When an AI model is installed on this computer (Ollama, LM Studio, Jan, GPT4All, llama.cpp and
+        others), it writes answers from your documents and every sentence is then checked against them. Without one,
+        answers come directly from your documents. Nothing is sent to the internet.</p>
+      <p class="ai-status" id="ai-status">Looking for AI models on this computer…</p>
+      <ul class="ai-servers" id="ai-servers"></ul>
+      <label class="check"><input type="checkbox" id="ai-enabled"> Use an AI model when one is available</label>
       <label for="ai-model">Model</label>
       <select id="ai-model"></select>
+      <details class="ai-advanced">
+        <summary>Other AI server</summary>
+        <label for="ai-server">Address of another OpenAI-compatible server on this computer</label>
+        <input id="ai-server" placeholder="http://127.0.0.1:8080" spellcheck="false" autocapitalize="off">
+      </details>
       <p class="hint" id="ai-help"></p>
       <p class="form-error" id="ai-error" role="alert" hidden></p>
       <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="ai-refresh">Look again</button>
         <button type="button" class="btn btn-ghost" id="ai-close">Close</button>
         <button type="submit" class="btn btn-primary" id="ai-save">Save</button>
       </div>

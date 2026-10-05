@@ -83,8 +83,8 @@ function formatWhen(seconds) {
 /* ---------------------------------------------------------------- auth */
 
 let mode = "local";
-let ai = { enabled: false, model_ready: false, model: "" };   // local LLM status from /api/ai
-let answerStyle = "quotes";            // "local": saved on this computer; "web": kept only while signed in
+let ai = { enabled: false, active: null };   // local AI status from /api/ai (active: the model in use)
+let answerStyle = "ai";                      // "ai" (when a model is available) or "quotes"            // "local": saved on this computer; "web": kept only while signed in
 let authMode = "login";
 let signupAllowed = true;
 let authModeChosen = false;
@@ -360,6 +360,7 @@ function answerCard(view) {
   card.append(
     el("span", { class: `pill o-${view.outcome}`, text: view.outcome_label }),
     view.ai ? el("span", { class: "ai-tag", text: `AI · ${view.ai.model}` }) : null,
+    view.fallback ? el("p", { class: "fallback", text: view.fallback }) : null,
     el("p", { class: "card-question", text: view.question }),
     answerText(view.answer, card));
 
@@ -411,10 +412,11 @@ async function ask(event) {
   const button = $("ask-button");
   button.disabled = true;
   $("welcome").hidden = true;
-  const style = ai.enabled && ai.model_ready ? answerStyle : "quotes";
+  // With a model available, the switch decides; without one the server answers from the documents.
+  const style = ai.active ? answerStyle : "auto";
   const pending = el("div", { class: "card thinking" }, el("span", { class: "spinner" }),
-    el("span", { text: style === "ai"
-      ? `${ai.model} is writing an answer from your documents; each sentence is then checked. ` +
+    el("span", { text: ai.active && style === "ai"
+      ? `${ai.active.model} is writing an answer from your documents; each sentence is then checked. ` +
         "The first answer can take a minute while the model loads."
       : "Searching your documents and checking each claim…" }));
   $("answers").prepend(pending);
@@ -499,74 +501,77 @@ async function clearHistory() {
 /* ---------------------------------------------------------------- local AI */
 
 function renderStyleSwitch() {
-  const available = ai.enabled && ai.model_ready;
+  const available = Boolean(ai.active);
   $("style-switch").hidden = !available;
   $("ask-hint").hidden = available;
-  $("style-ai").textContent = available ? `AI answer · ${ai.model}` : "AI answer";
-  if (!available) answerStyle = "quotes";
+  $("style-ai").textContent = available ? `AI answer · ${ai.active.model}` : "AI answer";
   for (const button of $("style-switch").querySelectorAll("button")) {
     button.setAttribute("aria-checked", String(button.dataset.style === answerStyle));
   }
 }
 
-async function loadAi() {
+async function loadAi(refresh = false) {
   try {
-    ai = await api("/api/ai");
+    ai = await api(`/api/ai${refresh ? "?refresh=1" : ""}`);
   } catch {
-    ai = { enabled: false, model_ready: false, model: "" };
+    ai = { enabled: false, active: null, servers: [], message: "" };
   }
-  try { if (localStorage.getItem("answerStyle") === "ai") answerStyle = "ai"; } catch { /* storage blocked */ }
+  try { if (localStorage.getItem("answerStyle") === "quotes") answerStyle = "quotes"; } catch { /* storage blocked */ }
   renderStyleSwitch();
 }
 
 function renderAiDialog() {
   const status = $("ai-status");
-  if (!ai.running) {
-    status.textContent = "Ollama is not running on this computer.";
-    status.className = "ai-status bad";
-    $("ai-help").textContent = "Install Ollama from https://ollama.com/download, start it, then run in a terminal: " +
-      `ollama pull ${ai.model || "qwen3:8b"}`;
-  } else if (!ai.model_ready) {
-    status.textContent = `Ollama is running, but ${ai.model} is not installed.`;
-    status.className = "ai-status bad";
-    $("ai-help").textContent = `In a terminal, run: ollama pull ${ai.model}   (or choose an installed model).`;
-  } else {
-    status.textContent = `Ready: ${ai.model}`;
-    status.className = "ai-status ok";
-    $("ai-help").textContent = "Larger models write better answers but need more memory. On a GPU with less than " +
-      "6 GB, an 8B model runs partly on the processor and is slower.";
-  }
-  const select = $("ai-model");
-  const names = [...new Set([...(ai.installed || []), ai.model].filter(Boolean))];
-  select.replaceChildren(...names.map((name) => el("option", {
-    value: name, text: (ai.installed || []).includes(name) ? name : `${name} (not installed)`,
+  status.textContent = ai.message || "";
+  status.className = ai.active ? "ai-status ok" : (ai.enabled ? "ai-status bad" : "ai-status");
+  $("ai-servers").replaceChildren(...(ai.servers || []).map((s) => el("li", {
+    text: `${s.name}: ${s.models.length} model${s.models.length === 1 ? "" : "s"} (${s.models.join(", ")})`,
   })));
-  select.value = ai.model;
+  const select = $("ai-model");
+  const options = [el("option", { value: "auto", text: "Automatic (best available)" })];
+  for (const server of ai.servers || []) {
+    for (const model of server.models) options.push(el("option", { value: model, text: `${model} (${server.name})` }));
+  }
+  if (ai.model && ai.model !== "auto" && !options.some((o) => o.value === ai.model)) {
+    options.push(el("option", { value: ai.model, text: `${ai.model} (not found)` }));
+  }
+  select.replaceChildren(...options);
+  select.value = ai.model || "auto";
   $("ai-enabled").checked = ai.enabled;
-  for (const id of ["ai-enabled", "ai-model", "ai-save"]) $(id).disabled = !ai.editable;
-  if (!ai.editable) $("ai-help").textContent = "AI settings are managed by the operator of this website.";
+  $("ai-server").value = ai.server || "";
+  $("ai-help").textContent = ai.editable
+    ? "Larger models write better answers but need more memory; on a graphics card with less than 6 GB, " +
+      "an 8B model runs partly on the processor and is slower."
+    : "AI settings are managed by the operator of this website.";
+  for (const id of ["ai-enabled", "ai-model", "ai-server", "ai-save"]) $(id).disabled = !ai.editable;
 }
 
 async function openAiDialog() {
   showError("ai-error", "");
-  await loadAi();
-  renderAiDialog();
+  $("ai-status").textContent = "Looking for AI models on this computer…";
+  $("ai-status").className = "ai-status";
   $("ai-dialog").showModal();
+  await loadAi(true);
+  renderAiDialog();
+}
+
+async function refreshAi() {
+  $("ai-status").textContent = "Looking for AI models on this computer…";
+  await loadAi(true);
+  renderAiDialog();
 }
 
 async function saveAi(event) {
   event.preventDefault();
   showError("ai-error", "");
   try {
-    ai = await api("/api/ai", { method: "PUT", body: { enabled: $("ai-enabled").checked, model: $("ai-model").value } });
+    ai = await api("/api/ai", { method: "PUT", body: {
+      enabled: $("ai-enabled").checked, model: $("ai-model").value, server: $("ai-server").value.trim() || null,
+    } });
     renderAiDialog();
     renderStyleSwitch();
-    if (ai.enabled && !ai.model_ready) {
-      showError("ai-error", "Saved, but the model is not ready yet; AI answers appear once it is installed.");
-      return;
-    }
     $("ai-dialog").close();
-    toast(ai.enabled ? `AI answers on: ${ai.model}` : "AI answers turned off");
+    toast(ai.message);
   } catch (error) {
     showError("ai-error", error.message);
   }
@@ -629,6 +634,7 @@ function init() {
   setUpSourceForms();
   $("ai-open").addEventListener("click", openAiDialog);
   $("ai-close").addEventListener("click", () => $("ai-dialog").close());
+  $("ai-refresh").addEventListener("click", refreshAi);
   $("ai-form").addEventListener("submit", saveAi);
   $("style-switch").addEventListener("click", (event) => {
     const style = event.target.dataset?.style;

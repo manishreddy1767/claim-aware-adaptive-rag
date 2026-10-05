@@ -21,9 +21,9 @@ The application runs on your own computer: you sign in, add documents and ask qu
 
 Uninstalling (Settings → Apps → Claim-Aware RAG) removes the application and asks whether to also delete your accounts and documents. Ollama and its models are separate applications and stay installed.
 
-**AI-written answers (optional)**
+**AI-written answers (automatic)**
 
-With Ollama running and a model pulled (`ollama pull qwen3:8b`), turn them on in the application's **AI settings** and choose *AI answer* next to the Ask button. The model writes the answer from passages of your documents; every sentence is then verified against the documents, unsupported sentences are removed (listed under *How this answer was checked*, with the model's original text), contradicted ones corrected, and disagreeing sources shown side by side. On a 4 GB RTX 3050, qwen3:8b runs partly on the CPU: about 5–20 s per answer, 40 s for the first while it loads. Known limit: the verifier confirms each fact but can miss an over-general word such as "both" when only one document says it.
+The application looks for any local AI model on the computer and uses it without setup: **Ollama** and every server with the OpenAI-compatible API (**LM Studio, Jan, GPT4All, llama.cpp, LocalAI, vLLM, KoboldCpp, text-generation-webui**) on their usual ports, or any other server address entered in **AI settings**. It picks the best-known chat model it finds (Qwen 3 first; embedding models are skipped), or the one you choose. **If no model is found, or the model fails, the question is answered directly from your documents (RAG)** with a note saying so, never with an error. *Quoted* next to the Ask button skips the model; AI settings can also turn it off. The model writes the answer from passages of your documents; every sentence is then verified against the documents, unsupported sentences are removed (listed under *How this answer was checked*, with the model's original text), contradicted ones corrected, and disagreeing sources shown side by side. On a 4 GB RTX 3050, qwen3:8b runs partly on the CPU: about 5–20 s per answer, 40 s for the first while it loads. Known limit: the verifier confirms each fact but can miss an over-general word such as "both" when only one document says it.
 
 **Windows: zip (manual)**
 

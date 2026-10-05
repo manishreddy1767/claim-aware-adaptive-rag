@@ -349,8 +349,9 @@ def test_web_mode_deletes_documents_at_sign_out(page, web_server):
     expect(page.locator("#history-empty")).to_be_visible()
 
 
-def test_ai_settings_and_ai_answers(page, server, monkeypatch):
-    """Enable a local model in AI settings and ask with 'AI answer' (fake Ollama, fixed reply)."""
+def test_local_ai_is_found_and_used_automatically(page, server, monkeypatch):
+    """A local model (fake Ollama, fixed reply) is found without any setup and writes the answer;
+    the switch can force quoted answers, and with AI off the documents answer directly."""
     import http.server
     import json
 
@@ -380,23 +381,28 @@ def test_ai_settings_and_ai_answers(page, server, monkeypatch):
     try:
         register(page, server, "grace")
         upload(page, "01_leave_policy.txt")
-        expect(page.locator("#style-switch")).to_be_hidden()          # AI is off by default
+        expect(page.locator("#style-ai")).to_have_text("AI answer · fake:1b")   # found, no setup needed
 
-        page.get_by_role("button", name="AI settings").click()
-        expect(page.locator("#ai-status")).to_contain_text("qwen3:8b is not installed")
-        page.locator("#ai-model").select_option("fake:1b")
-        page.get_by_label("Offer AI-written answers").check()
-        page.locator("#ai-save").click()
-        expect(page.locator("#ai-dialog")).to_be_hidden()
-        expect(page.locator("#style-ai")).to_have_text("AI answer · fake:1b")
-
-        page.locator("#style-ai").click()
         card = ask(page, "How many paid leave days does a full-time employee receive annually?")
         expect(card.locator(".ai-tag")).to_have_text("AI · fake:1b")
         expect(card.locator(".answer-text")).to_contain_text("24 days")
         expect(card.locator(".answer-text")).not_to_contain_text("free car")
         card.get_by_text("How this answer was checked").click()
         expect(card.locator(".draft")).to_contain_text("free car")       # original shown in details
+
+        page.get_by_role("radio", name="Quoted").click()
+        card = ask(page, "When must carried-forward leave days be used?")
+        expect(card.locator(".ai-tag")).to_have_count(0)
+
+        page.get_by_role("button", name="AI settings").click()
+        expect(page.locator("#ai-servers")).to_contain_text("Ollama: 1 model (fake:1b)")
+        expect(page.locator("#ai-status")).to_contain_text("Using fake:1b (Ollama)")
+        page.get_by_label("Use an AI model when one is available").uncheck()
+        page.locator("#ai-save").click()
+        expect(page.locator("#style-switch")).to_be_hidden()
+        card = ask(page, "How many paid leave days does a full-time employee receive annually?")
+        expect(card.locator(".ai-tag")).to_have_count(0)
+        expect(card.locator(".answer-text")).to_contain_text("24 days")
     finally:
         fake.shutdown()
 

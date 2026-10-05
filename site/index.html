@@ -177,9 +177,10 @@
           <p>Settings → Apps → Claim-Aware RAG → Uninstall. It asks whether to keep your documents. Ollama, if you
             installed it, is a separate app you can uninstall the same way.</p></details>
         <details><summary>How do AI-written answers work?</summary>
-          <p>A model running on your laptop (qwen3:8b through Ollama) writes the answer from passages of your documents.
-            Every sentence is then checked against your documents; sentences they do not support are removed, and you can
-            see the model's original text. Turn it on in the app's AI settings. On a graphics card with less than 6 GB,
+          <p>If your laptop has a local AI model (Ollama, LM Studio, Jan, GPT4All, llama.cpp and others), the app finds
+            it by itself and lets it write the answer from passages of your documents. Every sentence is then checked
+            against your documents; sentences they do not support are removed, and you can see the model's original
+            text. Without a model, or if it fails, answers come directly from your documents. On a graphics card with less than 6 GB,
             an 8B model runs partly on the processor and answers take several seconds.</p></details>
         <details><summary>Other systems (macOS, Linux)</summary>
           <p>Install Python 3.10 or newer, unzip the download, then in a terminal in that folder:</p>
