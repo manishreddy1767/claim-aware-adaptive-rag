@@ -18,6 +18,8 @@ _SYSTEM = ("You answer questions using only the numbered evidence provided. "
            "reply exactly: The evidence does not contain the answer.")
 
 NO_ANSWER_MARKERS = ("does not contain the answer", "not contain the answer", "does not mention",
+                     "do not contain this information", "does not contain this information",
+                     "do not contain information", "do not mention",
                      "no information", "not provided", "cannot be determined", "not specified",
                      "not stated", "does not say", "is not mentioned")
 

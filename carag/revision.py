@@ -33,11 +33,14 @@ class RevisedAnswer:
     qualified: list[str] = field(default_factory=list)
     corrected: list[str] = field(default_factory=list)
     removed: list[str] = field(default_factory=list)
+    conflicting: list[str] = field(default_factory=list)   # claims on which the sources disagree
+    body: str = ""        # text without the trailing list of removed statements
     citations: list[EvidenceUnit] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {"text": self.text, "abstained": self.abstained, "kept": self.kept,
                 "qualified": self.qualified, "corrected": self.corrected, "removed": self.removed,
+                "conflicting": self.conflicting,
                 "citations": [{"marker": i + 1, **u.to_dict(), "citation": u.citation()}
                               for i, u in enumerate(self.citations)]}
 
@@ -59,6 +62,7 @@ def revise_answer(verifications: list[ClaimVerification], index: EvidenceIndex,
         return "".join(markers)
 
     sentences: list[str] = []
+    conflicts_shown: set[frozenset[str]] = set()
     for v in verifications:
         if v.status == ClaimStatus.SUPPORTED and v.supporting:
             sentences.append(f"{v.claim} {cite(v.supporting[0].evidence_ids)}")
@@ -69,6 +73,16 @@ def revise_answer(verifications: list[ClaimVerification], index: EvidenceIndex,
                 sentences.append(f"{part.claim} {cite(part.supporting[0].evidence_ids)}")
             sentences.append(f"(The sources do not establish the rest of the statement: \"{v.claim}\")")
             revised.qualified.append(v.claim)
+        elif v.status == ClaimStatus.UNCERTAIN and v.supporting and v.contradicting:
+            # The sources disagree: state both sides, each cited.
+            support, contra = v.supporting[0], v.contradicting[0]
+            pair = frozenset(support.evidence_ids + contra.evidence_ids)
+            if pair not in conflicts_shown:
+                conflicts_shown.add(pair)
+                sentences.append(f"The sources disagree. One states: {support.premise} "
+                                 f"{cite(support.evidence_ids)} Another states: {contra.premise} "
+                                 f"{cite(contra.evidence_ids)}")
+            revised.conflicting.append(v.claim)
         elif v.status == ClaimStatus.UNCERTAIN:
             sentences.append(f"[Unverified] {v.claim}")
             revised.qualified.append(v.claim)
@@ -85,7 +99,7 @@ def revise_answer(verifications: list[ClaimVerification], index: EvidenceIndex,
         else:
             revised.removed.append(v.claim)
 
-    if not revised.kept and not revised.corrected and not any(
+    if not revised.kept and not revised.corrected and not revised.conflicting and not any(
             v.status == ClaimStatus.PARTIALLY_SUPPORTED for v in verifications):
         revised.abstained = True
         revised.text = abstain_message
@@ -93,6 +107,7 @@ def revise_answer(verifications: list[ClaimVerification], index: EvidenceIndex,
             revised.text += " Unverified statements: " + " ".join(sentences)
     else:
         revised.text = " ".join(sentences)
+    revised.body = revised.text
     if revised.removed:
         revised.text += (" Removed because the sources do not support them: "
                          + "; ".join(f"\"{c}\"" for c in revised.removed) + ".")

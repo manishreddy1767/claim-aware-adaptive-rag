@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import logging
+import time
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .answering import AnswerResult, GroundedAnswerer
 from .budget import BudgetedVerifier, BudgetReport
@@ -15,7 +16,7 @@ from .ingestion import load_bytes, load_source
 from .models import get_embedder, get_nli
 from .retrieval import AdaptiveRetriever, RetrievalResult
 from .revision import RevisedAnswer, revise_answer
-from .schema import ClaimVerification, SourceDocument
+from .schema import ClaimStatus, ClaimVerification, ScoredEvidence, SourceDocument
 from .verification import ClaimVerifier
 
 logger = logging.getLogger(__name__)
@@ -56,6 +57,41 @@ class AnswerCheck:
     def to_dict(self) -> dict:
         return {"claims": [c.to_dict() for c in self.claims], "revised": self.revised.to_dict(),
                 "budget": self.budget.to_dict() if self.budget else None}
+
+
+@dataclass
+class LLMAnswer:
+    """An answer drafted by a local LLM from the retrieved evidence, then verified claim by claim."""
+
+    question: str
+    model: str
+    draft: str                       # the model's own text, before verification
+    evidence: list[ScoredEvidence]   # the passages the model was given
+    check: AnswerCheck | None        # None when no draft was verified (abstained before or by the model)
+    retrieval: RetrievalResult | None
+    abstained: bool
+    reason: str = ""                 # why it abstained
+    timings: dict[str, float] = field(default_factory=dict)
+
+    @property
+    def text(self) -> str:
+        return self.check.revised.body if self.check and not self.abstained else self.reason
+
+    @property
+    def outcome(self) -> str:
+        """Same labels as AnswerResult.outcome."""
+        if self.abstained:
+            return "not_specified" if "do not specify" in self.reason else "abstain"
+        if self.check and any(c.status == ClaimStatus.UNCERTAIN and "conflict" in c.explanation
+                              for c in self.check.claims):
+            return "conflict"
+        if self.retrieval is not None and self.retrieval.analysis.is_yes_no:
+            first = self.draft.strip().lower()
+            if first.startswith(("no.", "no,")):
+                return "reject_premise"
+            if first.startswith(("yes.", "yes,")):
+                return "yes"
+        return "answer"
 
 
 class ClaimAwareRAG:
@@ -167,17 +203,93 @@ class ClaimAwareRAG:
         """Verify every claim in the text (exhaustively, no budget)."""
         return self.verifier.verify_text(text)
 
-    def check_answer(self, text: str, budget: int | None = None) -> AnswerCheck:
+    def check_answer(self, text: str, budget: int | None = None,
+                     pool: list[ScoredEvidence] | None = None) -> AnswerCheck:
         """Hallucination detection + prevention for any answer text.
 
         Claims are verified under the shared evidence budget (if enabled) and the
         answer is rewritten so only source-supported statements remain as facts.
+        ``pool`` adds evidence (e.g. the passages an LLM was given) to each claim's own retrieval.
         """
         claims = extract_claims(text)
         report = None
         if self.config.budget.enabled:
-            verifications, report = self.budgeted.verify_claims(claims, budget=budget)
+            verifications, report = self.budgeted.verify_claims(claims, pool, budget=budget)
         else:
-            verifications = [self.verifier.verify(c) for c in claims]
+            verifications = [self.verifier.verify(c, pool) for c in claims]
         revised = revise_answer(verifications, self.index, self.config.answer.abstain_message)
         return AnswerCheck(verifications, revised, report)
+
+
+    # -- local LLM (Ollama) --------------------------------------------------------------
+    def llm_evidence(self, question: str, retrieval: RetrievalResult, limit: int = 14) -> list[ScoredEvidence]:
+        """Passages to give the model: the adaptive retrieval, the best direct matches, each side of
+        an explicit comparison, and the rest of short sections around the best hits (so a rule's
+        conditions and exceptions come together). In document order."""
+        pool: dict[str, ScoredEvidence] = {}
+        for e in retrieval.evidence + self.retriever.rank(question, 8):
+            pool.setdefault(e.unit.evidence_id, e)
+        for target in retrieval.analysis.comparison_targets:
+            aspects = retrieval.analysis.comparison_aspects
+            for e in self.retriever.retrieve(f"{target}: {aspects}" if aspects else target).evidence:
+                pool.setdefault(e.unit.evidence_id, e)
+        best = sorted(pool.values(), key=lambda e: -e.score)
+        sections = {(e.unit.source, e.unit.section) for e in best[:3]}
+        for e in self.answerer._section_units(retrieval, sections, set(pool), "section context"):
+            pool.setdefault(e.unit.evidence_id, e)
+        chosen = sorted(pool.values(), key=lambda e: -e.score)[:limit]
+        return sorted(chosen, key=lambda e: (e.unit.source, e.unit.position))
+
+    def ask_with_llm(self, question: str, generator) -> LLMAnswer:
+        """Draft an answer with a local LLM (e.g. OllamaGenerator) and verify every claim in it.
+
+        The same gates as the extractive answerer run first (no sources, vague question, a
+        named subject that no source mentions), so the model is not asked to answer from nothing.
+        """
+        from .generation import is_no_answer
+
+        question = (question or "").strip()
+        if not question:
+            raise ValueError("Please enter a question.")
+        model = getattr(generator, "model", "local model")
+        timings: dict[str, float] = {}
+        start = time.perf_counter()
+        retrieval = self.retriever.retrieve(question)
+        timings["retrieval_s"] = round(time.perf_counter() - start, 3)
+
+        def abstain(reason: str, draft: str = "", evidence=None) -> LLMAnswer:
+            return LLMAnswer(question, model, draft, evidence or [], None, retrieval, True, reason, timings)
+
+        if not len(self.index):
+            return abstain("No sources have been added yet.")
+        analysis = retrieval.analysis
+        if analysis.is_vague:
+            return abstain(analysis.vague_reason)
+        absent = self.answerer._absent_entities(analysis.entities)
+        if absent:
+            return abstain(f"The sources do not mention {', '.join(absent)}, so this question cannot be "
+                           "answered from them.")
+
+        evidence = self.llm_evidence(question, retrieval)
+        start = time.perf_counter()
+        draft = generator.generate(question, evidence)
+        timings["generation_s"] = round(time.perf_counter() - start, 3)
+        # Models sometimes answer and then add "The documents do not contain this information."
+        # Drop such sentences; the reply is a non-answer only if nothing else remains.
+        from .text_utils import split_sentences
+        content = " ".join(s for s in split_sentences(draft) if not is_no_answer(s))
+        if not content.strip() or not extract_claims(content):
+            on_topic = evidence and max(e.semantic for e in evidence) >= self.config.answer.not_specified_min_semantic
+            reason = ("The sources cover this topic but do not specify the requested detail."
+                      if retrieval.sufficient or on_topic else self.config.answer.abstain_message)
+            return abstain(reason, draft, evidence)
+
+        start = time.perf_counter()
+        check = self.check_answer(content, pool=evidence)
+        timings["verification_s"] = round(time.perf_counter() - start, 3)
+        answer = LLMAnswer(question, model, draft, evidence, check, retrieval, check.revised.abstained,
+                           timings=timings)
+        if answer.abstained:
+            answer.reason = ("None of the statements in the model's answer could be verified against "
+                             "the sources, so it is not shown as an answer.")
+        return answer
