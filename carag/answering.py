@@ -37,6 +37,12 @@ _STATUS_QUALIFIER = {
 }
 
 
+def _qualifier(verdict: ClaimVerification) -> str:
+    if verdict.status == ClaimStatus.UNCERTAIN and "conflict" in verdict.explanation:
+        return "the sources disagree on this"
+    return _STATUS_QUALIFIER[verdict.status]
+
+
 @dataclass
 class Citation:
     marker: int
@@ -92,7 +98,23 @@ class AnswerResult:
             "budget": self.budget.to_dict() if self.budget else None,
             "answer_span": self.answer_span,
             "answerability": self.answerability,
+            "outcome": self.outcome,
         }
+
+    @property
+    def outcome(self) -> str:
+        """What kind of answer this is: answer | yes | reject_premise | not_specified |
+        conflict | abstain."""
+        text = self.answer.lower()
+        if self.abstained:
+            return "not_specified" if "do not specify" in text else "abstain"
+        if self.premise_check is not None and any(s.kind == "correction" for s in self.sentences):
+            return "not_specified" if self.premise_check.status == ClaimStatus.NOT_SPECIFIED else "reject_premise"
+        if text.startswith("yes."):
+            return "yes"
+        if any(c.status == ClaimStatus.UNCERTAIN and "conflict" in c.explanation for c in self.claims):
+            return "conflict"
+        return "answer"
 
 
 class GroundedAnswerer:
@@ -426,7 +448,7 @@ class GroundedAnswerer:
             if bad and len(bad) == len(verdicts):
                 sentences.append(None)
                 continue
-            qualifier = next((_STATUS_QUALIFIER[v.status] for v in verdicts if v.status in _STATUS_QUALIFIER), None)
+            qualifier = next((_qualifier(v) for v in verdicts if v.status in _STATUS_QUALIFIER), None)
             marker = self._cite(item.unit, result.citations)
             sentences.append(AnswerSentence(item.unit.text, [marker], verdicts, kind, qualifier))
         return sentences

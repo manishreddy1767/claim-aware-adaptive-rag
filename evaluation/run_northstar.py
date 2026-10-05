@@ -24,26 +24,6 @@ from carag.pipeline import ClaimAwareRAG
 DATA = Path(__file__).resolve().parent / "datasets"
 RESULTS = Path(__file__).resolve().parent / "results"
 
-# Phrases that mark an answer as "the sources do not establish this" rather than a definite answer.
-_NOT_SPECIFIED_MARKERS = ("not specified", "not establish", "does not specify", "do not specify")
-
-
-def observed_behavior(result) -> str:
-    text = result.answer.lower()
-    if result.abstained:
-        return "not_specified" if any(m in text for m in _NOT_SPECIFIED_MARKERS) else "abstain"
-    if any(s.kind == "correction" for s in result.sentences):
-        if text.startswith("no.") or "assumption is not supported" in text:
-            return "reject_premise"
-    if text.startswith("yes."):
-        return "yes"
-    if any(c.status.value == "UNCERTAIN" and "conflict" in c.explanation for c in result.claims):
-        return "conflict"
-    if any(m in text for m in _NOT_SPECIFIED_MARKERS):
-        return "not_specified"
-    return "answer"
-
-
 def trace(result) -> dict:
     r = result.retrieval
     a = r.analysis
@@ -89,7 +69,7 @@ def evaluate(rag: ClaimAwareRAG, cases: list[dict], quiet: bool) -> list[dict]:
         text = result.answer.lower()
         facts = case["required_facts"]
         found = [f for f in facts if f in text]
-        behavior = observed_behavior(result)
+        behavior = result.outcome
         rows.append({"id": case["id"], "category": case["category"], "question": case["question"],
                      "expected_behavior": case["expected_behavior"], "observed_behavior": behavior,
                      "behavior_ok": behavior == case["expected_behavior"],
