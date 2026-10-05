@@ -7,7 +7,7 @@
 ; Optionally installs Ollama and qwen3:8b for AI-written answers.
 
 #define AppName "Claim-Aware RAG"
-#define AppVersion "0.3.0"
+#define AppVersion "0.3.1"
 #define AppExe "{app}\.venv\Scripts\carag-desktop.exe"
 #define AppIcon "{app}\carag\server\static\icon.ico"
 #define AiModel "qwen3:8b"
