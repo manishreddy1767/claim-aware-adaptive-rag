@@ -11,6 +11,38 @@ A locally runnable retrieval-augmented question-answering system that:
 
 > The system measures agreement with the provided sources as judged by NLI and QA models. It does **not** establish real-world truth and does **not** eliminate hallucinations; it detects and removes many unsupported statements, with the error rates reported in §7.
 
+## Run the application
+
+The application runs on your own computer: you sign in, add documents and ask questions in the browser. Accounts, documents and question history are stored locally (on Windows in `%LOCALAPPDATA%\ClaimAwareRAG`).
+
+**Windows**
+
+1. Install [Python 3.10 or newer](https://www.python.org/downloads/).
+2. Double-click **`install.bat`** (one time). It creates `.venv`, installs PyTorch (the CUDA build when an NVIDIA GPU is present, otherwise the CPU build) and the application.
+3. Double-click **`start.bat`**. The application opens in your browser at `http://localhost:8765`. The first start downloads the models (about 1 GB, once).
+4. Create your account on the first screen, add documents (PDF, TXT, Markdown or Word, up to 25 MB each) and ask.
+
+**Any platform**
+
+```bash
+python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+pip install torch --index-url https://download.pytorch.org/whl/cu126   # or .../whl/cpu
+pip install -e ".[ocr]"
+carag-app                       # or: python -m carag.server
+```
+
+Options: `--port 9000`, `--data-dir PATH`, `--no-browser`, and `--no-signup` (only the first account can be created; use it when others can reach the computer). The server listens on `127.0.0.1` only, so other computers cannot reach it unless you pass `--host`.
+
+What the application does for you:
+
+- **Answers with citations**: every sentence of an answer is quoted from your documents and numbered; click a number to see the source sentence, file, section and page.
+- **Says what kind of answer it is**: answered, confirmed, *the question's assumption is wrong*, *not specified in your documents*, *your documents disagree*, or *no answer in your documents*.
+- **Shows how each answer was checked** (claim by claim), keeps a history of your questions, and can **check any text** (for example a chatbot answer) against your documents.
+
+Security: passwords are hashed with scrypt; sessions are random tokens in HttpOnly, SameSite=Strict cookies (only their hashes are stored); repeated failed sign-ins lock the account for a minute; each user sees only their own documents; cross-site requests are rejected and a strict Content-Security-Policy is set.
+
+The Streamlit page (`streamlit run app.py`) remains available as a research console with every threshold exposed.
+
 ---
 
 ## 1. Motivation and problem

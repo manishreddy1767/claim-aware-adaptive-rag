@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claim-aware-rag"
+version = "0.2.0"
+description = "Answer questions from your own documents with adaptive retrieval and claim-level verification."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    # Install PyTorch first for a GPU build (see install.bat / README); otherwise pip picks the default build.
+    "torch>=2.4",
+    "sentence-transformers>=3.0",
+    "transformers>=4.44",
+    "numpy>=1.26",
+    "pypdf>=5.0",
+    "python-docx>=1.1",
+    "beautifulsoup4>=4.12",
+    "requests>=2.31",
+    # Local web application
+    "starlette>=0.40",
+    "uvicorn>=0.30",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+ocr = ["pypdfium2>=4.30", "rapidocr>=3.0", "onnxruntime>=1.20"]
+research = ["streamlit>=1.38", "pandas>=2.2", "playwright>=1.45"]
+dev = ["pytest>=8.0", "fpdf2>=2.7", "httpx>=0.27", "playwright>=1.45"]
+
+[project.scripts]
+carag-app = "carag.server.launcher:main"
+carag = "carag.cli:main"
+
+[tool.setuptools]
+packages = ["carag", "carag.server"]
+
+[tool.setuptools.package-data]
+"carag.server" = ["static/*"]
