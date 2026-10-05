@@ -5,14 +5,20 @@ rem
 rem   install.bat                  install, prepare the models, create a desktop shortcut
 rem   install.bat --no-shortcut    without the desktop shortcut
 rem   install.bat --no-pause       do not wait for a key press at the end
+rem   install.bat --ai qwen3:8b    also install Ollama and this model, and turn AI answers on
 setlocal
 cd /d "%~dp0"
 set "SHORTCUT=1"
 set "PAUSE_AT_END=1"
+set "AI_MODEL="
 :args
 if "%~1"=="" goto :start
 if /i "%~1"=="--no-shortcut" set "SHORTCUT=0"
 if /i "%~1"=="--no-pause" set "PAUSE_AT_END=0"
+if /i "%~1"=="--ai" (
+    set "AI_MODEL=%~2"
+    shift
+)
 shift
 goto :args
 
@@ -68,6 +74,8 @@ echo [5/5] Preparing the models...
 "%VPY%" -m carag.server.prefetch
 if errorlevel 1 echo Warning: the models could not be prepared now; they will download on the first start.
 
+if defined AI_MODEL call :setup_ai
+
 if "%SHORTCUT%"=="1" (
     powershell -NoProfile -ExecutionPolicy Bypass -Command ^
       "$d=[Environment]::GetFolderPath('Desktop'); $s=(New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $d 'Claim-Aware RAG.lnk')); $s.TargetPath='%~dp0start.bat'; $s.WorkingDirectory='%~dp0'; $s.Description='Ask questions about your documents'; $s.IconLocation='%SystemRoot%\System32\imageres.dll,76'; $s.Save()" ^
@@ -79,6 +87,34 @@ echo   Installed. Start it from the desktop shortcut or with start.bat.
 echo   Your documents and accounts are saved in %LOCALAPPDATA%\ClaimAwareRAG
 echo.
 if "%PAUSE_AT_END%"=="1" pause
+exit /b 0
+
+:setup_ai
+rem ---- Optional: Ollama and a local AI model ---------------------------------------------------
+echo [AI] Setting up the local AI model %AI_MODEL%...
+set "OLLAMA_EXE="
+where ollama >nul 2>nul && set "OLLAMA_EXE=ollama"
+if not defined OLLAMA_EXE if exist "%LOCALAPPDATA%\Programs\Ollama\ollama.exe" set "OLLAMA_EXE=%LOCALAPPDATA%\Programs\Ollama\ollama.exe"
+if not defined OLLAMA_EXE (
+    where winget >nul 2>nul || goto :ai_failed
+    echo [AI] Installing Ollama...
+    winget install -e --id Ollama.Ollama --accept-source-agreements --accept-package-agreements || goto :ai_failed
+    if exist "%LOCALAPPDATA%\Programs\Ollama\ollama.exe" set "OLLAMA_EXE=%LOCALAPPDATA%\Programs\Ollama\ollama.exe"
+)
+if not defined OLLAMA_EXE goto :ai_failed
+"%OLLAMA_EXE%" list >nul 2>nul
+if errorlevel 1 (
+    echo [AI] Starting Ollama...
+    start "" /b "%OLLAMA_EXE%" serve >nul 2>nul
+    timeout /t 5 /nobreak >nul
+)
+echo [AI] Downloading %AI_MODEL%. This is a large download and can take a while...
+"%OLLAMA_EXE%" pull %AI_MODEL% || goto :ai_failed
+"%VPY%" -m carag.server.configure --ai-model %AI_MODEL% || goto :ai_failed
+exit /b 0
+:ai_failed
+echo Warning: the AI model could not be set up. The application works without it; you can
+echo install Ollama from https://ollama.com and turn AI answers on in AI settings later.
 exit /b 0
 
 :find_python

@@ -107,10 +107,10 @@
             claim by claim. When your documents do not say, it tells you instead of guessing.
             Everything runs on your laptop; your documents never leave it.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="https://github.com/manishreddy1767/claim-aware-adaptive-rag/releases/latest/download/ClaimAwareRAG-windows.zip">Download for Windows</a>
+            <a class="btn btn-primary" href="https://github.com/manishreddy1767/claim-aware-adaptive-rag/releases/latest/download/ClaimAwareRAG-Setup.exe">Download for Windows</a>
             <a class="btn btn-ghost" href="https://github.com/manishreddy1767/claim-aware-adaptive-rag">Source code</a>
           </div>
-          <p class="small">Free · Windows 10 or 11 · uses your NVIDIA GPU when you have one</p>
+          <p class="small">Free · Windows 10 or 11 · uses your NVIDIA GPU when you have one · optional local AI (qwen3:8b)</p>
         </div>
         <div class="demo" aria-label="Example answer">
           <span class="pill">Answered from your documents</span>
@@ -132,20 +132,20 @@
             <p>With an NVIDIA graphics card, answers take about a second. Without one, your processor does the work
               and answers are slower.</p></div>
           <div class="card"><h3>Checked, not guessed</h3>
-            <p>Answers are built from sentences in your files, each claim is verified against them, and you are told
-              when a question's assumption is wrong, when documents disagree, or when the answer is not there.</p></div>
+            <p>Answers quote your files, or are written by a local AI model (qwen3:8b through Ollama) and then checked
+              sentence by sentence. You are told when a question's assumption is wrong, when documents disagree, or
+              when the answer is not there.</p></div>
         </div>
       </section>
 
       <section id="install">
         <h2>Install in four steps</h2>
         <ol class="steps">
-          <li><strong>Download</strong> <a href="https://github.com/manishreddy1767/claim-aware-adaptive-rag/releases/latest/download/ClaimAwareRAG-windows.zip">ClaimAwareRAG-windows.zip</a>
-            and unzip it into a folder you keep, for example <code>Documents\ClaimAwareRAG</code>.</li>
-          <li><strong>Double-click <code>install.bat</code>.</strong> It installs Python if needed, the right version of PyTorch
-            for your graphics card, and the language models. This takes 10–30 minutes, once, and needs an internet connection.</li>
-          <li><strong>Open “Claim-Aware RAG” on your desktop.</strong> The application opens in your web browser; keep the
-            black window open while you use it.</li>
+          <li><strong>Download</strong> <a href="https://github.com/manishreddy1767/claim-aware-adaptive-rag/releases/latest/download/ClaimAwareRAG-Setup.exe">ClaimAwareRAG-Setup.exe</a>
+            and open it. If Windows says it protected your PC, choose <em>More info</em> → <em>Run anyway</em>.</li>
+          <li><strong>Follow the setup.</strong> Tick <em>Install a local AI model</em> if you want AI-written answers
+            (about 5 GB more). Setup downloads what the app needs; this takes 10–30 minutes, once, and needs an internet connection.</li>
+          <li><strong>Open Claim-Aware RAG</strong> from the Start menu or your desktop. It opens in its own window.</li>
           <li><strong>Create your account</strong> and add documents: upload files, add a whole folder from your laptop,
             or add a webpage. Then ask.</li>
         </ol>
@@ -174,8 +174,13 @@
         <details><summary>Can several people use it on one laptop?</summary>
           <p>Yes. Each person creates an account and sees only their own documents and questions.</p></details>
         <details><summary>How do I uninstall it?</summary>
-          <p>Close the application, double-click <code>uninstall.bat</code> in its folder (it asks whether to keep your
-            documents), then delete the folder.</p></details>
+          <p>Settings → Apps → Claim-Aware RAG → Uninstall. It asks whether to keep your documents. Ollama, if you
+            installed it, is a separate app you can uninstall the same way.</p></details>
+        <details><summary>How do AI-written answers work?</summary>
+          <p>A model running on your laptop (qwen3:8b through Ollama) writes the answer from passages of your documents.
+            Every sentence is then checked against your documents; sentences they do not support are removed, and you can
+            see the model's original text. Turn it on in the app's AI settings. On a graphics card with less than 6 GB,
+            an 8B model runs partly on the processor and answers take several seconds.</p></details>
         <details><summary>Other systems (macOS, Linux)</summary>
           <p>Install Python 3.10 or newer, unzip the download, then in a terminal in that folder:</p>
           <pre><code>python3 -m venv .venv && source .venv/bin/activate

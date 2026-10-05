@@ -15,12 +15,22 @@ A locally runnable retrieval-augmented question-answering system that:
 
 The application runs on your own computer: you sign in, add documents and ask questions in the browser. Accounts, documents and question history are stored locally (on Windows in `%LOCALAPPDATA%\ClaimAwareRAG`).
 
-**Windows**
+**Windows: installer (recommended)**
+
+`ClaimAwareRAG-Setup.exe` installs Claim-Aware RAG like any desktop application: a setup wizard, Start menu and desktop icons, its own window (no browser, no console), and an entry in *Settings → Apps* to uninstall it. No administrator rights are needed. Setup downloads Python (if missing), PyTorch for the computer's GPU or CPU and the models (about 5 GB, 10–30 minutes). An optional task also installs [Ollama](https://ollama.com) and **qwen3:8b** and turns on AI-written answers. Build it with `python scripts/build_release.py` (needs Inno Setup 6: `winget install JRSoftware.InnoSetup`); it is written to `dist/`.
+
+Uninstalling (Settings → Apps → Claim-Aware RAG) removes the application and asks whether to also delete your accounts and documents. Ollama and its models are separate applications and stay installed.
+
+**AI-written answers (optional)**
+
+With Ollama running and a model pulled (`ollama pull qwen3:8b`), turn them on in the application's **AI settings** and choose *AI answer* next to the Ask button. The model writes the answer from passages of your documents; every sentence is then verified against the documents, unsupported sentences are removed (listed under *How this answer was checked*, with the model's original text), contradicted ones corrected, and disagreeing sources shown side by side. On a 4 GB RTX 3050, qwen3:8b runs partly on the CPU: about 5–20 s per answer, 40 s for the first while it loads. Known limit: the verifier confirms each fact but can miss an over-general word such as "both" when only one document says it.
+
+**Windows: zip (manual)**
 
 Everything runs on the user's own laptop: its GPU (or CPU) does the work and documents are saved on its disk.
 
 1. Download `ClaimAwareRAG-windows.zip` (built with `python scripts/build_release.py`; attach it to a GitHub release so the download page's button works) and unzip it.
-2. Double-click **`install.bat`** (one time, needs internet). It installs Python with `winget` if it is missing, creates `.venv`, installs PyTorch (the CUDA build when an NVIDIA GPU is present, otherwise the CPU build) and the application, downloads the models (about 1 GB) so later starts work offline, and creates a desktop shortcut. Options: `--no-shortcut`, `--no-pause`.
+2. Double-click **`install.bat`** (one time, needs internet). It installs Python with `winget` if it is missing, creates `.venv`, installs PyTorch (the CUDA build when an NVIDIA GPU is present, otherwise the CPU build) and the application, downloads the models (about 1 GB) so later starts work offline, and creates a desktop shortcut. Options: `--no-shortcut`, `--no-pause`, `--ai qwen3:8b` (also install Ollama and the model and turn AI answers on).
 3. Open **Claim-Aware RAG** on the desktop (or `start.bat`). The application opens in your browser at `http://localhost:8765`.
 4. Create your account on the first screen, add documents (upload files, add a folder from the laptop, or a webpage) and ask.
 
