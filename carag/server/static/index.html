@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claim-Aware RAG</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <noscript>This application needs JavaScript enabled.</noscript>
+
+  <!-- Sign in / create account -->
+  <main id="auth-view" class="auth" hidden>
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="brand brand-lg">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Claim-Aware RAG</span>
+      </div>
+      <h1 id="auth-title">Sign in</h1>
+      <p class="muted" id="auth-subtitle">Answers from your own documents, with every claim checked against the source.</p>
+
+      <div class="tabs" role="tablist" id="auth-tabs">
+        <button role="tab" id="tab-login" aria-selected="true" data-mode="login">Sign in</button>
+        <button role="tab" id="tab-register" aria-selected="false" data-mode="register">Create account</button>
+      </div>
+
+      <form id="auth-form" novalidate>
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" required minlength="3" maxlength="32"
+               spellcheck="false" autocapitalize="off">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
+        <p class="hint" id="password-hint" hidden>At least 8 characters.</p>
+        <p class="form-error" id="auth-error" role="alert" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block" id="auth-submit">Sign in</button>
+      </form>
+      <p class="fineprint">Your account, documents and questions stay on this computer.</p>
+    </section>
+  </main>
+
+  <!-- Workspace -->
+  <div id="app-view" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Claim-Aware RAG</span>
+      </div>
+      <div class="topbar-right">
+        <span class="status-dot" id="model-status" title="Model status">Loading models…</span>
+        <span class="user" id="user-name"></span>
+        <button class="btn btn-ghost" id="logout">Sign out</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-labelledby="docs-title">
+        <div class="sidebar-head">
+          <h2 id="docs-title">Documents</h2>
+          <span class="count" id="doc-count">0</span>
+        </div>
+        <label class="dropzone" id="dropzone" tabindex="0">
+          <input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.docx" hidden>
+          <span class="dropzone-title">Add documents</span>
+          <span class="dropzone-sub">Drop files here or click to browse<br>PDF, TXT, Markdown or Word · up to 25 MB</span>
+        </label>
+        <ul class="uploads" id="uploads" aria-live="polite"></ul>
+        <ul class="doc-list" id="doc-list"></ul>
+        <p class="empty" id="doc-empty">No documents yet. Add the files you want to ask about.</p>
+      </aside>
+
+      <main class="content">
+        <div class="tabs tabs-main" role="tablist" id="main-tabs">
+          <button role="tab" aria-selected="true" data-panel="ask-panel">Ask</button>
+          <button role="tab" aria-selected="false" data-panel="check-panel">Check a text</button>
+          <button role="tab" aria-selected="false" data-panel="history-panel">History</button>
+        </div>
+
+        <section id="ask-panel" class="panel">
+          <form id="ask-form" class="composer">
+            <label for="question" class="sr-only">Your question</label>
+            <textarea id="question" rows="2" maxlength="1000"
+                      placeholder="Ask a question about your documents…"></textarea>
+            <div class="composer-row">
+              <span class="hint">Answers quote your documents and say so when they do not contain the answer. Ctrl+Enter to ask.</span>
+              <button type="submit" class="btn btn-primary" id="ask-button">Ask</button>
+            </div>
+          </form>
+          <p class="form-error" id="ask-error" role="alert" hidden></p>
+          <div id="answers" aria-live="polite"></div>
+          <div class="welcome" id="welcome">
+            <h2>Ask anything about your documents</h2>
+            <p class="muted">Every answer is built from sentences in your files, cites where each one came from,
+              and is checked claim by claim. When the documents do not say, you are told so instead of getting a guess.</p>
+          </div>
+        </section>
+
+        <section id="check-panel" class="panel" hidden>
+          <form id="check-form" class="composer">
+            <label for="check-text">Paste text to check against your documents, such as an answer from a chatbot.</label>
+            <textarea id="check-text" rows="6" maxlength="5000"></textarea>
+            <div class="composer-row">
+              <span class="hint">Each statement is labelled as supported, contradicted or not established.</span>
+              <button type="submit" class="btn btn-primary" id="check-button">Check</button>
+            </div>
+          </form>
+          <p class="form-error" id="check-error" role="alert" hidden></p>
+          <div id="check-result"></div>
+        </section>
+
+        <section id="history-panel" class="panel" hidden>
+          <div class="history-head">
+            <h2>Earlier questions</h2>
+            <button class="btn btn-ghost" id="clear-history">Clear history</button>
+          </div>
+          <div id="history-list"></div>
+          <p class="empty" id="history-empty">Questions you ask will appear here.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>
