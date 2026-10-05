@@ -17,10 +17,18 @@ The application runs on your own computer: you sign in, add documents and ask qu
 
 **Windows**
 
-1. Install [Python 3.10 or newer](https://www.python.org/downloads/).
-2. Double-click **`install.bat`** (one time). It creates `.venv`, installs PyTorch (the CUDA build when an NVIDIA GPU is present, otherwise the CPU build) and the application.
-3. Double-click **`start.bat`**. The application opens in your browser at `http://localhost:8765`. The first start downloads the models (about 1 GB, once).
-4. Create your account on the first screen, add documents (PDF, TXT, Markdown or Word, up to 25 MB each) and ask.
+Everything runs on the user's own laptop: its GPU (or CPU) does the work and documents are saved on its disk.
+
+1. Download `ClaimAwareRAG-windows.zip` (built with `python scripts/build_release.py`; attach it to a GitHub release so the download page's button works) and unzip it.
+2. Double-click **`install.bat`** (one time, needs internet). It installs Python with `winget` if it is missing, creates `.venv`, installs PyTorch (the CUDA build when an NVIDIA GPU is present, otherwise the CPU build) and the application, downloads the models (about 1 GB) so later starts work offline, and creates a desktop shortcut. Options: `--no-shortcut`, `--no-pause`.
+3. Open **Claim-Aware RAG** on the desktop (or `start.bat`). The application opens in your browser at `http://localhost:8765`.
+4. Create your account on the first screen, add documents (upload files, add a folder from the laptop, or a webpage) and ask.
+
+To remove it, close the application and run **`uninstall.bat`**; it asks whether to keep your accounts and documents (`--keep-data` / `--delete-data` to skip the question).
+
+Disk space: about 6 GB with an NVIDIA GPU (PyTorch with GPU support is 4 GB, the models 0.9 GB), about 2.5 GB without.
+
+`site/index.html` is a download page for the application (static; host it anywhere, for example GitHub Pages).
 
 **Any platform**
 

@@ -165,7 +165,7 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-/site
+# /site is the application's download page (not mkdocs output), so it is tracked.
 
 # mypy
 .mypy_cache/
