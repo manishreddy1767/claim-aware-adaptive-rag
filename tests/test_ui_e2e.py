@@ -399,3 +399,21 @@ def test_ai_settings_and_ai_answers(page, server, monkeypatch):
         expect(card.locator(".draft")).to_contain_text("free car")       # original shown in details
     finally:
         fake.shutdown()
+
+
+def test_sign_in_text_matches_the_chosen_tab(browser, tmp_path_factory):
+    """On a first run (no accounts), the explanation must follow the tab the user picks."""
+    url, stop = _serve(tmp_path_factory.mktemp("firstrun"), "local")
+    page = browser.new_page()
+    try:
+        page.goto(url)
+        expect(page.get_by_role("heading", name="Create your account")).to_be_visible()
+        expect(page.locator("#auth-subtitle")).to_contain_text("Create the first account")
+        page.get_by_role("tab", name="Sign in").click()
+        expect(page.get_by_role("heading", name="Sign in")).to_be_visible()
+        expect(page.locator("#auth-subtitle")).to_contain_text("No account exists yet")
+        page.get_by_role("tab", name="Create account").click()
+        expect(page.locator("#auth-subtitle")).to_contain_text("Create the first account")
+    finally:
+        page.close()
+        stop()

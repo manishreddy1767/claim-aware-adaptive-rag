@@ -87,7 +87,8 @@ let ai = { enabled: false, model_ready: false, model: "" };   // local LLM statu
 let answerStyle = "quotes";            // "local": saved on this computer; "web": kept only while signed in
 let authMode = "login";
 let signupAllowed = true;
-let authModeChosen = false;   // the user picked a tab; a late config reply must not switch it back
+let authModeChosen = false;
+let hasUsers = true;          // whether any account exists yet (first run: none)   // the user picked a tab; a late config reply must not switch it back
 
 function setAuthMode(mode) {
   authMode = mode;
@@ -98,6 +99,12 @@ function setAuthMode(mode) {
   $("auth-submit").textContent = register ? "Create account" : "Sign in";
   $("password").setAttribute("autocomplete", register ? "new-password" : "current-password");
   $("password-hint").hidden = !register;
+  // The explanation follows the chosen tab, so heading and text always agree.
+  $("auth-subtitle").textContent = !hasUsers
+    ? (register ? "Create the first account to get started. It is stored only on this computer."
+                : "No account exists yet. Choose Create account to make the first one.")
+    : (register ? "Create a new account. Each account sees only its own documents and questions."
+                : "Answers from your own documents, with every claim checked against the source.");
   showError("auth-error", "");
 }
 
@@ -114,9 +121,7 @@ async function showAuth(message) {
       ? "Documents you add are kept only while you are signed in and are deleted when you sign out."
       : "Your account, documents and questions stay on this computer.";
     $("tab-register").hidden = !signupAllowed;
-    $("auth-subtitle").textContent = config.has_users
-      ? "Answers from your own documents, with every claim checked against the source."
-      : "Create the first account to get started. It is stored only on this computer.";
+    hasUsers = config.has_users;
     if (!authModeChosen || !signupAllowed) setAuthMode(config.has_users || !signupAllowed ? "login" : "register");
   } catch (error) {
     showError("auth-error", error.message);
