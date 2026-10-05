@@ -431,18 +431,33 @@ def _html_with_js_fallback(html: str, url: str, config: IngestionConfig) -> Sour
     return document
 
 
-def load_url(url: str, config: IngestionConfig | None = None) -> SourceDocument:
+def load_url(url: str, config: IngestionConfig | None = None, url_guard=None) -> SourceDocument:
+    """Fetch and ingest a webpage or PDF URL.
+
+    ``url_guard(url)`` is called for the URL and every redirect target and may raise
+    IngestionError (the web application uses it to refuse private-network addresses).
+    """
     import requests
 
     config = config or IngestionConfig()
     url = validate_url(url)
     try:
-        response = requests.get(
-            url,
-            timeout=config.request_timeout,
-            headers={"User-Agent": "Mozilla/5.0 (compatible; ClaimAwareRAG/1.0; research prototype)"},
-            stream=True,
-        )
+        for _ in range(6):   # follow redirects one by one so each target can be checked
+            if url_guard is not None:
+                url_guard(url)
+            response = requests.get(
+                url,
+                timeout=config.request_timeout,
+                headers={"User-Agent": "Mozilla/5.0 (compatible; ClaimAwareRAG/1.0; research prototype)"},
+                stream=True,
+                allow_redirects=False,
+            )
+            if not response.is_redirect:
+                break
+            url = validate_url(requests.compat.urljoin(url, response.headers["Location"]))
+            response.close()
+        else:
+            raise IngestionError(f"Too many redirects for '{url}'.")
         response.raise_for_status()
         content_type = response.headers.get("Content-Type", "").lower()
         raw = response.raw.read(config.max_download_bytes + 1, decode_content=True)

@@ -21,12 +21,14 @@ def models():
         pytest.skip(f"Models unavailable: {exc}")
 
 
-def make_client(data_dir: Path, **settings):
+def make_client(data_dir: Path, client_host: str = "testclient", **settings):
+    """A test client; ``client_host='127.0.0.1'`` makes requests look like they come from this computer."""
     from carag.server.app import Settings, create_app
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")   # starlette's httpx deprecation notice
         from starlette.testclient import TestClient
-    return TestClient(create_app(Settings(data_dir=data_dir, warm_up=False, **settings)))
+    return TestClient(create_app(Settings(data_dir=data_dir, warm_up=False, **settings)),
+                      client=(client_host, 50000))
 
 
 def upload(client, name: str, data: bytes | None = None):
@@ -48,7 +50,7 @@ def alice(client):
 # -- accounts ----------------------------------------------------------------------------
 
 def test_first_run_offers_account_creation(client):
-    assert client.get("/api/auth/config").json() == {"allow_signup": True, "has_users": False}
+    assert client.get("/api/auth/config").json() == {"allow_signup": True, "has_users": False, "mode": "local"}
     assert client.get("/api/health").json()["status"] == "ok"
 
 
@@ -64,7 +66,7 @@ def test_registration_validates_input(client, username, password, message):
 
 
 def test_register_signs_in_and_usernames_are_unique(alice):
-    assert alice.get("/api/auth/me").json() == {"username": "alice"}
+    assert alice.get("/api/auth/me").json()["username"] == "alice"
     response = alice.post("/api/auth/register", json={"username": "ALICE", "password": PASSWORD})
     assert response.status_code == 400 and "already taken" in response.json()["error"]
 
@@ -78,7 +80,7 @@ def test_login_logout(alice):
     unknown = alice.post("/api/auth/login", json={"username": "nobody", "password": PASSWORD})
     assert unknown.json()["error"] == "Incorrect username or password."   # same message: no user enumeration
     assert alice.post("/api/auth/login", json={"username": "Alice", "password": PASSWORD}).status_code == 200
-    assert alice.get("/api/auth/me").json() == {"username": "alice"}
+    assert alice.get("/api/auth/me").json()["username"] == "alice"
 
 
 def test_repeated_failures_lock_the_account_temporarily(alice):
@@ -175,7 +177,7 @@ def test_text_without_sentences_is_rejected(alice, models):
 
 def test_ask_requires_documents_and_a_question(alice, models):
     no_docs = alice.post("/api/ask", json={"question": "How many leave days?"})
-    assert no_docs.status_code == 400 and "Upload at least one document" in no_docs.json()["error"]
+    assert no_docs.status_code == 400 and "Add at least one document" in no_docs.json()["error"]
     upload(alice, "01_leave_policy.txt")
     assert alice.post("/api/ask", json={"question": "   "}).status_code == 400
     assert alice.post("/api/ask", json={"question": "x" * 1001}).status_code == 400

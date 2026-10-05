@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS documents (
     sentences INTEGER NOT NULL,
     warnings TEXT NOT NULL DEFAULT '[]',
     created_at REAL NOT NULL,
+    origin TEXT NOT NULL DEFAULT 'upload',
+    location TEXT,
     UNIQUE (user_id, name)
 );
 CREATE TABLE IF NOT EXISTS history (
@@ -63,10 +65,13 @@ class Document:
     sentences: int
     warnings: list[str]
     created_at: float
+    origin: str = "upload"           # "upload" | "path" (read in place on this computer) | "url"
+    location: str | None = None      # the file path or URL for "path" / "url" documents
 
     def to_dict(self) -> dict:
         return {"id": self.id, "name": self.name, "size": self.size, "sentences": self.sentences,
-                "warnings": self.warnings, "created_at": self.created_at}
+                "warnings": self.warnings, "created_at": self.created_at, "origin": self.origin,
+                "location": self.location}
 
 
 class Store:
@@ -75,6 +80,11 @@ class Store:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._connect() as db:
             db.executescript(_SCHEMA)
+            # Databases created before documents had an origin.
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(documents)")}
+            if "origin" not in columns:
+                db.execute("ALTER TABLE documents ADD COLUMN origin TEXT NOT NULL DEFAULT 'upload'")
+                db.execute("ALTER TABLE documents ADD COLUMN location TEXT")
 
     @contextmanager
     def _connect(self):
@@ -130,10 +140,10 @@ class Store:
     def add_document(self, doc: Document) -> None:
         try:
             with self._connect() as db:
-                db.execute("INSERT INTO documents (id, user_id, name, size, sentences, warnings, created_at) "
-                           "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                db.execute("INSERT INTO documents (id, user_id, name, size, sentences, warnings, created_at, "
+                           "origin, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                            (doc.id, doc.user_id, doc.name, doc.size, doc.sentences,
-                            json.dumps(doc.warnings), doc.created_at))
+                            json.dumps(doc.warnings), doc.created_at, doc.origin, doc.location))
         except sqlite3.IntegrityError as exc:
             raise ValueError(f"A document named '{doc.name}' already exists. Delete it first to replace it.") from exc
 
@@ -142,7 +152,7 @@ class Store:
             rows = db.execute("SELECT * FROM documents WHERE user_id = ? ORDER BY created_at, name",
                               (user_id,)).fetchall()
         return [Document(r["id"], r["user_id"], r["name"], r["size"], r["sentences"], json.loads(r["warnings"]),
-                         r["created_at"]) for r in rows]
+                         r["created_at"], r["origin"], r["location"]) for r in rows]
 
     def document(self, user_id: int, doc_id: str) -> Document | None:
         return next((d for d in self.documents(user_id) if d.id == doc_id), None)

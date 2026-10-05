@@ -50,6 +50,9 @@ def _open_when_ready(url: str) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="carag-app", description="Claim-Aware RAG local web application.")
+    parser.add_argument("--mode", choices=["local", "web"], default="local",
+                        help="local (default): documents are saved on this computer and files can be added "
+                             "by path; web: a hosted website, documents stay in memory and are deleted at sign-out")
     parser.add_argument("--host", default="127.0.0.1",
                         help="interface to listen on (default 127.0.0.1: this computer only)")
     parser.add_argument("--port", type=int, default=DEFAULT_PORT,
@@ -71,9 +74,13 @@ def main(argv: list[str] | None = None) -> int:
     port = _pick_port(args.host, args.port)
     shown_host = "localhost" if args.host in ("127.0.0.1", "0.0.0.0") else args.host
     url = f"http://{shown_host}:{port}/"
-    app = create_app(Settings(data_dir=args.data_dir, allow_signup=not args.no_signup))
-    print(f"\n  Claim-Aware RAG is running at {url}")
-    print(f"  Data folder: {args.data_dir}")
+    app = create_app(Settings(data_dir=args.data_dir, mode=args.mode, allow_signup=not args.no_signup))
+    print(f"\n  Claim-Aware RAG is running at {url}  ({args.mode} mode)")
+    if args.mode == "web":
+        print(f"  Accounts are stored in {args.data_dir}; documents and questions are kept in memory only")
+        print("  and deleted when a user signs out (or after 2 hours without activity).")
+    else:
+        print(f"  Data folder: {args.data_dir}")
     if args.host not in ("127.0.0.1", "localhost"):
         print("  Warning: listening beyond this computer; anyone who can reach it can try to sign in.")
     print("  Models load in the background; the first start may download them (about 1 GB).")
