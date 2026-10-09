@@ -57,3 +57,21 @@ def test_evidence_keeps_source_metadata(rag):
     result = rag.retrieve("How much energy did Trial Two consume per day?")
     unit = result.evidence[0].unit
     assert unit.source == "claim_aware_rag_test_document.pdf" and unit.page == 2
+
+
+def test_missing_term_search_can_be_switched_off(rag):
+    import copy
+    original = rag.config
+    question = "Why were humidity readings during rain excluded from the wireless analysis?"
+    try:
+        with_search = rag.retrieve(question)
+        config = copy.deepcopy(original)
+        config.retrieval.expand_missing_terms = False
+        rag.apply_config(config)
+        without = rag.retrieve(question)
+    finally:
+        rag.apply_config(original)
+    actions = lambda r: " ".join(step["action"] for step in r.trace)
+    if with_search.expanded:
+        assert "searched for missing terms" in actions(with_search)
+    assert "searched for missing terms" not in actions(without)

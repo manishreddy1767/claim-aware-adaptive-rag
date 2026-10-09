@@ -60,6 +60,8 @@ class RetrievalConfig:
     # Add sentences adjacent to top hits during expansion (disable when units
     # are independent documents rather than consecutive sentences).
     expand_neighbors: bool = True
+    # Expansion step (a): search again for query key terms missing from the evidence.
+    expand_missing_terms: bool = True
     # Near-duplicate suppression (cosine between evidence sentences).
     redundancy_threshold: float = 0.92
     # Fixed top-k used by the baseline retriever.

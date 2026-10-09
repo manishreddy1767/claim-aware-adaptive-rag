@@ -210,7 +210,7 @@ class AdaptiveRetriever:
             # (a) Target key terms that are still missing from the evidence set.
             missing = [t for t in analysis.key_terms
                        if not any(t in self.index.unit_terms[i] for i in chosen)]
-            if missing:
+            if missing and cfg.expand_missing_terms:
                 lexical = self.index.lexical_scores(missing)
                 boosted = dict(scores)
                 boosted["total"] = scores["total"] + cfg.lexical_weight * lexical
