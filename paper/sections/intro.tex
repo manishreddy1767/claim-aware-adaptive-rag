@@ -1,0 +1,22 @@
+\section{Introduction}
+\label{sec:intro}
+
+Retrieval-augmented generation (RAG) grounds answers in retrieved documents \citep{lewis2020rag}, yet LLM answers still contain statements the documents do not support \citep{niu2024ragtruth}.
+A natural safeguard is \emph{claim-level verification}: split an answer into claims and check each one against the evidence with an entailment model \citep{min2023factscore,gao2023rarr,tang2024minicheck}.
+Two practical problems limit this safeguard.
+First, checking a claim well requires testing several candidate premises (single sentences, adjacent sentences, combinations), so exhaustive verification costs 10--15 verifier calls per claim.
+Second, off-the-shelf NLI models transfer poorly to LLM outputs: in our experiments a zero-shot DeBERTa-v3 NLI verifier reaches only 0.24 sentence-level F1 on RAGTruth, below a cosine-similarity baseline.
+
+We study claim-level verification for RAG under a verification \emph{budget}.
+The claims of an answer share a fixed number of NLI calls; each claim's candidate premises are ordered by relevance, and a claim stops consuming budget once it is settled.
+We pair this with an adaptive retriever, an answerability gate, a verifier fine-tuned on RAGTruth with retrieval-selected premises, and a revision step that removes or corrects unsupported claims.
+The whole system runs on a 4\,GB laptop GPU.
+
+Our contributions are:
+\begin{itemize}
+\item \textbf{Budget-aware verification.} A shared NLI-call budget with relevance-ordered premises and early stopping matches exhaustive verification with 73\% fewer verifier calls on RAGTruth (3.3 vs.\ 12.2 per claim), and with 48--81\% fewer calls on SciFact and a synthetic claim set, without a statistically significant loss (\S\ref{sec:results-budget}).
+\item \textbf{A negative result on scheduling.} Prioritising claims by evidence gap and evidence gain, the design that motivated this project, is \emph{not} measurably better than round-robin scheduling with the same early stopping: the savings come from sharing the budget and stopping early.
+\item \textbf{A fine-tuned claim verifier.} Fine-tuning the NLI cross-encoder on RAGTruth train with NLI-preserving labels (faithful/conflict/baseless $\rightarrow$ entailment/contradiction/neutral) and top-5 retrieved premises raises sentence-level F1 on the RAGTruth test split from 0.24 to 0.44, above MiniCheck (0.36) and HHEM (0.31) applied off the shelf, while remaining a drop-in replacement inside the budgeted verifier (\S\ref{sec:results-ragtruth}).
+\item \textbf{An evaluation of where each component helps}, with confidence intervals across SciFact, SQuAD~2.0 and RAGTruth, and ablations. Multi-sentence premises are the most important verifier component. For extractive answers, claim verification adds little and abstention is driven by the answerability gate. Relevance gating, useful for the zero-shot verifier, slightly hurts the fine-tuned one (\S\ref{sec:results}).
+\end{itemize}
+Code, evaluation scripts, per-item outputs and the table generator are released with the paper.

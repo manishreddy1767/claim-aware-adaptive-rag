@@ -1,0 +1,168 @@
+{
+  "dataset": "SciFact dev (real, expert-annotated)",
+  "source": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+  "nli_model": "cross-encoder/nli-deberta-v3-base",
+  "verification": {
+    "n_claims": 300,
+    "gold_distribution": {
+      "SUPPORTED": 124,
+      "CONTRADICTED": 64,
+      "NOT_ESTABLISHED": 112
+    },
+    "three_way": {
+      "similarity_threshold": {
+        "accuracy": 0.5367,
+        "macro_f1": 0.3836,
+        "n": 300,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.4762,
+            "recall": 0.9677,
+            "f1": 0.6383,
+            "support": 124
+          },
+          "CONTRADICTED": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 64
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.8542,
+            "recall": 0.3661,
+            "f1": 0.5125,
+            "support": 112
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 120,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 4
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 61,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 3
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 71,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 41
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "nli_top1": {
+        "accuracy": 0.56,
+        "macro_f1": 0.5392,
+        "n": 300,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.9545,
+            "recall": 0.3387,
+            "f1": 0.5,
+            "support": 124
+          },
+          "CONTRADICTED": {
+            "precision": 0.5455,
+            "recall": 0.4688,
+            "f1": 0.5042,
+            "support": 64
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.4776,
+            "recall": 0.8571,
+            "f1": 0.6134,
+            "support": 112
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 42,
+            "CONTRADICTED": 9,
+            "NOT_ESTABLISHED": 73
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 2,
+            "CONTRADICTED": 30,
+            "NOT_ESTABLISHED": 32
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 16,
+            "NOT_ESTABLISHED": 96
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "claim_aware_verifier": {
+        "accuracy": 0.66,
+        "macro_f1": 0.6487,
+        "n": 300,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.9661,
+            "recall": 0.4597,
+            "f1": 0.623,
+            "support": 124
+          },
+          "CONTRADICTED": {
+            "precision": 0.6029,
+            "recall": 0.6406,
+            "f1": 0.6212,
+            "support": 64
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.578,
+            "recall": 0.8929,
+            "f1": 0.7018,
+            "support": 112
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 57,
+            "CONTRADICTED": 15,
+            "NOT_ESTABLISHED": 52
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 2,
+            "CONTRADICTED": 41,
+            "NOT_ESTABLISHED": 21
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 12,
+            "NOT_ESTABLISHED": 100
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      }
+    },
+    "claim_aware_raw_label_distribution": {
+      "CONTRADICTED": 68,
+      "INSUFFICIENT_EVIDENCE": 119,
+      "PARTIALLY_SUPPORTED": 2,
+      "SUPPORTED": 59,
+      "UNCERTAIN": 52
+    },
+    "latency_s": {
+      "similarity_threshold": 0.008,
+      "nli_top1": 0.055,
+      "claim_aware_verifier": 0.1291
+    }
+  }
+}

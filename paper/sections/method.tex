@@ -1,0 +1,57 @@
+\section{Method}
+\label{sec:method}
+
+Figure~\ref{fig:pipeline} summarises the pipeline. All components run locally on a 4\,GB laptop GPU.
+
+\subsection{Evidence units and adaptive retrieval}
+Sources (PDF, DOCX, text, web pages) are split into sentences; each sentence is an \emph{evidence unit} with a stable identifier, page, section and source, so every statement can be cited.
+Each unit $u$ is scored for a query $q$ by
+\begin{equation}
+  s(u,q) = \lambda \cos(\mathbf{e}_u,\mathbf{e}_q) + (1-\lambda)\,\widetilde{\mathrm{BM25}}(u,q) + \beta\,\mathrm{cov}(u,q)\,\mathbb{1}[\tau(q)\in\phi(u)],
+\end{equation}
+with MiniLM sentence embeddings \citep{reimers2019sbert,wang2020minilm}, BM25 \citep{robertson2009bm25} normalised by the score of an ideal match, and an intent bonus that is non-zero only if the unit has the evidence type the question asks for (causal, comparative, numeric, limitation; $\tau(q)\in\phi(u)$), scaled by the fraction $\mathrm{cov}(u,q)$ of the question's key terms the unit contains.
+The retriever keeps up to $k_0$ units scoring at least $\rho\,s_{\max}$ (trimming), then tests \emph{sufficiency}: best score, key-term coverage, presence of every named entity of the question, and the presence of the requested evidence type.
+If insufficient, it expands in up to two rounds (missing-term search, neighbouring sentences, relaxed cutoff).
+We use $\lambda{=}0.65$, $\beta{=}0.08$, $k_0{=}4$, $\rho{=}0.7$ throughout.
+
+\subsection{Answerability gate}
+Retrieved evidence can be topically relevant without answering the question.
+An extractive reader trained on SQuAD~2.0 reads the evidence and returns its best span together with the margin between the best span score and the null (``no answer'') score.
+The system abstains when the margin is negative (the reader's own decision; not tuned) and otherwise leads the answer with the sentence containing the span.
+Answers are extractive: every answer sentence is a cited source sentence.
+
+\subsection{Claim-level verification}
+Answers (or any text, e.g.\ an LLM draft) are split into claims conservatively: sentences, split further only at clause boundaries with self-contained halves; attribution wrappers (``According to the passages, \dots'') and meta statements are removed.
+For a claim $c$, the verifier gathers candidate premises: the $m$ most relevant single sentences, adjacent-sentence windows, and one \emph{multi-sentence} premise built from the top-$k$ sentences in document order (for claims that aggregate facts).
+A cross-encoder NLI model \citep{he2023debertav3} returns $P(\text{entail}), P(\text{contra}), P(\text{neutral})$ for each premise, and the claim is labelled
+\textsc{Supported} if a relevant premise entails it (and all its numbers occur in the premise),
+\textsc{Contradicted} if a closely relevant \emph{single} sentence (or a window more relevant than every single sentence) contradicts it,
+\textsc{Uncertain} if support and contradiction are of comparable strength (relevance\,$\times$\,probability within a margin) or the NLI probabilities are inconclusive,
+\textsc{Partially supported} if only a component of a causal claim (``A because B'') is supported,
+and \textsc{Insufficient evidence} otherwise.
+Missing evidence is never labelled contradicted.
+Multi-sentence premises are support-only because NLI models produce spurious contradictions on long multi-entity premises.
+
+\subsection{Budget-aware verification}
+Checking every candidate premise costs $\approx$10--15 NLI calls per claim.
+The claims of an answer instead share a budget $B = \max(B_{\min}, b\cdot n)$ of NLI calls.
+Premises of each claim are ordered by relevance.
+Every claim first receives one step of two checks; afterwards the scheduler picks the unresolved claim maximising
+\begin{equation}
+  \frac{\pi_c\,(1-d_c)}{(1+\alpha\,a_c)(1+\gamma\,\ell_c)},\qquad
+  \pi_c = 0.7\,(1-r_c) + 0.3\,h_c,
+\end{equation}
+where $r_c$ is the relevance of the claim's best candidate (so $1-r_c$ is its evidence gap), $h_c$ a hedging-based uncertainty, $d_c$ the current decisiveness (best relevant entailment or contradiction probability), $a_c$ the number of steps taken and $\ell_c$ the streak of steps whose evidence gain (increase of $d_c$) was below $0.05$.
+A claim stops consuming budget as soon as it is \textsc{Supported} or \textsc{Contradicted} (early stopping), and part of the budget is reserved for the components of causal claims.
+Claims the budget never reached are reported as \textsc{Uncertain}, never as supported.
+We compare this priority scheduler with round-robin scheduling (same early stopping) and a fixed per-claim split (no early stopping).
+
+\subsection{Revision}
+Given claim verdicts, the answer is rewritten: supported claims are kept with a citation, contradicted claims are replaced by a correction quoting the source, only the established part of partially supported claims is kept, uncertain claims are marked, and unsupported claims are removed.
+
+\subsection{Fine-tuning the verifier on RAGTruth}
+To adapt the verifier to LLM outputs we fine-tune the NLI cross-encoder on RAGTruth \emph{train}.
+Every claim extracted from a training response becomes an example whose premise is the top-5 source sentences retrieved by our retriever.
+Labels keep NLI semantics so that the fine-tuned model is a drop-in replacement: faithful $\rightarrow$ entailment, \emph{conflict} $\rightarrow$ contradiction, \emph{baseless} $\rightarrow$ neutral.
+We hold out 10\% of the training \emph{sources} for validation, subsample faithful claims (35\%) to reduce imbalance, freeze the word embeddings, and train for two epochs with fp16 and gradient checkpointing (peak 2.1\,GB of GPU memory).
+The RAGTruth test split is used only for the final evaluation.

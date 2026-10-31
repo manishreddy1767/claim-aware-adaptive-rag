@@ -1,0 +1,24 @@
+\section{Additional Results}
+\label{app:results}
+
+\input{tables/ragtruth_tasks}
+\input{tables/retrieval}
+\input{tables/priority_vs_rr}
+
+\paragraph{Retrieval.}
+Table~\ref{tab:retrieval} compares retrievers on SciFact abstract retrieval. Hybrid scoring outperforms BM25 and MiniLM alone; adaptive selection returns about four abstracts instead of ten, trading recall at 10 for three times higher set precision.
+
+\section{Local Generation with Verification and Revision}
+\label{app:generation}
+We let Qwen2.5-0.5B-Instruct \citep{qwen2024qwen25} draft answers from the retrieved evidence and pass the drafts through verification and revision, scoring against gold labels (72 answerable and 72 unanswerable SQuAD~2.0 test questions).
+Without an answerability gate the model answered every unanswerable question; revision reduced the false-answer rate from 1.00 to 0.68 but lowered answer accuracy from 0.63 to 0.49, because the verifier also rejects correct paraphrases.
+With the gate, revision reduced false answers from 0.25 to 0.17 (answer accuracy 0.57 to 0.44).
+The extractive system was more accurate than any generative variant (overall accuracy 0.79 vs.\ at most 0.66).
+These results come from \texttt{evaluation/run\_generation.py} with the zero-shot verifier.
+
+\section{Implementation Details}
+\label{app:implementation}
+Retriever: $\lambda{=}0.65$, intent bonus $0.08$, initial $k{=}4$, maximum $k{=}10$, relative cutoff $0.7$, sufficiency score $0.45$ ($0.35$ with full key-term coverage), key-term coverage $0.6$, near-duplicate threshold $0.92$, two expansion rounds.
+Verifier: six single-sentence candidates, windows around the top three, one multi-sentence premise (top-3 for the zero-shot model, top-5 for the fine-tuned model, matching its training premises), support and contradiction thresholds $0.7$, relevance threshold $0.40$ ($0.55$ for contradictions), conflict margin $0.10$.
+Budget: $4$ calls per claim, minimum $6$ per answer, step size $2$, gap weight $0.7$, attempt penalty $0.8$, low-gain penalty $0.75$ (gain threshold $0.05$).
+Fine-tuning: \texttt{cross-encoder/nli-deberta-v3-base}, 40{,}821 training examples (35\% of faithful claims kept), learning rate $2{\cdot}10^{-5}$, effective batch 16, two epochs, max length 320, frozen word embeddings, fp16; 1\,h on an RTX~3050. Held-out validation hallucination F1: 0.265 before, 0.605 after fine-tuning.

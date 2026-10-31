@@ -1,0 +1,3023 @@
+{
+  "dataset": "SciFact dev (real, expert-annotated)",
+  "source": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+  "nli_model": "cross-encoder/nli-deberta-v3-base",
+  "verification": {
+    "n_claims": 300,
+    "gold_distribution": {
+      "SUPPORTED": 124,
+      "CONTRADICTED": 64,
+      "NOT_ESTABLISHED": 112
+    },
+    "three_way": {
+      "similarity_threshold": {
+        "accuracy": 0.5367,
+        "macro_f1": 0.3836,
+        "n": 300,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.4762,
+            "recall": 0.9677,
+            "f1": 0.6383,
+            "support": 124
+          },
+          "CONTRADICTED": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 64
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.8542,
+            "recall": 0.3661,
+            "f1": 0.5125,
+            "support": 112
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 120,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 4
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 61,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 3
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 71,
+            "CONTRADICTED": 0,
+            "NOT_ESTABLISHED": 41
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "nli_top1": {
+        "accuracy": 0.56,
+        "macro_f1": 0.5392,
+        "n": 300,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.9545,
+            "recall": 0.3387,
+            "f1": 0.5,
+            "support": 124
+          },
+          "CONTRADICTED": {
+            "precision": 0.5455,
+            "recall": 0.4688,
+            "f1": 0.5042,
+            "support": 64
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.4776,
+            "recall": 0.8571,
+            "f1": 0.6134,
+            "support": 112
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 42,
+            "CONTRADICTED": 9,
+            "NOT_ESTABLISHED": 73
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 2,
+            "CONTRADICTED": 30,
+            "NOT_ESTABLISHED": 32
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 16,
+            "NOT_ESTABLISHED": 96
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "claim_aware_verifier": {
+        "accuracy": 0.67,
+        "macro_f1": 0.659,
+        "n": 300,
+        "per_class": {
+          "SUPPORTED": {
+            "precision": 0.9524,
+            "recall": 0.4839,
+            "f1": 0.6417,
+            "support": 124
+          },
+          "CONTRADICTED": {
+            "precision": 0.6119,
+            "recall": 0.6406,
+            "f1": 0.626,
+            "support": 64
+          },
+          "NOT_ESTABLISHED": {
+            "precision": 0.5882,
+            "recall": 0.8929,
+            "f1": 0.7092,
+            "support": 112
+          }
+        },
+        "confusion": {
+          "SUPPORTED": {
+            "SUPPORTED": 60,
+            "CONTRADICTED": 14,
+            "NOT_ESTABLISHED": 50
+          },
+          "CONTRADICTED": {
+            "SUPPORTED": 3,
+            "CONTRADICTED": 41,
+            "NOT_ESTABLISHED": 20
+          },
+          "NOT_ESTABLISHED": {
+            "SUPPORTED": 0,
+            "CONTRADICTED": 12,
+            "NOT_ESTABLISHED": 100
+          }
+        },
+        "labels": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "NOT_ESTABLISHED"
+        ]
+      }
+    },
+    "claim_aware_raw_label_distribution": {
+      "CONTRADICTED": 67,
+      "INSUFFICIENT_EVIDENCE": 115,
+      "PARTIALLY_SUPPORTED": 2,
+      "SUPPORTED": 63,
+      "UNCERTAIN": 53
+    },
+    "binary_supported": {
+      "similarity_threshold": {
+        "accuracy": 0.5467,
+        "macro_f1": 0.5156,
+        "n": 300,
+        "per_class": {
+          "S": {
+            "precision": 0.4762,
+            "recall": 0.9677,
+            "f1": 0.6383,
+            "support": 124
+          },
+          "N": {
+            "precision": 0.9167,
+            "recall": 0.25,
+            "f1": 0.3929,
+            "support": 176
+          }
+        },
+        "confusion": {
+          "S": {
+            "S": 120,
+            "N": 4
+          },
+          "N": {
+            "S": 132,
+            "N": 44
+          }
+        },
+        "labels": [
+          "S",
+          "N"
+        ]
+      },
+      "nli_top1": {
+        "accuracy": 0.72,
+        "macro_f1": 0.6528,
+        "n": 300,
+        "per_class": {
+          "S": {
+            "precision": 0.9545,
+            "recall": 0.3387,
+            "f1": 0.5,
+            "support": 124
+          },
+          "N": {
+            "precision": 0.6797,
+            "recall": 0.9886,
+            "f1": 0.8056,
+            "support": 176
+          }
+        },
+        "confusion": {
+          "S": {
+            "S": 42,
+            "N": 82
+          },
+          "N": {
+            "S": 2,
+            "N": 174
+          }
+        },
+        "labels": [
+          "S",
+          "N"
+        ]
+      },
+      "claim_aware_verifier": {
+        "accuracy": 0.7767,
+        "macro_f1": 0.7398,
+        "n": 300,
+        "per_class": {
+          "S": {
+            "precision": 0.9524,
+            "recall": 0.4839,
+            "f1": 0.6417,
+            "support": 124
+          },
+          "N": {
+            "precision": 0.73,
+            "recall": 0.983,
+            "f1": 0.8378,
+            "support": 176
+          }
+        },
+        "confusion": {
+          "S": {
+            "S": 60,
+            "N": 64
+          },
+          "N": {
+            "S": 3,
+            "N": 173
+          }
+        },
+        "labels": [
+          "S",
+          "N"
+        ]
+      }
+    },
+    "latency_s": {
+      "similarity_threshold": 0.011,
+      "nli_top1": 0.07,
+      "claim_aware_verifier": 0.1975
+    },
+    "items": [
+      {
+        "id": 1,
+        "claim": "0-dimensional biomaterials show inductive properties.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 3,
+        "claim": "1,000 genomes project enables mapping of genetic sequence variation consisting of rare variants with larger penetrance effects than common variants.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 5,
+        "claim": "1/2000 in UK have abnormal PrP positivity.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 13,
+        "claim": "5% of perinatal mortality is due to low birth weight.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 36,
+        "claim": "A deficiency of vitamin B12 increases blood levels of homocysteine.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 42,
+        "claim": "A high microerythrocyte count raises vulnerability to severe anemia in homozygous alpha (+)- thalassemia trait subjects.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 48,
+        "claim": "A total of 1,000 people in the UK are asymptomatic carriers of vCJD infection.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 49,
+        "claim": "ADAR1 binds to Dicer to cleave pre-miRNA.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 50,
+        "claim": "AIRE is expressed in some skin tumors.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 51,
+        "claim": "ALDH1 expression is associated with better breast cancer outcomes.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 53,
+        "claim": "ALDH1 expression is associated with poorer prognosis in breast cancer.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 54,
+        "claim": "AMP-activated protein kinase (AMPK) activation increases inflammation-related fibrosis in the lungs.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 56,
+        "claim": "APOE4 expression in iPSC-derived neurons increases AlphaBeta production and tau phosphorylation causing GABA neuron degeneration.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 57,
+        "claim": "APOE4 expression in iPSC-derived neurons increases AlphaBeta production and tau phosphorylation, delaying GABA neuron degeneration.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 70,
+        "claim": "Activation of PPM1D suppresses p53 function.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 72,
+        "claim": "Activator-inhibitor pairs are provided dorsally by Admpchordin.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 75,
+        "claim": "Active H. pylori urease has a polymeric structure that compromises two subunits, UreA and UreB.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 94,
+        "claim": "Albendazole is used to treat lymphatic filariasis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 99,
+        "claim": "Alizarin forms hydrogen bonds with residues involved in PGAM1 substrate binding.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 100,
+        "claim": "All hematopoietic stem cells segregate their chromosomes randomly.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 113,
+        "claim": "Angiotensin converting enzyme inhibitors are associated with increased risk for functional renal insufficiency.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 115,
+        "claim": "Anthrax spores can be disposed of easily after they are dispersed.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 118,
+        "claim": "Antibiotic induced alterations in the gut microbiome reduce resistance against Clostridium difficile",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 124,
+        "claim": "Antiretroviral therapy reduces rates of tuberculosis across a broad range of CD4 strata.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 127,
+        "claim": "Arginine 90 in p150n is important for interaction with EB1.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 128,
+        "claim": "Arterioles have a larger lumen diameter than venules.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 129,
+        "claim": "Articles published in open access format are less likely to be cited than traditional journals.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 130,
+        "claim": "Articles published in open access format are more likely to be cited than traditional journals.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 132,
+        "claim": "Aspirin inhibits the production of PGE2.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 133,
+        "claim": "Assembly of invadopodia is triggered by focal generation of phosphatidylinositol-3,4-biphosphate and the activation of the nonreceptor tyrosine kinase Src.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 137,
+        "claim": "Asymptomatic visual impairment screening in elderly populations does not lead to improved vision.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 141,
+        "claim": "Auditory entrainment is strengthened when people see congruent visual and auditory information.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 142,
+        "claim": "Autologous transplantation of mesenchymal stem cells causes a higher rate of opportunistic infections than induction therapy with anti-interleukin-2 receptor antibodies.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 143,
+        "claim": "Autologous transplantation of mesenchymal stem cells causes fewer opportunistic infections than induction therapy with anti-interleukin-2 receptor antibodies.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 146,
+        "claim": "Autologous transplantation of mesenchymal stem cells has lower rates of rejection than induction therapy with anti-interleukin-2 receptor antibodies.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 148,
+        "claim": "Autophagy declines in aged organisms.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 163,
+        "claim": "Bariatric surgery has a positive impact on mental health.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 171,
+        "claim": "Basophils counteract disease development in patients with systemic lupus erythematosus (SLE).",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 179,
+        "claim": "Birth-weight is positively associated with breast cancer.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 180,
+        "claim": "Blocking the interaction between TDP-43 and respiratory complex I proteins ND3 and ND6 leads to increased TDP-43-induced neuronal loss.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 183,
+        "claim": "Bone marrow cells contribute to adult macrophage compartments.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 185,
+        "claim": "Breast cancer development is determined exclusively by genetic factors.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 198,
+        "claim": "CCL19 is absent within dLNs.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 208,
+        "claim": "CHEK2 is not associated with breast cancer.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 212,
+        "claim": "CR is associated with higher methylation age.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 213,
+        "claim": "CRP is not predictive of postoperative mortality following Coronary Artery Bypass Graft (CABG) surgery.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 216,
+        "claim": "CX3CR1 on the Th2 cells impairs T cell survival",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 217,
+        "claim": "CX3CR1 on the Th2 cells promotes T cell survival",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 218,
+        "claim": "CX3CR1 on the Th2 cells promotes airway inflammation.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 219,
+        "claim": "CX3CR1 on the Th2 cells suppresses airway inflammation.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 230,
+        "claim": "Carriers of the alcohol aldehyde dehydrogenase deficiency mutation drink less that non-carries.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 232,
+        "claim": "Cataract and trachoma are the primary cause of blindness in Southern Sudan.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 233,
+        "claim": "Cell autonomous sex determination in somatic cells does not occur in Galliformes.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 236,
+        "claim": "Cell autonomous sex determination in somatic cells occurs in Passeriformes.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 237,
+        "claim": "Cells lacking clpC have a defect in sporulation efficiency in Bacillus subtilis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 238,
+        "claim": "Cells undergoing methionine restriction may activate miRNAs.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 239,
+        "claim": "Cellular aging closely links to an older appearance.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 248,
+        "claim": "Chenodeosycholic acid treatment increases whole-body energy expenditure.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 249,
+        "claim": "Chenodeosycholic acid treatment reduces whole-body energy expenditure.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 261,
+        "claim": "Chronic aerobic exercise alters endothelial function, improving vasodilating mechanisms mediated by NO.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 268,
+        "claim": "Cold exposure increases BAT recruitment.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 269,
+        "claim": "Cold exposure reduces BAT recruitment.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 274,
+        "claim": "Combination nicotine replacement therapies with varenicline or bupropion lead to significantly higher long-term abstinence rates at 52 weeks than varenicline monotherapy.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 275,
+        "claim": "Combining phosphatidylinositide 3-kinase and MEK 1/2 inhibitors is effective at treating KRAS mutant tumors.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 279,
+        "claim": "Commelina yellow mottle virus' (ComYMV) genome consists of 7489 baise pairs.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 294,
+        "claim": "Crossover hot spots are not found within gene promoters in Saccharomyces cerevisiae.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 295,
+        "claim": "Crosstalk between dendritic cells (DCs) and innate lymphoid cells (ILCs) is important in the regulation of intestinal homeostasis.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 298,
+        "claim": "Cytochrome c is released from the mitochondrial intermembrane space to cytosol during apoptosis.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 300,
+        "claim": "Cytosolic proteins bind to iron-responsive elements on mRNAs coding for DMT1. Cytosolic proteins bind to iron-responsive elements on mRNAs coding for proteins involved in iron uptake.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 303,
+        "claim": "DMRT1 is a sex-determining gene that is epigenetically regulated by the MHM region.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 312,
+        "claim": "De novo assembly of sequence data has more specific contigs than unassembled sequence data.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 314,
+        "claim": "Deamination of cytidine to uridine on the minus strand of viral DNA results in catastrophic G-to-A mutations in the viral genome.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 324,
+        "claim": "Deleting Raptor reduces G-CSF levels.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 327,
+        "claim": "Deletion of \u03b1v\u03b28 does not result in a spontaneous inflammatory phenotype.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 338,
+        "claim": "Dexamethasone decreases risk of postoperative bleeding.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 343,
+        "claim": "Diabetic patients with acute coronary syndrome experience increased short-term and long-term risk for bleeding events.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 350,
+        "claim": "Discrimination between the initiator and elongation tRNAs depends on the translation initiation factor IF3.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 354,
+        "claim": "Downregulation and mislocalization of Scribble prevents cell transformation and mammary tumorigenesis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 362,
+        "claim": "During the primary early antibody response activated B cells migrate toward the inner-and outer paracortical areas where oxysterol accumulation is generated by stromal cells.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 380,
+        "claim": "Enhanced early production of inflammatory chemokines improves viral control in the lung.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 384,
+        "claim": "Epidemiological disease burden from noncommunicable diseases is more prevalent in low economic settings.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 385,
+        "claim": "Epigenetic modulating agents (EMAs) modulate antitumor immune response in a cancer model system.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 386,
+        "claim": "Errors in peripheral IV drug administration are most common during bolus administration and multiple-step medicine preparations.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 388,
+        "claim": "Ethanol stress decreases the expression of IBP in bacteria.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 399,
+        "claim": "Exposure to fine particulate air pollution is relate to anxiety prevalence.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 410,
+        "claim": "Febrile seizures increase the threshold for development of epilepsy.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 411,
+        "claim": "Febrile seizures reduce the threshold for development of epilepsy.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 415,
+        "claim": "Female carriers of the Apolipoprotein E4 (APOE4) allele have increased risk for dementia.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 421,
+        "claim": "Flexible molecules experience greater steric hindrance in the tumor microenviroment than rigid molecules.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 431,
+        "claim": "FoxO3a activation in neuronal death is mediated by reactive oxygen species (ROS).",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 436,
+        "claim": "Free histones are degraded by a Rad53-dependent mechanism once DNA has been replicated.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 437,
+        "claim": "Functional consequences of genomic alterations due to Myelodysplastic syndrome (MDS) are poorly understood due to the lack of an animal model.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "PARTIALLY_SUPPORTED",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 439,
+        "claim": "Fz/PCP-dependent Pk localizes to the anterior membrane of neuroectoderm cells during zebrafish neuralation",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 440,
+        "claim": "Fz/PCP-dependent Pk localizes to the anterior membrane of notochord cells during zebrafish neuralation.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 443,
+        "claim": "GATA-3 is important for hematopoietic stem cell (HSC) function.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 452,
+        "claim": "Gene expression does not vary appreciably across genetically identical cells.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 475,
+        "claim": "Glycolysis is one of the primary glycometabolic pathways in cells.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 478,
+        "claim": "Golli-deficient T-cells prefer to differentiate into an anergic phenotype in the adaptive immune response when there are increased levels of Ca2+ in the cytosol.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 491,
+        "claim": "HNF4A mutations can cause diabetes in mutant carriers by the age of 14 years",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 501,
+        "claim": "Headaches are not correlated with cognitive impairment.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 502,
+        "claim": "Healthcare delivery efficiency in crowded delivery centers is impaired by improving structural, logistical, and interpersonal elements.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 507,
+        "claim": "Helminths interfere with immune system control of macrophages activated by IL-4 favor Mycobacterium tuberculosis replication.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 508,
+        "claim": "Hematopoietic Stem Cell purification reaches purity rate of up to 50%.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 513,
+        "claim": "High cardiopulmonary fitness causes increased mortality rate.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 514,
+        "claim": "High dietary calcium intakes are unnecessary for prevention of secondary hyperparathyroidism in subjects with 25(OH)D levels above 75 nmol/liter.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 516,
+        "claim": "High levels of CRP reduces the risk of exacerbations in chronic obstructive pulmonary disease (COPD).",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 517,
+        "claim": "High levels of copeptin decrease risk of diabetes.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 521,
+        "claim": "High-sensitivity cardiac troponin T (HSCT-T) dosage may not be diagnostic if the onset of symptoms occurs less than 3 hours before acute myocardial injury (AMI).",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 525,
+        "claim": "Histone demethylase recruitment and a transient decrease in histone methylation is necessary for ligand-dependent induction of transcription by nuclear receptors.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 527,
+        "claim": "Homozygous deletion of murine Sbds gene from osterix-expressing mesenchymal stem and progenitor cells (MPCs) prevents oxidative stress.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 528,
+        "claim": "Human T-lymphotropic virus type-I-associated myelopathy / tropical spastic paraparesis (HAM/TSP) patients produce Immunoglobulin G (IgG) antibodies which cross-react with an immunodominant epitope in Tax.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 532,
+        "claim": "Hyperfibrinogenemia decreases rates of femoropopliteal bypass thrombosis.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 533,
+        "claim": "Hyperfibrinogenemia increases rates of femoropopliteal bypass thrombosis.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 535,
+        "claim": "Hypertension is frequently observed in type 1 diabetes patients.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 536,
+        "claim": "Hypocretin neurones induce panicprone state in rats.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 539,
+        "claim": "Hypoglycemia increases the risk of dementia.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 540,
+        "claim": "Hypothalamic glutamate neurotransmission is crucial to energy balance.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 544,
+        "claim": "IFIT1 restricts viral replication by sequestrating mis-capped viral RNAs.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 549,
+        "claim": "IRG1 has antiviral effects against neurotropic viruses.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 551,
+        "claim": "ITAM phosphorylation prevents the transfer of the T cell receptor (TCR) signal from the echo-domain to the cytoplasmic tail of the T cell receptor (TCR).",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 552,
+        "claim": "IgA plasma cells that are specific for transglutaminase 2 accumulate in the duodenal mucosa on commencement of a gluten-free diet.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 554,
+        "claim": "Immune complex triggered cell death leads to extracellular release of neutrophil protein HMGB1.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 560,
+        "claim": "Immune responses result in the development of inflammatory Th17 cells and anti-inflammatory iTregs.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 569,
+        "claim": "In adult tissue, most T cells are memory T cells.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 575,
+        "claim": "In domesticated populations of Saccharomyces cerevisiae, whole chromosome aneuploidy is very uncommon.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 577,
+        "claim": "In mice, P. chabaudi parasites are able to proliferate faster early in infection when inoculated at lower numbers than when inoculated at high numbers.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 578,
+        "claim": "In mouse models, the loss of CSF1R facilitates MOZ-TIF2-induced leuekmogenesis.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 587,
+        "claim": "In transgenic mice harboring green florescent protein under the control of the Sox2 promoter, less than ten percent of the cells with green florescent colocalize with cell proliferation markers.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 589,
+        "claim": "In young and middle-aged adults, current or remote uses of ADHD medications do not increase the risk of serious cardiovascular events.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 593,
+        "claim": "Incidence of heart failure decreased by 10% in women since 1979.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 597,
+        "claim": "Incidence rates of cervical cancer have decreased.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 598,
+        "claim": "Incidence rates of cervical cancer have increased due to nationwide screening programs based primarily on cytology to detect uterine cervical cancer.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 613,
+        "claim": "Increased microtubule acetylation repairs LRRK2 Roc-COR domain mutation induced locomotor deficits.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 619,
+        "claim": "Increased vessel density along with a reduction in fibrosis decreases the efficacy of chemotherapy treatments.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 623,
+        "claim": "Individuals with low serum vitamin D concentrations have increased risk of multiple sclerosis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 628,
+        "claim": "Infection of human T-cell lymphotropic virus type 1 is most frequent in individuals of African origin.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 636,
+        "claim": "Inositol lipid 3-phosphatase PTEN converts Ptdlns(3,4)P 2 into phosphatidylinositol 4-phosphate.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 637,
+        "claim": "Input from  mental and physical health care professionals is effective at decreasing homelessness.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 641,
+        "claim": "Insomnia can be effectively treated with cognitive behavioral therapy.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 644,
+        "claim": "Insulin increases risk of severe kidney failure.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 649,
+        "claim": "Integrating classroom-based collaborative learning with Web-based collaborative learning leads to subpar class performance",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 659,
+        "claim": "Ivermectin is used to treat lymphatic filariasis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 660,
+        "claim": "Ivermectin is used to treat onchocerciasis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 674,
+        "claim": "LDL cholesterol has no involvement in the development of cardiovascular disease.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 684,
+        "claim": "Lack of clpC does not affect sporulation efficiency in Bacillus subtilis cells.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 690,
+        "claim": "Less than 10% of the gabonese children with Schimmelpenning-Feuerstein-Mims syndrome (SFM) had a plasma lactate of more than 5mmol/L.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 691,
+        "claim": "Leukemia associated Rho guanine nucleotide-exchange factor represses RhoA in response to SRC activation.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 692,
+        "claim": "Leuko-increased blood increases infectious complications in red blood cell transfusion.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 693,
+        "claim": "Leuko-reduced blood reduces infectious complications in red blood cell transfusion.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 700,
+        "claim": "Localization of PIN1 in the Arabidopsis embryo does not require VPS9a",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 702,
+        "claim": "Localization of PIN1 in the roots of Arabidopsis does not require VPS9a",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 715,
+        "claim": "Low expression of miR7a does represses target genes and exerts a biological function in ovaries.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 716,
+        "claim": "Low expression of miR7a exerts a biological function in testis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 718,
+        "claim": "Low nucleosome occupancy correlates with low methylation levels across species.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 721,
+        "claim": "Lupus-prone mice infected with curliproducing bacteria have higher autoantibody titers compared to controls.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 723,
+        "claim": "Ly49Q directs the organization of neutrophil migration to inflammation sites by regulating membrane raft functions.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 727,
+        "claim": "Ly6C hi monocytes have a lower inflammatory capacity compared to their Ly6C lo counterparts.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 728,
+        "claim": "Ly6C hi monocytes have a lower inflammatory capacity than Ly6C lo monocytes.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 729,
+        "claim": "Lymphadenopathy is observed in knockin mouse lacking the SHP-2 MAPK pathway.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 742,
+        "claim": "Macrolides have no protective effect against myocardial infarction.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 743,
+        "claim": "Macrolides protect against myocardial infarction.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 744,
+        "claim": "Macropinocytosis contributes to a cell's supply of amino acids via the intracellular uptake of protein.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 756,
+        "claim": "Many proteins in human cells can be post-translationally modified at lysine residues via acetylation.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 759,
+        "claim": "Mathematical models predict that using Artemisinin-based combination therapy over nongametocytocidal drugs have a dramatic impact in reducing malaria transmission.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 768,
+        "claim": "Mercaptopurine is anabolized into the inactive methylmercaptopurine by thiopurine methyltrasnferase (TPMT).",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 770,
+        "claim": "Metastatic colorectal cancer treated with a single agent fluoropyrimidines resulted in reduced efficacy and lower quality of life when compared with oxaliplatin-based chemotherapy in elderly patients.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 775,
+        "claim": "Mice defective for deoxyribonucleic acid (DNA) polymerase I (polI) reveal increased sensitivity to ionizing radiation (IR).",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 781,
+        "claim": "Mice that lack Interferon-\u03b3 or its receptor exhibit high resistance to experimental autoimmune myocarditis.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 783,
+        "claim": "Mice without IFN-\u03b3 or its receptor are resistant to EAM induced with \u03b1-MyHC/CFA.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 784,
+        "claim": "MicroRNA is involved in the regulation of Neural Stem Cell (NSC) differentiation and proliferation dynamic homeostasis",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 785,
+        "claim": "Microarray results from culture-amplified mixtures of serotypes correlate poorly with microarray results from uncultured mixtures.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 793,
+        "claim": "Mitochondria are uninvolved in apoptosis.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 800,
+        "claim": "Modifying the epigenome in the brain affects the normal human aging process by affecting certain genes related to neurogenesis.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 805,
+        "claim": "Monoclonal antibody targeting of N-cadherin inhibits metastasis.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 808,
+        "claim": "Most termination events in Okazaki fragments are sequence specific.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 811,
+        "claim": "Mutant mice lacking SVCT2 have greatly increased ascorbic acid levels in both brain and adrenals.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 814,
+        "claim": "Mutations in G-Beta protein GNB2 are present in many cancers, resulting in loss of interaction with G-alpha subunits and concomitant activation of AKT pathway.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 820,
+        "claim": "N-terminal cleavage increases success identifying transcription start sites.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 821,
+        "claim": "N-terminal cleavage reduces success identifying transcription start sites.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 823,
+        "claim": "N348I mutations cause resistance to zidovudine (AZT).",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 830,
+        "claim": "NF2 (Merlin) causes phosphorylation and subsequent cytoplasmic sequestration of YAP in Drosophila by activating LATS1/2 kinases.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 831,
+        "claim": "NF2 (Merlin) prevents phosphorylation and subsequent cytoplasmic sequestration of YAP in Drosophila.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 832,
+        "claim": "NFAT4 activation requires IP3R-mediated Ca2+ mobilization.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 834,
+        "claim": "NOX2-independent pathways can generate peroxynitrite by reacting with nitrogen intermediates.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 837,
+        "claim": "NR5A2 is important in development of endometrial tissues.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 839,
+        "claim": "Nanoparticles can be targeted against specific cell types by incorporating aptamers into lipid nanoparticles.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 845,
+        "claim": "Neutrophil extracellular traps (NETs) are released by ANCA-stimulated neutrophils.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 847,
+        "claim": "New drugs for tuberculosis often do not penetrate the necrotic portion of a tuberculosis lesion in high concentrations.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 852,
+        "claim": "Non-invasive ventilation use should be decreased if there is inadequate response to conventional treatment.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 859,
+        "claim": "Normal expression of RUNX1 has tumor-promoting effects.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 870,
+        "claim": "Obesity decreases life quality.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 873,
+        "claim": "Obesity is determined solely by environmental factors.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 879,
+        "claim": "Occupancy of ribosomes by IncRNAs do not make functional peptides.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 880,
+        "claim": "Occupancy of ribosomes by IncRNAs mirror 5 0-UTRs",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 882,
+        "claim": "Omnivores produce less trimethylamine N-oxide from dietary I-carnitine than vegetarians.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 887,
+        "claim": "Only a minority of cells survive development after differentiation into stress-resistant spores.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 903,
+        "claim": "PD-1 triggering on monocytes reduces IL-10 production by monocytes.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 904,
+        "claim": "PDPN promotes efficient motility along stromal surfaces by activating the C-type lectin receptor to rearrange the actin cytoskeleton in dendritic cells.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 907,
+        "claim": "PGE 2 promotes intestinal tumor growth by altering the expression of tumor suppressing and DNA repair genes.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 911,
+        "claim": "PKG-la plays an essential role in expression of pain hypersensitivity in PGK-la knockout mice.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 913,
+        "claim": "PPAR-RXRs are inhibited by PPAR ligands.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 914,
+        "claim": "PPAR-RXRs can be activated by PPAR ligands.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 921,
+        "claim": "Participating in six months of physical activity improves cognitive functioning.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 922,
+        "claim": "Patients in stable partnerships have a faster progression from HIV to AIDS.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 936,
+        "claim": "Peroxynitrite is required for nitration of TCR/CD8.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 956,
+        "claim": "Pleiotropic coupling of GLP-1R to intracellular effectors promotes distinct profiles of cellular signaling.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 957,
+        "claim": "Podocytes are motile and migrate in the presence of injury.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 960,
+        "claim": "Polymeal nutrition reduces cardiovascular mortality.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 967,
+        "claim": "Pretreatment with the Arp2/3 inhibitor CK-666 affects lamelliopodia formation.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 971,
+        "claim": "Primary cervical cancer screening with HPV detection has higher longitudinal sensitivity than conventional cytology to detect cervical intraepithelial neoplasia grade 2.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 975,
+        "claim": "Primary pro-inflammatory cytokines induce secondary pro- and anti-inflammatory mediators.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 982,
+        "claim": "Proteins synthesized at the growth cone are ubiquitinated at a higher rate than proteins from the cell body.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 985,
+        "claim": "Pseudogene PTENP1 regulates the expression of PTEN by functioning as an miRNA decoy.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 993,
+        "claim": "Pyridostatin destabilizes the G - quadruplex in the telomeric region.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1012,
+        "claim": "Radioiodine treatment of non-toxic multinodular goitre reduces thyroid volume.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1014,
+        "claim": "Rapamycin decreases the concentration of triacylglycerols in fruit flies.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1019,
+        "claim": "Rapid phosphotransfer rates govern fidelity in two component systems",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1020,
+        "claim": "Rapid up-regulation and higher basal expression of interferon-induced genes increase survival of granule cell neurons that are infected by West Nile virus.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1021,
+        "claim": "Rapid up-regulation and higher basal expression of interferon-induced genes reduce survival of granule cell neurons that are infected by West Nile virus.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1024,
+        "claim": "Recurrent mutations occur frequently within CTCF anchor sites adjacent to oncogenes.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1029,
+        "claim": "Reduced responsiveness to interleukin-2 in regulatory T cells is associated with greater resistance to autoimmune diseases such as Type 1 Diabetes.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1041,
+        "claim": "Replacement of histone H2A with H2A.Z slows gene activation in yeasts by stabilizing +1 nucleosomes.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1049,
+        "claim": "Ribosomopathies have a low degree of cell and tissue specific pathology.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1062,
+        "claim": "S-nitrosylated GAPDH physiologically transnitrosylates histone deacetylases.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1086,
+        "claim": "Sildenafil improves erectile function in men who experience sexual dysfunction as a result of the use of SSRI antidepressants.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1088,
+        "claim": "Silencing of Bcl2 is important for the maintenance and progression of tumors.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1089,
+        "claim": "Smc5/6 engagment drives the activation of SUMO E3 ligase Mms21 by ATP-dependent remolding.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1099,
+        "claim": "Statins decrease blood cholesterol.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1100,
+        "claim": "Statins increase blood cholesterol.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1104,
+        "claim": "Stroke patients with prior use of direct oral anticoagulants have a lower risk of in-hospital mortality than stroke patients with prior use of warfarin.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1107,
+        "claim": "Subcutaneous fat depots undergo extensive browning processes after cold exposure.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1110,
+        "claim": "Suboptimal nutrition is not predictive of chronic disease",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1121,
+        "claim": "Synaptic activity enhances local release of brain derived neurotrophic factor from postsynaptic dendrites.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1130,
+        "claim": "T regulatory cells (tTregs) lacking \u03b1v\u03b28 are more adept at suppressing pathogenic T-cell responses during active inflammation.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1132,
+        "claim": "TCR/CD3 microdomains are a required to induce the immunologic synapse to activate T cells.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1137,
+        "claim": "TNFAIP3 is a tumor suppressor in glioblastoma.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1140,
+        "claim": "Taking 400mg of \u03b1-tocopheryl acetate helps to prevent prostate cancer.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1144,
+        "claim": "Taxation of sugar-sweetened beverages had no effect on the incidence rate of type II diabetes in India.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1146,
+        "claim": "Teaching hospitals do not provide better care than non-teaching hospitals.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1150,
+        "claim": "Tetraspanin-3 is a causative factor in the development of acute myelogenous leukemia",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1163,
+        "claim": "The DdrB protein from Deinococcus radiodurans is an alternative SSB.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1175,
+        "claim": "The PPR MDA5 has two N-terminal CARD domains.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1179,
+        "claim": "The PRR MDA5 has a central DExD/H RNA helices domain.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1180,
+        "claim": "The PRR MDA5 is a sensor of RNA virus infection.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1185,
+        "claim": "The US health care system can save up to $750 million if 7% of patients waiting for kidney transplants participate in the optimized national kidney paired donation program.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1187,
+        "claim": "The YAP1 and TEAD complex tanslocates into the nucleus where it interacts with transcription factors and DNA-binding proteins that modulate target gene transcription.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1191,
+        "claim": "The amount of publicly available DNA data doubles every 10 years.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1194,
+        "claim": "The arm density of TatAd complexes is due to structural rearrangements within Class1 TatAd complexes such as the 'charge zipper mechanism'.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1196,
+        "claim": "The availability of safe places to study is effective at decreasing homelessness.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1197,
+        "claim": "The availability of safe places to study is not effective at decreasing homelessness.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1199,
+        "claim": "The benefits of colchicine were achieved with effective widespread use of secondary prevention strategies such as high-dose statins.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1200,
+        "claim": "The binding orientation of the ML-SA1 activator at hTRPML2 is different from the binding orientation of the ML-SA1 activator at hTRPML1.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1202,
+        "claim": "The center of the granuloma in an immune cell induces a pro-inflammatory immune response.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1204,
+        "claim": "The combination of H3K4me3 and H3K79me2 is found in quiescent hair follicle stem cells.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1207,
+        "claim": "The composition of myosin-II isoform switches from the polarizable B isoform to the more homogenous A isoform during hematopoietic differentiation.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1213,
+        "claim": "The deregulated and prolonged activation of monocytes has deleterious effects in inflammatory diseases.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1216,
+        "claim": "The extracellular domain of TMEM27 is cleaved in human beta cells.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1221,
+        "claim": "The genomic aberrations found in matasteses are very similar to those found in the primary tumor.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1225,
+        "claim": "The locus rs647161 is associated with colorectal carcinoma.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1226,
+        "claim": "The loss of the TET protein functions may have dire biological consequences, such as myeloid cancers.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1232,
+        "claim": "The minor G allele of FOXO3 is related to more severe symptoms of Crohn's Disease.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1241,
+        "claim": "The myocardial lineage develops from cardiac progenitors of mesodermal origin.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1245,
+        "claim": "The one-child policy has been successful in lowering population growth.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1259,
+        "claim": "The relationship between a breast cancer patient's capacity to metabolize tamoxifen and treatment outcome is dependent on the patient's genetic make-up.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1262,
+        "claim": "The repair of Cas9-induced double strand breaks in human DNA is error-prone.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1266,
+        "claim": "The risk of breast cancer among parous women increases with placental weight of pregnancies, and this association is strongest for premenopausal breast cancer.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1270,
+        "claim": "The risk of male prisoners harming themselves is ten times that of female prisoners.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1271,
+        "claim": "The severity of cardiac involvement in amyloidosis can be described by the degree of transmurality of late gadolinium enhancement in MRI.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1272,
+        "claim": "The single flash-evoked ERG b-wave is generated by activity of ON-bipolar cells.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1273,
+        "claim": "The sliding activity of kinesin-8 protein Kip3 promotes bipolar spindle assembly.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1274,
+        "claim": "The tip of the inner tube of the toxic type VI secretion system (T6SS) antibacterial effector in Escherichia coli (E. coli) carries toxic effector proteins.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1278,
+        "claim": "The treatment of cancer patients with co-IR blockade does not cause any adverse autoimmune events.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1279,
+        "claim": "The treatment of cancer patients with co-IR blockade precipitates adverse autoimmune events.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1280,
+        "claim": "The ureABIEFGH gene cluster encodes urease maturation proteins : UreD/UreH, UreE, UreF, and UreG.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1281,
+        "claim": "The ureABIEFGH gene cluster is induced by nickel (II) ion.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1282,
+        "claim": "Therapeutic use of the drug Dapsone to treat pyoderma gangrenous is based on anecdotal evidence.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1290,
+        "claim": "There is an inverse relationship between hip fractures and statin use.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1292,
+        "claim": "There is no association between HNF4A mutations and diabetes risks.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1298,
+        "claim": "Thigh-length graduated compression stockings (GCS) did not reduce deep vein thrombosis in patients admitted to hospital who are immobile because of acute stroke.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "PARTIALLY_SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1303,
+        "claim": "Tirasemtiv has no effect on fast-twitch muscle.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1316,
+        "claim": "Transferred UCB T cells acquire a memory-like phenotype in recipients.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1319,
+        "claim": "Transplanted human glial cells can differentiate within the host animal.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1320,
+        "claim": "Transplanted human glial progenitor cells are incapable of forming a neural network with host animals' neurons.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1332,
+        "claim": "Tumor necrosis factor alpha (TNF-\u03b1) and interleukin-1 (IL-1) are pro-inflammatory cytokines that inhibit IL-6 and IL-10.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1335,
+        "claim": "UCB T cells maintain high TCR diversity after transplantation.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1336,
+        "claim": "UCB T cells reduce TCR diversity after transplantation.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "SUPPORTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "SUPPORTED",
+        "claim_aware_verifier": "SUPPORTED"
+      },
+      {
+        "id": 1337,
+        "claim": "Ubiquitin ligase UBC13 generates a K63-linked polyubiquitin moiety at PCNA K164.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1339,
+        "claim": "Ultrasound guidance significantly raises the number of traumatic procedures when attempting needle insertion.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1344,
+        "claim": "Up-regulation of the p53 pathway and related molecular events casues cancer resistance and results in a significantly shortened lifespan marked by senescent cells and accelerated organismal aging.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1352,
+        "claim": "Upregulation of mosGCTL-1 is induced upon infection with West Nile virus.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1359,
+        "claim": "Varenicline monotherapy is more effective after 12 weeks of treatment compared to combination nicotine replacement therapies with varenicline or bupropion.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1362,
+        "claim": "Venules have a larger lumen diameter than arterioles.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1363,
+        "claim": "Venules have a thinner or absent smooth layer compared to arterioles.",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "NOT_ESTABLISHED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1368,
+        "claim": "Vitamin D deficiency effects the term of delivery.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1370,
+        "claim": "Vitamin D deficiency is unrelated to birth weight.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1379,
+        "claim": "Women with a higher birth weight are more likely to develop breast cancer later in life.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "INSUFFICIENT_EVIDENCE",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1382,
+        "claim": "aPKCz causes tumour enhancement by affecting glutamine metabolism.",
+        "gold": "CONTRADICTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1385,
+        "claim": "cSMAC formation enhances weak ligand signalling.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "CONTRADICTED",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "CONTRADICTED",
+        "claim_aware_verifier": "CONTRADICTED"
+      },
+      {
+        "id": 1389,
+        "claim": "mTORC2 regulates intracellular cysteine levels through xCT inhibition.",
+        "gold": "SUPPORTED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      },
+      {
+        "id": 1395,
+        "claim": "p16INK4A accumulation is  linked to an abnormal wound response caused by the microinvasive step of advanced Oral Potentially Malignant Lesions (OPMLs).",
+        "gold": "NOT_ESTABLISHED",
+        "claim_aware_5way": "UNCERTAIN",
+        "similarity_threshold": "SUPPORTED",
+        "nli_top1": "NOT_ESTABLISHED",
+        "claim_aware_verifier": "NOT_ESTABLISHED"
+      }
+    ]
+  },
+  "retrieval": {
+    "n_queries": 188,
+    "n_abstracts": 5183,
+    "k": 10,
+    "index_time_s": 21.87,
+    "systems": {
+      "bm25": {
+        "p@1": 0.6489,
+        "r@3": 0.8121,
+        "r@10": 0.9139,
+        "mrr": 0.745,
+        "ndcg@10": 0.7849,
+        "set_precision": 0.0989,
+        "set_recall": 0.9139,
+        "n_retrieved": 10.0,
+        "latency_s": 0.0264
+      },
+      "semantic": {
+        "p@1": 0.617,
+        "r@3": 0.8043,
+        "r@10": 0.9117,
+        "mrr": 0.7267,
+        "ndcg@10": 0.7714,
+        "set_precision": 0.1,
+        "set_recall": 0.9117,
+        "n_retrieved": 10.0,
+        "latency_s": 0.026
+      },
+      "hybrid": {
+        "p@1": 0.6968,
+        "r@3": 0.8707,
+        "r@10": 0.9516,
+        "mrr": 0.7999,
+        "ndcg@10": 0.8351,
+        "set_precision": 0.1043,
+        "set_recall": 0.9516,
+        "n_retrieved": 10.0,
+        "latency_s": 0.0268
+      },
+      "adaptive_hybrid": {
+        "p@1": 0.7021,
+        "r@3": 0.8654,
+        "r@10": 0.9058,
+        "mrr": 0.796,
+        "ndcg@10": 0.8175,
+        "set_precision": 0.3,
+        "set_recall": 0.9058,
+        "n_retrieved": 4.2074,
+        "latency_s": 0.0279
+      }
+    }
+  }
+}

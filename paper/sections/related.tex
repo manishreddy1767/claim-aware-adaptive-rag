@@ -1,0 +1,19 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Adaptive retrieval.}
+Retrieval-augmented generation \citep{lewis2020rag} usually retrieves a fixed number of passages.
+Adaptive approaches decide \emph{when} and \emph{how much} to retrieve: FLARE retrieves when the generator is uncertain \citep{jiang2023flare}, Adaptive-RAG routes questions by predicted complexity \citep{jeong2024adaptiverag}, Self-RAG learns reflection tokens that trigger retrieval and critique \citep{asai2024selfrag}, and CRAG evaluates retrieved documents and triggers corrective actions \citep{yan2024crag}.
+Our retriever is simpler and training-free: it trims weak evidence by a relative score cutoff, checks sufficiency with lexical, entity and evidence-type signals, and expands in bounded rounds.
+Our focus is on what happens \emph{after} retrieval: whether the evidence actually answers the question and whether each claim is supported.
+
+\paragraph{Claim-level factuality and grounding.}
+FActScore decomposes long-form generations into atomic facts and verifies each against a knowledge source \citep{min2023factscore}; RARR retrieves evidence and revises unsupported statements \citep{gao2023rarr}.
+NLI-based consistency checking has a long history in summarization \citep{laban2022summac,honovich2022true}, and specialised checkers such as AlignScore \citep{zha2023alignscore}, MiniCheck \citep{tang2024minicheck} and HHEM \citep{vectara2024hhem} score whether a claim is supported by a grounding document.
+SelfCheckGPT instead detects hallucinations without references through sampling consistency \citep{manakul2023selfcheckgpt}.
+RAGTruth \citep{niu2024ragtruth} provides span-level hallucination annotations of LLM responses in retrieval-augmented settings, which we use for evaluation and fine-tuning.
+Unlike these works we study the \emph{cost} of claim-level verification: how many verifier calls are needed per claim, and how to allocate a fixed number of calls across the claims of an answer.
+
+\paragraph{Answerability.}
+SQuAD~2.0 \citep{rajpurkar2018squad2} introduced unanswerable questions whose plausible distractor spans make abstention hard.
+We use a SQuAD~2.0-trained extractive reader only as an answerability and relevance gate, and we report its in-distribution caveat explicitly.

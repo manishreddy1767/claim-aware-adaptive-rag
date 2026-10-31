@@ -1,0 +1,10 @@
+Northstar Digital IT Equipment Policy
+
+Laptops
+Every new employee receives a company laptop on their first working day. Laptops are replaced every 3 years. Employees must return their laptop within 5 working days of leaving the company.
+
+Security
+Passwords must be changed every 90 days. Multi-factor authentication is mandatory for email and PeoplePortal. Lost or stolen devices must be reported to the IT helpdesk within 24 hours.
+
+Personal Devices
+Personal devices may be used for email only after the IT team installs the device-management app. Software that is not on the approved list must not be installed on company laptops.
